@@ -111,17 +111,20 @@ h1 {
     flex-direction: column;
 }
 
+/* Dynamic Image Container */
 .img-container {
     width: 100%;
-    aspect-ratio: 4 / 3;
-    overflow: hidden;
+    height: auto; 
+    overflow: visible;
     margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
 }
 
 .img-container img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    object-fit: contain; 
     transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
