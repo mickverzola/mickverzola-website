@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 2. Dynamic Image Randomizer
     // Set maxImages to the total number of photos you uploaded to the 'images' folder
-    const maxImages = 5; 
+    const maxImages = 2; 
     
     // Pick two unique random numbers between 1 and maxImages
     let randomInt1 = Math.floor(Math.random() * maxImages) + 1;
