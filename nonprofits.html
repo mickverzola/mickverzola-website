@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Non-Profits</title>
   <style>
     :root {
@@ -20,6 +20,16 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      touch-action: manipulation;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      position: fixed;
     }
 
     body {
@@ -30,7 +40,6 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
       padding: 16px;
     }
 
@@ -38,7 +47,7 @@
       width: 100%;
       max-width: 1100px;
       height: 75vh;
-      min-height: 500px;
+      min-height: 480px;
       max-height: 650px;
       position: relative;
     }
@@ -56,6 +65,10 @@
       justify-content: space-between;
       animation: fadeIn 0.4s ease-in-out;
       overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
+      -webkit-user-select: text;
+      user-select: text;
     }
 
     .slide.active {
@@ -83,6 +96,8 @@
       flex: 1;
       margin-top: 20px;
       overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
     }
 
     /* Title Slide Styling */
@@ -147,7 +162,7 @@
       color: var(--text-main);
     }
 
-    /* Table Styling (Updated to match mobile card typography/weight) */
+    /* Table Styling */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -178,7 +193,7 @@
       font-weight: 700;
     }
 
-    /* Card View for Slide 5 (Consolidated to match table styling) */
+    /* Option Card Styling */
     .option-card {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border-color);
@@ -227,7 +242,7 @@
       background-color: var(--accent-blue);
       color: #0f172a;
       border: none;
-      padding: 10px 20px;
+      padding: 12px 24px;
       border-radius: 8px;
       font-weight: bold;
       cursor: pointer;
@@ -262,10 +277,12 @@
     @media (max-width: 768px) {
       body {
         justify-content: flex-start;
+        padding: 12px;
       }
 
       .deck-container {
-        height: 78vh;
+        height: calc(100vh - 90px);
+        min-height: auto;
         max-height: none;
       }
 
@@ -550,6 +567,17 @@
       updateDeck();
     }
 
+    /* Prevent accidental double-tap zoom on iOS */
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', (e) => {
+      const now = (new Date()).getTime();
+      if (now - lastTouchEnd <= 300) {
+        e.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, false);
+
+    /* Keyboard Navigation */
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowRight' || e.key === 'Space') {
         if (currentSlide < slides.length - 1) changeSlide(1);
