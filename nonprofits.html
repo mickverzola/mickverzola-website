@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Non-Profits</title>
   <style>
     :root {
@@ -38,18 +38,23 @@
       color: var(--text-main);
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
-      padding: 16px;
+      padding: clamp(12px, 3vw, 24px);
+      /* Safe area insets for notched phones & gesture bars */
+      padding-top: max(12px, env(safe-area-inset-top));
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+      padding-left: max(12px, env(safe-area-inset-left));
+      padding-right: max(12px, env(safe-area-inset-right));
     }
 
     .deck-container {
       width: 100%;
       max-width: 1100px;
-      height: 75vh;
-      min-height: 480px;
-      max-height: 650px;
+      flex: 1;
       position: relative;
+      overflow: hidden;
+      margin-bottom: 12px;
     }
 
     .slide {
@@ -59,7 +64,7 @@
       background-color: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 16px;
-      padding: 32px;
+      padding: 24px;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
       flex-direction: column;
       justify-content: space-between;
@@ -81,20 +86,20 @@
     }
 
     .slide-header h1 {
-      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
       color: var(--accent-blue);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .slide-header h2 {
-      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      font-size: clamp(0.95rem, 2.5vw, 1.2rem);
       color: var(--text-muted);
       font-weight: 400;
     }
 
     .slide-body {
       flex: 1;
-      margin-top: 20px;
+      margin-top: 16px;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       touch-action: pan-y;
@@ -109,14 +114,14 @@
     }
 
     .title-slide h1 {
-      font-size: clamp(2rem, 6vw, 3rem);
+      font-size: clamp(1.8rem, 6vw, 3rem);
       color: var(--accent-blue);
       margin-bottom: 16px;
       line-height: 1.2;
     }
 
     .title-slide h2 {
-      font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+      font-size: clamp(1rem, 3.5vw, 1.5rem);
       color: var(--accent-teal);
       font-weight: 400;
     }
@@ -124,27 +129,27 @@
     /* Responsive Grid Layouts */
     .grid-3 {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
     }
 
     .grid-2 {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
     }
 
     .card {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 20px;
+      padding: 16px;
     }
 
     .card h3 {
       color: var(--accent-teal);
-      margin-bottom: 12px;
-      font-size: 1.1rem;
+      margin-bottom: 10px;
+      font-size: 1.05rem;
     }
 
     .card ul {
@@ -152,10 +157,10 @@
     }
 
     .card ul li {
-      margin-bottom: 10px;
-      line-height: 1.5;
+      margin-bottom: 8px;
+      line-height: 1.45;
       color: #cbd5e1;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
     }
 
     .card ul li strong {
@@ -171,7 +176,7 @@
     }
 
     th, td {
-      padding: 12px;
+      padding: 10px 12px;
       text-align: left;
       border-bottom: 1px solid var(--border-color);
     }
@@ -179,7 +184,7 @@
     th {
       background-color: rgba(56, 189, 248, 0.1);
       color: var(--accent-blue);
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 700;
     }
 
@@ -198,27 +203,27 @@
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
+      padding: 14px;
+      margin-bottom: 12px;
     }
 
     .option-card h3 {
       color: var(--accent-blue);
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 700;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       border-bottom: 1px solid var(--border-color);
-      padding-bottom: 6px;
+      padding-bottom: 4px;
     }
 
     .option-meta {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     .option-meta-item {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: #cbd5e1;
       line-height: 1.4;
     }
@@ -228,25 +233,29 @@
       font-weight: 700;
     }
 
-    /* Controls */
+    /* Safe Bottom Controls */
     .controls {
       display: flex;
       justify-content: space-between;
       align-items: center;
       width: 100%;
       max-width: 1100px;
-      margin-top: 16px;
+      height: 48px;
+      flex-shrink: 0;
+      gap: 12px;
     }
 
     .btn {
       background-color: var(--accent-blue);
       color: #0f172a;
       border: none;
-      padding: 12px 24px;
+      padding: 12px 20px;
       border-radius: 8px;
       font-weight: bold;
+      font-size: 0.95rem;
       cursor: pointer;
       transition: opacity 0.2s;
+      min-width: 90px;
     }
 
     .btn:hover {
@@ -261,10 +270,11 @@
 
     .slide-counter {
       color: var(--text-muted);
-      font-size: 0.9rem;
+      font-size: 0.85rem;
+      text-align: center;
     }
 
-    /* Display switcher */
+    /* Display Switcher */
     .table-view {
       display: block;
     }
@@ -275,23 +285,8 @@
 
     /* Mobile Breakpoint Tweaks */
     @media (max-width: 768px) {
-      body {
-        justify-content: flex-start;
-        padding: 12px;
-      }
-
-      .deck-container {
-        height: calc(100vh - 90px);
-        min-height: auto;
-        max-height: none;
-      }
-
       .slide {
-        padding: 20px;
-      }
-
-      .controls {
-        padding: 0 4px;
+        padding: 16px;
       }
 
       .table-view {
@@ -306,7 +301,7 @@
 </head>
 <body>
 
-  <div class="deck-container">
+  <div class="deck-container" id="deckContainer">
     
     <!-- Slide 1: Title -->
     <div class="slide title-slide active">
@@ -354,15 +349,15 @@
         <div class="grid-3">
           <div class="card">
             <h3>An Assistant, Not an Author</h3>
-            <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.5;">Handles tedious, repetitive tasks (sorting transcripts, synthesizing notes) while experts handle high-level analysis and strategy.</p>
+            <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.45;">Handles tedious, repetitive tasks (sorting transcripts, synthesizing notes) while experts handle high-level analysis and strategy.</p>
           </div>
           <div class="card">
             <h3>Preserving Integrity</h3>
-            <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.5;">AI outputs are starting points for human review, not final products. Domain experts remain the ultimate authority.</p>
+            <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.45;">AI outputs are starting points for human review, not final products. Domain experts remain the ultimate authority.</p>
           </div>
           <div class="card">
             <h3>Protecting IP & Values</h3>
-            <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.5;">Hybrid and Local deployment options keep proprietary research strictly confidential and behind your firewall.</p>
+            <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.45;">Hybrid and Local deployment options keep proprietary research strictly confidential and behind your firewall.</p>
           </div>
         </div>
       </div>
@@ -521,15 +516,15 @@
         <div class="grid-3">
           <div class="card">
             <h3>1. Identify Pilots</h3>
-            <p style="color: #cbd5e1; font-size: 0.95rem; margin-top: 8px;">Select 1–2 non-sensitive, labor-intensive tasks (e.g., public policy synthesis or grant drafts) to test.</p>
+            <p style="color: #cbd5e1; font-size: 0.9rem; margin-top: 6px; line-height: 1.45;">Select 1–2 non-sensitive, labor-intensive tasks (e.g., public policy synthesis or grant drafts) to test.</p>
           </div>
           <div class="card">
             <h3>2. Audit Data</h3>
-            <p style="color: #cbd5e1; font-size: 0.95rem; margin-top: 8px;">Review organizational workflows and categorize data into Public, Internal, and Confidential.</p>
+            <p style="color: #cbd5e1; font-size: 0.9rem; margin-top: 6px; line-height: 1.45;">Review organizational workflows and categorize data into Public, Internal, and Confidential.</p>
           </div>
           <div class="card">
             <h3>3. Choose Model</h3>
-            <p style="color: #cbd5e1; font-size: 0.95rem; margin-top: 8px;">Select the Cloud, Hybrid, or Local deployment model that aligns with your privacy profile.</p>
+            <p style="color: #cbd5e1; font-size: 0.9rem; margin-top: 6px; line-height: 1.45;">Select the Cloud, Hybrid, or Local deployment model that aligns with your privacy profile.</p>
           </div>
         </div>
       </div>
@@ -537,7 +532,7 @@
 
   </div>
 
-  <!-- Navigation Controls -->
+  <!-- Safe Area Navigation Controls -->
   <div class="controls">
     <button class="btn" id="prevBtn" onclick="changeSlide(-1)">Previous</button>
     <div class="slide-counter" id="counter">Slide 1 of 7</div>
@@ -550,6 +545,7 @@
     const counter = document.getElementById('counter');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
+    const deckContainer = document.getElementById('deckContainer');
 
     function updateDeck() {
       slides.forEach((slide, index) => {
@@ -567,7 +563,30 @@
       updateDeck();
     }
 
-    /* Prevent accidental double-tap zoom on iOS */
+    /* Swipe Gesture Support for Mobile Navigation */
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    deckContainer.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    deckContainer.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    }, { passive: true });
+
+    function handleSwipe() {
+      const swipeThreshold = 50;
+      if (touchEndX < touchStartX - swipeThreshold) {
+        if (currentSlide < slides.length - 1) changeSlide(1);
+      }
+      if (touchEndX > touchStartX + swipeThreshold) {
+        if (currentSlide > 0) changeSlide(-1);
+      }
+    }
+
+    /* Prevent Double-Tap Zoom */
     let lastTouchEnd = 0;
     document.addEventListener('touchend', (e) => {
       const now = (new Date()).getTime();
