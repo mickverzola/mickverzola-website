@@ -31,13 +31,14 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      overflow: hidden;
+      padding: 16px;
     }
 
     .deck-container {
-      width: 90vw;
+      width: 100%;
       max-width: 1100px;
       height: 75vh;
+      min-height: 500px;
       max-height: 650px;
       position: relative;
     }
@@ -49,11 +50,12 @@
       background-color: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 16px;
-      padding: 40px;
+      padding: 32px;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
       flex-direction: column;
       justify-content: space-between;
       animation: fadeIn 0.4s ease-in-out;
+      overflow-y: auto;
     }
 
     .slide.active {
@@ -66,20 +68,20 @@
     }
 
     .slide-header h1 {
-      font-size: 2.2rem;
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
       color: var(--accent-blue);
       margin-bottom: 8px;
     }
 
     .slide-header h2 {
-      font-size: 1.2rem;
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
       color: var(--text-muted);
       font-weight: 400;
     }
 
     .slide-body {
       flex: 1;
-      margin-top: 24px;
+      margin-top: 20px;
       overflow-y: auto;
     }
 
@@ -92,30 +94,29 @@
     }
 
     .title-slide h1 {
-      font-size: 3rem;
+      font-size: clamp(2rem, 6vw, 3rem);
       color: var(--accent-blue);
       margin-bottom: 16px;
       line-height: 1.2;
     }
 
     .title-slide h2 {
-      font-size: 1.5rem;
+      font-size: clamp(1.1rem, 3.5vw, 1.5rem);
       color: var(--accent-teal);
       font-weight: 400;
     }
 
-    /* Grid Layouts */
+    /* Responsive Grid Layouts */
     .grid-3 {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      height: 100%;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
     }
 
     .grid-2 {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
     }
 
     .card {
@@ -128,7 +129,7 @@
     .card h3 {
       color: var(--accent-teal);
       margin-bottom: 12px;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
     }
 
     .card ul {
@@ -146,11 +147,11 @@
       color: var(--text-main);
     }
 
-    /* Table Styling */
+    /* Table Styling (Updated to match mobile card typography/weight) */
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       margin-top: 10px;
     }
 
@@ -163,6 +164,53 @@
     th {
       background-color: rgba(56, 189, 248, 0.1);
       color: var(--accent-blue);
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    td {
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+
+    td strong {
+      color: var(--accent-teal);
+      font-weight: 700;
+    }
+
+    /* Card View for Slide 5 (Consolidated to match table styling) */
+    .option-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .option-card h3 {
+      color: var(--accent-blue);
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 6px;
+    }
+
+    .option-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .option-meta-item {
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+
+    .option-meta-item strong {
+      color: var(--accent-teal);
+      font-weight: 700;
     }
 
     /* Controls */
@@ -170,9 +218,9 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      width: 90vw;
+      width: 100%;
       max-width: 1100px;
-      margin-top: 20px;
+      margin-top: 16px;
     }
 
     .btn {
@@ -199,6 +247,43 @@
     .slide-counter {
       color: var(--text-muted);
       font-size: 0.9rem;
+    }
+
+    /* Display switcher */
+    .table-view {
+      display: block;
+    }
+
+    .mobile-cards-view {
+      display: none;
+    }
+
+    /* Mobile Breakpoint Tweaks */
+    @media (max-width: 768px) {
+      body {
+        justify-content: flex-start;
+      }
+
+      .deck-container {
+        height: 78vh;
+        max-height: none;
+      }
+
+      .slide {
+        padding: 20px;
+      }
+
+      .controls {
+        padding: 0 4px;
+      }
+
+      .table-view {
+        display: none;
+      }
+
+      .mobile-cards-view {
+        display: block;
+      }
     }
   </style>
 </head>
@@ -306,42 +391,80 @@
         <h2>Strategic Model Comparison</h2>
       </div>
       <div class="slide-body">
-        <table>
-          <thead>
-            <tr>
-              <th>Factor</th>
-              <th>Cloud-Based AI</th>
-              <th>Hybrid Local-Cloud AI</th>
-              <th>Fully Local AI</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Cost</strong></td>
-              <td>Low upfront; subscription per user</td>
-              <td>Balanced; low baseline + cloud scale</td>
-              <td>Higher hardware upfront; zero sub fees</td>
-            </tr>
-            <tr>
-              <td><strong>Maintenance</strong></td>
-              <td>Zero IT maintenance</td>
-              <td>Low to moderate IT overhead</td>
-              <td>Requires dedicated IT management</td>
-            </tr>
-            <tr>
-              <td><strong>Privacy</strong></td>
-              <td>Standard enterprise cloud APIs</td>
-              <td>High control; local sensitivity filtering</td>
-              <td>100% offline & air-gapped sovereignty</td>
-            </tr>
-            <tr>
-              <td><strong>Best Advantage</strong></td>
-              <td>Immediate access to top models</td>
-              <td>Optimal mix of safety and scaling</td>
-              <td>Total confidentiality & zero dependencies</td>
-            </tr>
-          </tbody>
-        </table>
+        
+        <!-- Desktop Table View -->
+        <div class="table-view">
+          <table>
+            <thead>
+              <tr>
+                <th>Factor</th>
+                <th>Cloud-Based AI</th>
+                <th>Hybrid Local-Cloud AI</th>
+                <th>Fully Local AI</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Cost</strong></td>
+                <td>Low upfront; predictable subscription per user</td>
+                <td>Balanced; low baseline + cloud scale</td>
+                <td>Higher hardware upfront; zero sub fees</td>
+              </tr>
+              <tr>
+                <td><strong>Maintenance</strong></td>
+                <td>Zero IT maintenance</td>
+                <td>Low to moderate IT overhead</td>
+                <td>Requires dedicated IT management</td>
+              </tr>
+              <tr>
+                <td><strong>Privacy</strong></td>
+                <td>Standard enterprise cloud APIs</td>
+                <td>High control; local sensitivity filtering</td>
+                <td>100% offline & air-gapped sovereignty</td>
+              </tr>
+              <tr>
+                <td><strong>Primary Advantage</strong></td>
+                <td>Immediate access to top-tier models with zero setup</td>
+                <td>Optimal balance of data safety, scaling, and efficiency</td>
+                <td>Total confidentiality, zero external dependencies</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile Stacked Card View -->
+        <div class="mobile-cards-view">
+          <div class="option-card">
+            <h3>Cloud-Based AI</h3>
+            <div class="option-meta">
+              <div class="option-meta-item"><strong>Cost:</strong> Low upfront; predictable subscription per user.</div>
+              <div class="option-meta-item"><strong>Maintenance:</strong> Zero IT maintenance; provider managed.</div>
+              <div class="option-meta-item"><strong>Privacy:</strong> Standard enterprise cloud APIs.</div>
+              <div class="option-meta-item"><strong>Primary Advantage:</strong> Immediate access to top-tier models with zero setup.</div>
+            </div>
+          </div>
+
+          <div class="option-card">
+            <h3>Hybrid Local-Cloud AI</h3>
+            <div class="option-meta">
+              <div class="option-meta-item"><strong>Cost:</strong> Balanced; low baseline running costs + cloud scale.</div>
+              <div class="option-meta-item"><strong>Maintenance:</strong> Low to moderate IT overhead.</div>
+              <div class="option-meta-item"><strong>Privacy:</strong> High control; sensitive data filtered locally first.</div>
+              <div class="option-meta-item"><strong>Primary Advantage:</strong> Optimal balance of data safety, scaling, and efficiency.</div>
+            </div>
+          </div>
+
+          <div class="option-card">
+            <h3>Fully Local AI</h3>
+            <div class="option-meta">
+              <div class="option-meta-item"><strong>Cost:</strong> Higher hardware upfront; zero recurring subscription fees.</div>
+              <div class="option-meta-item"><strong>Maintenance:</strong> Requires dedicated internal or partner IT management.</div>
+              <div class="option-meta-item"><strong>Privacy:</strong> Maximum data sovereignty; 100% offline & air-gapped.</div>
+              <div class="option-meta-item"><strong>Primary Advantage:</strong> Total confidentiality, zero external dependencies.</div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
