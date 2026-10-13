@@ -1,6 +1,6 @@
 # Portfolio delivery plan
 
-Updated: 2026-10-13. **Status:** GitHub milestone and issues #1–#10 read back for alignment; documentation baseline submitted for review through #1. Website implementation has not started.
+Updated: 2026-10-13. **Status:** Baseline #1 accepted through merged PR #11; issue #2 investigation recorded with open release prerequisites under #12. Website implementation has not started.
 
 ## Problem and outcome
 
@@ -12,7 +12,7 @@ The outcome is a portfolio where recruiters and employers understand who Mick is
 
 The [PRD](prd.md) owns audience, intended outcomes and scope. The [TDD](tdd.md) owns technical facts, design implications and verification evidence. GitHub issues own execution status; the [backlog](backlog.md) maps local B01–B06 groups to those issues. The [workflow](workflow.md) owns branch → preview → PR → review → merge. Proposed approaches may evolve while remaining within those requirements.
 
-The starting documentation is the owner-aligned 2026-10-13 set, with original source review baseline `0dea6ca` and documentation branch base `1121b62` (see the [TDD](tdd.md#source-baseline)). Issue #1 records the documentation PR and versioned PRD/TDD links. Branch links are provisional until merge. After owner review and merge, record the full merged commit SHA on #1 and replace workspace-only PRD/TDD references in delivery issues #1–#10 with links to that commit. This PR does not complete a website fix or verify a release.
+The accepted baseline is the owner-aligned 2026-10-13 set, merged through PR #11 at `df58ff754f8ddeea554509dc19e0a8616e42b0a9`, with original source review `0dea6ca` and runtime base `1121b62` (see the [TDD](tdd.md#source-baseline)). Issue #1 records acceptance checks and final versioned PRD/TDD links; workspace-only references in issues #1–#10 were replaced and read back. Later evidence updates do not move that fixed baseline. Publication does not complete a website fix or verify a browser release.
 
 ## Milestone and work items
 
@@ -30,6 +30,7 @@ The starting documentation is the owner-aligned 2026-10-13 set, with original so
 | [#8](https://github.com/mickverzola/mickverzola-website/issues/8) | Presentation reading controls | B03 | FR-06; R05/R06 |
 | [#9](https://github.com/mickverzola/mickverzola-website/issues/9) | Image transfer and appearance | B04 | FR-07 and quality goals; R01 |
 | [#10](https://github.com/mickverzola/mickverzola-website/issues/10) | Outcome and production verification | B01–B06 | FR-01–FR-07; TDD verification |
+| [#12](https://github.com/mickverzola/mickverzola-website/issues/12) | Missing browser/account/release evidence from #2 | B05; supports B02/B03/B04 | Quality goals; R01/R04–R06/R08 |
 
 Each issue states the problem, alignment, proposed approach, acceptance criteria/investigation outputs, constraints and dependency references. Full issue bodies on GitHub are the execution records; avoid maintaining duplicate task status here.
 
@@ -40,6 +41,8 @@ Each issue states the problem, alignment, proposed approach, acceptance criteria
 3. After #3, review sample claims (#4), implement professional story/contact (#5), and homepage reading/navigation (#7). Selected work (#6) depends on #3 and #4.
 4. Deck controls (#8) can be implemented independently; browser acceptance evidence is needed before closure. Image optimization (#9) follows #3 and final selected-work imagery/layout (#6).
 5. Review the combined outcome and verify release (#10) after #1–#9 outputs/acceptance are satisfied. Unresolved spike findings that are release prerequisites must be resolved through follow-up work before release.
+
+Issue #2's recorded limitations are explicitly assigned to #12, which remains a prerequisite for #10. Its browser matrix and account inspection also supply evidence needed by #7/#8/#9. Closing the investigation does not satisfy B05's full hosting acceptance or imply that the preview/release path is confirmed.
 
 GitHub dependencies are recorded as cross-references in issue bodies; no native blocking relation or GitHub Project automation was configured.
 

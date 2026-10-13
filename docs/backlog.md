@@ -2,21 +2,21 @@
 
 Updated: 2026-10-13. IDs below are local planning references, not GitHub issue numbers.
 
-The owner requested problem-focused GitHub tracking aligned with the PRD and TDD. The [Portfolio v1 milestone](https://github.com/mickverzola/mickverzola-website/milestone/1) and ten open issues were created and verified on 2026-10-13. No website fixes have been implemented. The sequence below remains suggested, without dates or a promised release; see the [delivery plan](delivery-plan.md) for dependencies and completion rules.
+The owner requested problem-focused GitHub tracking aligned with the PRD and TDD. The [Portfolio v1 milestone](https://github.com/mickverzola/mickverzola-website/milestone/1) and issues #1–#10 were created and verified on 2026-10-13. Baseline #1 is accepted; #2's investigation has explicit release prerequisites under #12. No website fixes have been implemented. The sequence below remains suggested, without dates or a promised release; see the [delivery plan](delivery-plan.md) for dependencies and completion rules.
 
 | Item | Status | Suggested sequence |
 | --- | --- | --- |
-| D01 — Review and document the repository | Source review/draft complete; baseline publication under #1 awaits review and merge; runtime verification excluded | Baseline |
+| D01 — Review and document the repository | Baseline #1 accepted through merged PR #11; runtime verification excluded | Baseline |
 | B01 — Portfolio content overhaul | Accepted direction to explore; design and delivery unscheduled | Choose content, then preview |
 | B02 — Homepage reading and navigation | Proposed; findings R02–R04/R06 | Address alongside overhaul |
 | B03 — Retained presentation usability | Proposed; findings R05/R06 | Small independent fix |
 | B04 — Image optimization | Proposed; finding R01 | After image role/crops are selected |
-| B05 — Confirm hosting and preview configuration | Open verification; finding R08 | Before next remote release |
+| B05 — Confirm hosting and preview configuration | #2 investigation recorded; browser/account/release evidence remains open under #12 | Before next remote release |
 | B06 — Review presentation claims and framing | Proposed; deck retained as AI sample | With its portfolio entry |
 
 ## GitHub execution mapping
 
-B01–B06 remain local grouping IDs, not GitHub issue numbers. GitHub owns task status; creating an issue does not complete its work. [#1](https://github.com/mickverzola/mickverzola-website/issues/1) records the planning-baseline PR and documentation commit; final baseline links must use the merged commit after owner review.
+B01–B06 remain local grouping IDs, not GitHub issue numbers. GitHub owns task status; creating an issue does not complete its work. [#1](https://github.com/mickverzola/mickverzola-website/issues/1) records baseline acceptance, PR #11 and merged commit `df58ff754f8ddeea554509dc19e0a8616e42b0a9`; issues #1–#10 now contain final commit-pinned PRD/TDD links.
 
 | Local group | GitHub issues |
 | --- | --- |
@@ -25,13 +25,13 @@ B01–B06 remain local grouping IDs, not GitHub issue numbers. GitHub owns task 
 | B02 | [#5 — Story/contact layout](https://github.com/mickverzola/mickverzola-website/issues/5), [#7 — Reading/navigation](https://github.com/mickverzola/mickverzola-website/issues/7) |
 | B03 | [#8 — Deck controls](https://github.com/mickverzola/mickverzola-website/issues/8) |
 | B04 | [#3 — Image-role decision](https://github.com/mickverzola/mickverzola-website/issues/3), [#9 — Image optimization](https://github.com/mickverzola/mickverzola-website/issues/9) |
-| B05 | [#2 — Browser/delivery spike](https://github.com/mickverzola/mickverzola-website/issues/2) |
+| B05 | [#2 — Browser/delivery spike](https://github.com/mickverzola/mickverzola-website/issues/2), [#12 — Missing browser/hosting release evidence](https://github.com/mickverzola/mickverzola-website/issues/12) |
 | B06 | [#3 — Sample/content decision](https://github.com/mickverzola/mickverzola-website/issues/3), [#4 — AI sample editorial review](https://github.com/mickverzola/mickverzola-website/issues/4) |
 | Combined outcome/release | [#10 — Portfolio acceptance and production verification](https://github.com/mickverzola/mickverzola-website/issues/10) |
 
 ## D01 — Review and documentation
 
-**Source review and draft complete; publication pending review/merge:** README, PRD, TDD, workflow, backlog, delivery plan, operations and ADRs were created from source review and the owner interview. Earlier draft validation covered 13 Markdown files and 51 local file/heading links; the publication PR records checks for the expanded set. The [TDD evidence](tdd.md#review-findings-and-verification) retains the original check limits and distinguishes the newer source base. This item does not complete any runtime fix or claim a deployed release. After merge, record final PRD/TDD references using the merged commit in delivery issues #1–#10 before accepting #1.
+**Baseline accepted:** README, PRD, TDD, workflow, backlog, delivery plan, operations and ADRs were reviewed and committed together in PR #11, merged at `df58ff754f8ddeea554509dc19e0a8616e42b0a9`. Its tree matches the submitted revision, the diff contains only 14 Markdown files, and all 61 local file/heading links pass. GitHub PRD/TDD blobs match the merged objects; final links in issues #1–#10 were read back with scope/criteria preserved. Issue #1 is closed. The [TDD evidence](tdd.md#review-findings-and-verification) retains original check limits and the newer source-base distinction; this acceptance does not complete a runtime fix or verify a browser release.
 
 ## B01 — Plan and deliver the portfolio content overhaul
 
@@ -62,6 +62,8 @@ First resolve the content and arrangement with Mick: current people leadership a
 ## B05 — Confirm hosting and preview configuration
 
 **Status:** Open verification. **Depends on:** Access to the owner-managed accounts. **Finding:** R08.
+
+Issue #2's [TDD investigation](tdd.md#issue-2-investigation--2026-10-13) and [operations findings](operations.md#issue-2-hosting-investigation--2026-10-13) record successful deployment metadata, public HTTP/source comparisons and measured image transfers. Browser surfaces and authenticated account inspection remain unavailable. Follow-up #12 preserves those prerequisites for #10; B05's complete hosting acceptance below remains open.
 
 **Acceptance:** Record the actual Vercel project, repository connection, production branch, root/build/output settings, automatic-deployment behavior, preview access and domains. Verify the Cloudflare records and proxy setting without guessing values. Match a deployment to a known commit and check homepage/deck/assets. Record how to return to a known-good deployment. Update operations; no hosting migration is requested.
 
