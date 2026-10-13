@@ -207,6 +207,7 @@ Content is approved in the [PRD](prd.md#approved-content-issue-3). The technical
 - **Weight:** 24,262 B (8,358 B gzipped), plus the shared Google Fonts. No library and no build step.
 
 Local Chrome evidence: the boot sequence completed and autoplayed the first flow. Selecting a component and switching flows updated the panel, step list and `aria-pressed`. At 1440, 390 and 320 px wide there is no horizontal overflow. Node labels render at ≈15 px at 390 and ≈12 px at 320 (subtitles ≈10 / 8 px). Not verified: real touch devices, an actual screen reader, and OS-level reduced motion (#12).
+
 ### Ingestion workflow section — issue #25, 2026-10-14
 
 A second section on `self-hosted-ai.html` (`#ingestion`) shows the n8n workflow behind the n8n box. It is reached from the n8n component's panel (**See the workflow, node by node →**) and from the *Learn a document* flow (**See the ingestion workflow, node by node →**). Either link scrolls to the section, focuses its heading and starts *New file*. **↑ Back to the architecture diagram** returns to `#architecture`. The homepage card is unchanged.
