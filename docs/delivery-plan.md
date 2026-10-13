@@ -1,6 +1,6 @@
 # Portfolio delivery plan
 
-Updated: 2026-10-13. **Status:** Baseline #1 accepted through merged PR #11; issue #2 investigation recorded with open release prerequisites under #12. Website implementation has not started.
+Updated: 2026-10-14. **Status:** Baseline #1 accepted through merged PR #11; issue #2 investigation recorded with open release prerequisites under #12; #3 content and composition decisions recorded in the PRD and TDD. Website implementation has not started.
 
 ## Problem and outcome
 
