@@ -70,9 +70,9 @@ Lines stay deliberately light on specifics; clients are not named. Company names
 | FR-01 | Introduce Mick using the retained tagline and a concise professional summary | Implemented in #5: name, tagline, approved intro, labeled contact links |
 | FR-02 | Present the employment timeline | Exists: Netflix, Astreya and SolarWinds; approved one-liners shown at rest (#5) |
 | FR-03 | Provide Facebook, Instagram, GitHub, LinkedIn and email access | Exists in the desktop rail and mobile footer; labeled Email/LinkedIn links added under the intro (#5) |
-| FR-04 | Provide a gateway to personal side projects | Rabbit Hole becomes the project section; private tools are described, not linked |
-| FR-05 | Show selected work that supports breadth of skills | Card copy approved under #3; implementation under #6 |
-| FR-06 | Retain the Non-Profits presentation and identify it as a local AI output sample | Framing approved under #3; provenance banner, back link and claim revisions done in #4 |
+| FR-04 | Provide a gateway to personal side projects | Done in #6: Rabbit Hole is the project section; private tools are described, not linked |
+| FR-05 | Show selected work that supports breadth of skills | Done in #6: Self-Hosted AI and storefront cards with approved copy |
+| FR-06 | Retain the Non-Profits presentation and identify it as a local AI output sample | Done in #4/#6: banner, back link, revised claims, and linked from the Self-Hosted AI card |
 | FR-07 | Preserve the tagline, M logo and current palette through an overhaul | Existing identity is the baseline to retain |
 
 The ecommerce entry describes an unpublished project using details Mick supplied. Its repository and demo links should appear only when public destinations exist; both project repositories are currently private. Do not invent project outcomes, metrics or confidential work examples.
