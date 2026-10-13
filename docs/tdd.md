@@ -39,6 +39,8 @@ The homepage uses Cormorant Garamond and Jost from Google Fonts, with serif and 
 
 The layout has a header, hero, four-photo gallery, employment timeline and copyright. The desktop social rail becomes a footer at widths of 980 px and below. Additional breakpoints at 560, 1360 and 1600 px adjust typography, timeline position and rail placement. These are source observations, not proof of successful device layouts.
 
+**Issue #5 update (2026-10-14):** the hero now names Mick above the tagline, uses the approved intro copy, shows `002.jpg` as a 4:3 portrait with a descriptive `alt`, and adds labeled Email/LinkedIn links visible at every width. On mobile the introduction precedes the portrait. Experience is its own `#info` section after Rabbit Hole, with years, company and approved one-liners readable at rest (muted text 6.4:1, cream 15.6:1 against the background). The 1360 px timeline breakpoint is gone; experience stacks at 560 px. The Rabbit Hole keeps the three remaining placeholder photos until #6, and the dropdown is unchanged until #7.
+
 At the original review baseline, the Rabbit Hole dropdown linked to Self Hosted AI, GenMedia AI and the local deck, each in a new tab with `rel="noopener"`; the newer base removes GenMedia as noted above. JavaScript changes `.open` and `aria-expanded`; CSS can also reveal the menu through hover. INFO targets the employment block. “Enter the Rabbit Hole” targets the section containing that same link. The four photos are noninteractive, so this section currently provides no selected-work discovery path.
 
 ## Non-Profits presentation
