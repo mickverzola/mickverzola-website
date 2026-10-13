@@ -180,3 +180,16 @@ Content is approved in the [PRD](prd.md#approved-content-issue-3). The technical
 - **Images.** `000.jpg`, `001.jpg`, `003.jpg` and `004.jpg` leave the page; `002.jpg` becomes the portrait with a real `alt`, addressing R03. That shrinks #9 to one display-sized portrait (measured against the 15,751,376-byte baseline) plus future project media.
 - **Project clips.** When Mick supplies ~5 s clips, use muted, looping, `playsinline` video with a poster frame, no autoplay under `prefers-reduced-motion`, and a still image fallback. Keep each clip small enough that it does not undo #9's savings; agree a size target then.
 - **No private destinations.** Cards carry no repository or demo links while both project repositories are private and the storefront is unlaunched.
+
+## Self-Hosted AI architecture page — issue #21, 2026-10-14
+
+`self-hosted-ai.html` is linked from the Self-Hosted AI card (**View the architecture →**, between the stack description and Sample output). It is a standalone static page in the portfolio palette with a back link. Owner-chosen design:
+
+- **Boot sequence:** `docker compose up`-style lines appear in the platform's Compose dependency order and light each component. It is skippable and collapses afterwards.
+- **Request tracer:** an inline SVG generated from one data model (14 components, 19 connections) with two layouts: a 4-column grid, and a 2-column stack at ≤ 720 px with curved routes around boxes and larger text and short subtitles. A glowing packet traces five flows: Ask a question, Learn a document, Answer from my docs, Use a cloud model, and Share the GPU. Each step updates an ordered, `aria-live` step list.
+- **Components:** each box is a focusable button (mouse, touch, Enter/Space) that shows its role in an `aria-live` panel.
+- **Reduced motion:** no boot animation, and a flow shows its whole route at once with the numbered steps.
+- **Source and limits:** the diagram follows `ai-personal` `docs/tdd.md` §3 at commit `9c3a3bc` (2026-10-13), with Cloudflare named and the optional cloud API shown as owner-approved. It deliberately omits ports, volumes, hostnames and access policies. When that architecture changes, update the `NODES`/`EDGES`/`FLOWS` data in the page.
+- **Weight:** 24,262 B (8,358 B gzipped), plus the shared Google Fonts. No library and no build step.
+
+Local Chrome evidence: the boot sequence completed and autoplayed the first flow. Selecting a component and switching flows updated the panel, step list and `aria-pressed`. At 1440, 390 and 320 px wide there is no horizontal overflow. Node labels render at ≈15 px at 390 and ≈12 px at 320 (subtitles ≈10 / 8 px). Not verified: real touch devices, an actual screen reader, and OS-level reduced motion (#12).
