@@ -233,6 +233,48 @@
       font-weight: 700;
     }
 
+    /* Provenance banner + route back to the portfolio */
+    .sample-banner {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      align-items: baseline;
+      gap: 8px 20px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+      margin-bottom: 12px;
+      font-size: 0.8rem;
+      line-height: 1.4;
+      color: var(--text-muted);
+    }
+
+    .sample-banner strong {
+      color: var(--accent-teal);
+    }
+
+    .back-link {
+      color: var(--accent-blue);
+      text-decoration: none;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+
+    .back-link:hover,
+    .back-link:focus-visible {
+      text-decoration: underline;
+    }
+
+    .source-note {
+      margin-top: 14px;
+      font-size: 0.75rem;
+      line-height: 1.4;
+      color: var(--text-muted);
+    }
+
+    .source-note a {
+      color: var(--accent-blue);
+    }
+
     /* Safe Bottom Controls */
     .controls {
       display: flex;
@@ -301,6 +343,11 @@
 </head>
 <body>
 
+  <div class="sample-banner">
+    <a class="back-link" href="/">← mickverzola.com</a>
+    <p><strong>Sample output · Self-Hosted AI.</strong> Generated with a 27B open-weight model on a single consumer GPU, then edited by Mick for accuracy.</p>
+  </div>
+
   <div class="deck-container" id="deckContainer">
     
     <!-- Slide 1: Title -->
@@ -320,19 +367,19 @@
           <div class="card">
             <h3>Scale Impact</h3>
             <ul>
-              <li>Process <strong>2x to 3x</strong> the volume of research material without expanding headcount.</li>
+              <li>Take on more research volume without expanding headcount.</li>
             </ul>
           </div>
           <div class="card">
             <h3>Accelerate Discovery</h3>
             <ul>
-              <li>Uncover critical patterns & insights across decades of reports in seconds.</li>
+              <li>Uncover patterns & insights across decades of reports far faster than manual review.</li>
             </ul>
           </div>
           <div class="card">
             <h3>Streamline Operations</h3>
             <ul>
-              <li>Dramatically reduce administrative overhead on grant writing and compliance reports.</li>
+              <li>Reduce administrative overhead on grant writing and compliance reports.</li>
             </ul>
           </div>
         </div>
@@ -357,7 +404,7 @@
           </div>
           <div class="card">
             <h3>Protecting IP & Values</h3>
-            <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.45;">Hybrid and Local deployment options keep proprietary research strictly confidential and behind your firewall.</p>
+            <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.45;">Hybrid and local deployment options help keep proprietary research confidential and behind your firewall.</p>
           </div>
         </div>
       </div>
@@ -372,10 +419,10 @@
       <div class="slide-body">
         <div class="grid-3">
           <div class="card">
-            <h3>Massive Time Savings</h3>
+            <h3>Time Savings</h3>
             <ul>
-              <li><strong>60%–70%</strong> faster literature synthesis and background research.</li>
-              <li>Saves knowledge workers <strong>~7.5 hrs/week</strong> (350–700 hours/year).</li>
+              <li>Professional writing tasks, including grant writing, completed <strong>40% faster</strong> with <strong>18% higher</strong> rated quality in a controlled study.<sup>1</sup></li>
+              <li>Faster literature synthesis and background research.</li>
             </ul>
           </div>
           <div class="card">
@@ -393,6 +440,7 @@
             </ul>
           </div>
         </div>
+        <p class="source-note"><sup>1</sup> Noy &amp; Zhang, “Experimental evidence on the productivity effects of generative artificial intelligence,” <em>Science</em> 381 (2023), 453 professionals. <a href="https://doi.org/10.1126/science.adh2586" target="_blank" rel="noopener">doi:10.1126/science.adh2586</a></p>
       </div>
     </div>
 
@@ -420,11 +468,11 @@
                 <td><strong>Cost</strong></td>
                 <td>Low upfront; predictable subscription per user</td>
                 <td>Balanced; low baseline + cloud scale</td>
-                <td>Higher hardware upfront; zero sub fees</td>
+                <td>Higher hardware upfront; no subscription fees</td>
               </tr>
               <tr>
                 <td><strong>Maintenance</strong></td>
-                <td>Zero IT maintenance</td>
+                <td>Minimal IT maintenance; provider managed</td>
                 <td>Low to moderate IT overhead</td>
                 <td>Requires dedicated IT management</td>
               </tr>
@@ -432,13 +480,13 @@
                 <td><strong>Privacy</strong></td>
                 <td>Standard enterprise cloud APIs</td>
                 <td>High control; local sensitivity filtering</td>
-                <td>100% offline & air-gapped sovereignty</td>
+                <td>Can run fully offline; data stays on your hardware</td>
               </tr>
               <tr>
                 <td><strong>Primary Advantage</strong></td>
-                <td>Immediate access to top-tier models with zero setup</td>
+                <td>Immediate access to top-tier models with minimal setup</td>
                 <td>Optimal balance of data safety, scaling, and efficiency</td>
-                <td>Total confidentiality, zero external dependencies</td>
+                <td>Strong confidentiality; no reliance on outside AI providers</td>
               </tr>
             </tbody>
           </table>
@@ -450,9 +498,9 @@
             <h3>Cloud-Based AI</h3>
             <div class="option-meta">
               <div class="option-meta-item"><strong>Cost:</strong> Low upfront; predictable subscription per user.</div>
-              <div class="option-meta-item"><strong>Maintenance:</strong> Zero IT maintenance; provider managed.</div>
+              <div class="option-meta-item"><strong>Maintenance:</strong> Minimal IT maintenance; provider managed.</div>
               <div class="option-meta-item"><strong>Privacy:</strong> Standard enterprise cloud APIs.</div>
-              <div class="option-meta-item"><strong>Primary Advantage:</strong> Immediate access to top-tier models with zero setup.</div>
+              <div class="option-meta-item"><strong>Primary Advantage:</strong> Immediate access to top-tier models with minimal setup.</div>
             </div>
           </div>
 
@@ -469,10 +517,10 @@
           <div class="option-card">
             <h3>Fully Local AI</h3>
             <div class="option-meta">
-              <div class="option-meta-item"><strong>Cost:</strong> Higher hardware upfront; zero recurring subscription fees.</div>
+              <div class="option-meta-item"><strong>Cost:</strong> Higher hardware upfront; no recurring subscription fees.</div>
               <div class="option-meta-item"><strong>Maintenance:</strong> Requires dedicated internal or partner IT management.</div>
-              <div class="option-meta-item"><strong>Privacy:</strong> Maximum data sovereignty; 100% offline & air-gapped.</div>
-              <div class="option-meta-item"><strong>Primary Advantage:</strong> Total confidentiality, zero external dependencies.</div>
+              <div class="option-meta-item"><strong>Privacy:</strong> Can run fully offline; data stays on your hardware.</div>
+              <div class="option-meta-item"><strong>Primary Advantage:</strong> Strong confidentiality; no reliance on outside AI providers.</div>
             </div>
           </div>
         </div>
@@ -491,7 +539,7 @@
           <div class="card">
             <h3>Literature Reviews & Data Synthesis</h3>
             <ul>
-              <li>Summarizes 50-page academic papers into key takeaways in seconds.</li>
+              <li>Summarizes 50-page academic papers into key takeaways in minutes rather than hours.</li>
               <li>Uncovers common themes across hundreds of qualitative transcripts.</li>
             </ul>
           </div>

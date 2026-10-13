@@ -49,6 +49,25 @@ The deck swaps its comparison table for stacked cards at 768 px and below. It fi
 
 Sample content includes quantified productivity claims and broad deployment/privacy claims without citations. This review did not validate those claims. Presenting the deck as an AI output sample must not imply that its claims are independently verified or that this portfolio operates the described systems.
 
+### Editorial disposition — issue #4, 2026-10-14
+
+Mick chose to keep numbers only where published research supports them and otherwise use qualified wording. A provenance banner and a back link (`← mickverzola.com`) now appear above every slide: *Sample output · Self-Hosted AI. Generated with a 27B open-weight model on a single consumer GPU, then edited by Mick for accuracy.* The desktop table and mobile cards carry identical revised wording.
+
+| Slide | Original claim | Disposition | Basis |
+| --- | --- | --- | --- |
+| 2 | Process 2x to 3x the volume without expanding headcount | Revised: “Take on more research volume without expanding headcount” | No generative-AI study supports the multiplier |
+| 2 | Patterns across decades of reports in seconds | Revised: “far faster than manual review” | Speed depends on hardware and corpus |
+| 2 | Dramatically reduce administrative overhead | Revised: “Reduce…” | Unquantified intensifier |
+| 3 | Local deployment keeps research strictly confidential | Revised: “help keep… confidential” | Absolute guarantee |
+| 4 | 60%–70% faster literature synthesis | **Replaced with a cited figure:** writing tasks, including grant writing, 40% faster with 18% higher rated quality | [Noy & Zhang, *Science* 381 (2023)](https://doi.org/10.1126/science.adh2586): randomized experiment, 453 professionals. Corroborated by [MIT News](https://news.mit.edu/2023/study-finds-chatgpt-boosts-worker-productivity-writing-0714) |
+| 4 | Saves ~7.5 hrs/week (350–700 hours/year) | Removed | Internally inconsistent (7.5 × 52 ≈ 390); no matching source. Microsoft's [field experiment](https://www.microsoft.com/en-us/research/publication/shifting-work-patterns-with-generative-ai/) measured ~3 h/week less email time, not research time |
+| 5 | Cloud: zero IT maintenance; zero setup | Revised: “Minimal…” | Absolute |
+| 5 | Local: 100% offline & air-gapped sovereignty | Revised: “Can run fully offline; data stays on your hardware” | Local is not air-gapped by default |
+| 5 | Local: total confidentiality, zero external dependencies | Revised: “Strong confidentiality; no reliance on outside AI providers” | Updates and model downloads are external |
+| 6 | Summarizes 50-page papers in seconds | Revised: “in minutes rather than hours” | Hardware-dependent |
+
+An evidence-synthesis review ([Abogunrin et al., *Frontiers in Pharmacology*, 2025](https://pmc.ncbi.nlm.nih.gov/articles/PMC11826052/)) reports >50% screening-time reductions, but mostly for machine-learning tools rather than generative AI, so it was not used to support the literature-synthesis figure. Deck controls (R05/R06) are unchanged and remain under #8.
+
 ## Review findings and verification
 
 Reviewed all four source files, asset sizes, tracked inventory and Git history. JavaScript syntax and selected interactions were checked with Node and a small in-memory DOM simulation. This is source review, not browser automation.
