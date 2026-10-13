@@ -21,7 +21,7 @@ flowchart LR
     Browser -->|Navigation|Links[Socials and external side projects]
 ```
 
-The diagram records the reported hosting arrangement, not inspected account settings. Cloudflare proxy mode, DNS record values, Vercel's production branch and preview settings are unverified. Cloudflare management does not establish that website traffic is proxied through Cloudflare.
+The diagram records the original owner-reported arrangement, not inspected account settings. The original review did not establish Cloudflare traffic proxying. Issue #2 later observed Cloudflare public DNS/responses and Vercel deployment metadata; the [investigation below](#issue-2-investigation--2026-10-13) states their limits. Dashboard DNS targets/proxy flags, configured production branch and preview policy remain unverified.
 
 | Component | Contract |
 | --- | --- |
@@ -77,7 +77,52 @@ Neither page includes description or social-preview metadata. This is an optiona
 | CSS contrast calculation | Approximately 1.74:1 for the specified default text/background pair; no full-page accessibility audit |
 | Live site | Web research tool could not retrieve the public URL; no uptime conclusion |
 
-No fixes, performance measurements, external-link health checks, real-device checks, Vercel account inspection or production release were performed by this review.
+No fixes, performance measurements, external-link health checks, real-device checks, Vercel account inspection or production release were performed by the original review. The later investigation below adds HTTP transfer and deployment evidence with separate limits.
+
+## Issue 2 investigation — 2026-10-13
+
+Baseline PR #11 merged into `main` at **`df58ff754f8ddeea554509dc19e0a8616e42b0a9`** (12:54:06 UTC). Its tree matches submitted `88e23e3fc2dcea9bea6fe5a11e94a12c582b0331` exactly; only 14 Markdown files differ from runtime base `1121b6252a738794aa2dc7eacd536bbbe852129a`. Issues #1–#10 now use merged-commit PRD/TDD links; #1 closed after its acceptance checks. This investigation branch starts at the merged SHA and changes documentation only.
+
+### Browser access and interaction limits
+
+The available computer/browser tool was rechecked: `cua.getState()` returned `apps: []` and `browsers: []`; `cua.createBrowserTab('iab', 'https://mickverzola.com', {visible: true})` returned **Browser is not available: iab**. No available browser could render either page. No screenshots, actual viewport sizes, browser version, device pixel ratio, console results or observed interaction results exist for this session. Neither desktop/mobile emulation nor a real-device check occurred. HTTP retrieval does not execute JavaScript, render fonts/images or test mouse, keyboard, touch, zoom, motion preferences or accessibility.
+
+The explicit follow-up is [#12 — Complete browser and hosting evidence before release acceptance](https://github.com/mickverzola/mickverzola-website/issues/12). Its proposed CSS viewports are **1440×900 desktop, 390×844 mobile, 320×568 narrow mobile and 844×390 landscape**; these are future checks, not measurements. Capture the homepage, dropdown states and all seven deck slides, and check INFO, social/email destinations, dropdown state/Escape, bounds, buttons, arrows/actual Space, zoom, nested scrolling, gestures and reduced motion. Source findings R02–R06 remain unresolved under #7/#8; they have not become browser observations.
+
+### Deployment and public HTTP evidence
+
+GitHub's Vercel status reports success for the merged SHA at 12:54:21 UTC, with [deployment details](https://vercel.com/mickverzola/mickverzola-website/68mCP4t5VvAVxEV5wru7wP4aKYZY). GitHub deployment **7039017944** has environment label `Production` and a success status at 12:54:22 UTC, identifying [the deployment URL](https://mickverzola-website-o6zjcuagm-mickverzola.vercel.app). The API's separate `production_environment` boolean is false; the environment label and successful status are metadata, not independent proof of the custom domain's active routing or configured production branch.
+
+Preview deployment **7038622333** is labeled `Preview`, SHA `88e23e3fc2dcea9bea6fe5a11e94a12c582b0331`, success at 12:36:35 UTC: [immutable preview URL](https://mickverzola-website-ubwh84wdb-mickverzola.vercel.app). Both `/` and `/nonprofits.html` on both deployment URLs returned **302 to `https://vercel.com/sso-api`** in unauthenticated HTTP checks, rechecked at 13:06 UTC. Authentication query parameters and cookies are omitted. These responses establish an access restriction for this client, not its full policy or logged-in reviewer access.
+
+Public HTTP checks at 13:02 UTC found **308 redirects** from `https://mickverzola.com/` and each tested page/asset to the same path at `https://www.mickverzola.com`. Direct canonical GETs at 13:06:23–13:06:28 UTC returned:
+
+| Canonical URL | HTTP | Downloaded body bytes | TTFB / total seconds | Comparison with source at merged SHA |
+| --- | --- | --- | --- | --- |
+| [Homepage](https://www.mickverzola.com/) | 200 | 10,193 | 0.785 / 0.788 | Diff consists of two rewritten email links and injected Cloudflare decoder script |
+| [Seven-slide deck](https://www.mickverzola.com/nonprofits.html) | 200 | 18,520 | 0.455 / 0.458 | SHA-256 byte match |
+| [CSS](https://www.mickverzola.com/styles.css) | 200 | 11,215 | 0.326 / 0.327 | SHA-256 byte match |
+| [JavaScript](https://www.mickverzola.com/main.js) | 200 | 1,058 | 0.346 / 0.347 | SHA-256 byte match |
+
+The served homepage changes both `mailto:` hrefs to `/cdn-cgi/l/email-protection#…` and injects `/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js`. This is an observed response transformation; dashboard settings and browser restoration of email actions were not verified. The rest of the homepage has no textual difference in `git diff --no-index`. All five downloaded JPEGs also match source SHA-256. These checks show source-consistent runtime content with that transformation, but cannot distinguish documentation-only commits sharing these assets or prove the custom domain is serving the merged deployment. Resolve that mapping in #12/#10.
+
+### Measured image transfers
+
+Direct serial HTTPS GETs using **Windows curl 8.21.0 / Schannel**, 2026-10-13 13:06:25–13:06:28 UTC, downloaded full bodies to temporary files. Each used a separate curl process, no browser cache, cookies, auth, conditional headers, compression option or network throttling; the machine's normal network was used. No viewport applies. Timing includes connection/TLS and transfer for each request, excludes the apex redirect (canonical URLs were requested directly), and is a single sample rather than a distribution. Curl `size_download`, `time_starttransfer` and `time_total` supply the measurements. No raw cookies, tokens or private account output are committed.
+
+| Canonical image URL | Download bytes | TTFB seconds | Total seconds |
+| --- | --- | --- | --- |
+| [000.jpg](https://www.mickverzola.com/images/000.jpg) | 2,877,847 | 0.318 | 0.479 |
+| [001.jpg](https://www.mickverzola.com/images/001.jpg) | 3,118,304 | 0.322 | 0.492 |
+| [002.jpg](https://www.mickverzola.com/images/002.jpg) | 3,586,457 | 0.381 | 0.535 |
+| [003.jpg](https://www.mickverzola.com/images/003.jpg) | 3,388,062 | 0.156 | 0.358 |
+| [004.jpg](https://www.mickverzola.com/images/004.jpg) | 2,780,706 | 0.201 | 0.407 |
+
+All returned HTTP 200, `Content-Type: image/jpeg`, `cf-cache-status: REVALIDATED`, `x-vercel-cache: MISS`, and `Cache-Control: public, max-age=14400, must-revalidate`. The measured **15,751,376 body bytes** total equals the earlier file-size baseline, now supported by actual downloads. It excludes HTTP/TLS overhead and other page resources. Approximately 2.271 seconds is the sum of serial request durations, not page load time. There is no browser waterfall, image decode/paint, LCP, concurrent page-loading or mobile-network measurement. CDN caches were not purged and origin-cold behavior is not claimed. #9 must compare equivalent measured conditions and add browser evidence under #12.
+
+### Hosting evidence and disposition
+
+See [operations investigation](operations.md#issue-2-hosting-investigation--2026-10-13) for the settings matrix, DNS observations, preview procedure and conditional rollback guidance. Owner-reported hosting, observed public responses and verified GitHub metadata remain distinct. Issue #2's output is this limited investigation and explicit follow-up #12; it does not confirm the complete release path. #12 remains open as a prerequisite for #10. No runtime, hosting settings or other implementation issues were changed.
 
 ## Future design implications
 
