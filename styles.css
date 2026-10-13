@@ -243,7 +243,6 @@ nav a:hover{ opacity: 1; color: var(--gold); }
   aspect-ratio: 4 / 3;
   background: linear-gradient(155deg, #4a3423 0%, #2a1e14 45%, #150f0a 100%);
 }
-.hero-image img{ object-position: center 55%; }
 
 .hero-image img{
   width: 100%;

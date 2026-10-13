@@ -10,7 +10,7 @@ The owner requested problem-focused GitHub tracking aligned with the PRD and TDD
 | B01 — Portfolio content overhaul | #3 decisions recorded: copy, single-page layout, portrait, Rabbit Hole cards; implementation under #5/#6 | Choose content, then preview |
 | B02 — Homepage reading and navigation | Proposed; findings R02–R04/R06 | Address alongside overhaul |
 | B03 — Retained presentation usability | Proposed; findings R05/R06 | Small independent fix |
-| B04 — Image optimization | Proposed; scope reduced by #3 to the portrait and future project media | After image role/crops are selected |
+| B04 — Image optimization | Portrait served responsively in #9 (≤ 333 KB vs 15.75 MB baseline); future project media still needs a budget | After image role/crops are selected |
 | B05 — Confirm hosting and preview configuration | #2 investigation recorded; browser/account/release evidence remains open under #12 | Before next remote release |
 | B06 — Review presentation claims and framing | Proposed; deck retained as AI sample | With its portfolio entry |
 
