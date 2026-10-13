@@ -74,6 +74,20 @@ Mick chose to keep numbers only where published research supports them and other
 
 An evidence-synthesis review ([Abogunrin et al., *Frontiers in Pharmacology*, 2025](https://pmc.ncbi.nlm.nih.gov/articles/PMC11826052/)) reports >50% screening-time reductions, but mostly for machine-learning tools rather than generative AI, so it was not used to support the literature-synthesis figure. Deck controls (R05/R06) are unchanged and remain under #8.
 
+### Deck controls — issue #8, 2026-10-14
+
+R05 and the deck half of R06 are resolved in source:
+
+- **Keyboard:** ArrowRight/Space go forward and ArrowLeft/Shift+Space go back. The handler ignores events from focused buttons, links and fields, so a focused Previous/Next button fires once through its own click. Modifier-key combinations are left to the browser.
+- **Bounds:** `changeSlide` clamps and does nothing at either end. When a focused button becomes disabled, focus moves to the other button.
+- **Zoom:** `maximum-scale`/`user-scalable=no` and the double-tap `preventDefault` are removed.
+- **Scrolling:** each slide is the only vertical scroll container (`.slide-body` no longer scrolls), and the desktop table scrolls sideways on its own. A new slide starts at the top.
+- **Gestures:** a swipe changes slides only when it is horizontal (|dx| ≥ 60 px and ≥ 1.5 × |dy|), single-finger, not on the table, and the page isn't pinch-zoomed.
+- **Assistive technology:** the counter is `aria-live="polite"`; the deck is a labelled carousel region with each slide a `group` labelled “n of 7”.
+- **Motion:** the slide fade/rise is disabled under `prefers-reduced-motion`.
+
+Local Chrome evidence: synthetic keys and touches exercised every rule above. All seven slides were stepped through at 390×844, 320×568 and 844×390, with one scroll container and no horizontal overflow at each size. Real-device pinch/swipe and an actual screen reader remain #12 checks.
+
 ## Review findings and verification
 
 Reviewed all four source files, asset sizes, tracked inventory and Git history. JavaScript syntax and selected interactions were checked with Node and a small in-memory DOM simulation. This is source review, not browser automation.
@@ -112,7 +126,7 @@ Baseline PR #11 merged into `main` at **`df58ff754f8ddeea554509dc19e0a8616e42b0a
 
 The available computer/browser tool was rechecked: `cua.getState()` returned `apps: []` and `browsers: []`; `cua.createBrowserTab('iab', 'https://mickverzola.com', {visible: true})` returned **Browser is not available: iab**. No available browser could render either page. No screenshots, actual viewport sizes, browser version, device pixel ratio, console results or observed interaction results exist for this session. Neither desktop/mobile emulation nor a real-device check occurred. HTTP retrieval does not execute JavaScript, render fonts/images or test mouse, keyboard, touch, zoom, motion preferences or accessibility.
 
-The explicit follow-up is [#12 — Complete browser and hosting evidence before release acceptance](https://github.com/mickverzola/mickverzola-website/issues/12). Its proposed CSS viewports are **1440×900 desktop, 390×844 mobile, 320×568 narrow mobile and 844×390 landscape**; these are future checks, not measurements. Capture the homepage, dropdown states and all seven deck slides, and check INFO, social/email destinations, dropdown state/Escape, bounds, buttons, arrows/actual Space, zoom, nested scrolling, gestures and reduced motion. Source findings R02–R06 remain unresolved under #7/#8; they have not become browser observations.
+The explicit follow-up is [#12 — Complete browser and hosting evidence before release acceptance](https://github.com/mickverzola/mickverzola-website/issues/12). Its proposed CSS viewports are **1440×900 desktop, 390×844 mobile, 320×568 narrow mobile and 844×390 landscape**; these are future checks, not measurements. Capture the homepage, dropdown states and all seven deck slides, and check INFO, social/email destinations, dropdown state/Escape, bounds, buttons, arrows/actual Space, zoom, nested scrolling, gestures and reduced motion. Source findings R02–R06 have since been addressed in #5–#8; real-browser and device confirmation remains here.
 
 ### Deployment and public HTTP evidence
 
