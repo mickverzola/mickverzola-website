@@ -72,7 +72,7 @@ Lines stay deliberately light on specifics; clients are not named. Company names
 | FR-03 | Provide Facebook, Instagram, GitHub, LinkedIn and email access | Exists in the desktop rail and mobile footer; labeled Email/LinkedIn links added under the intro (#5) |
 | FR-04 | Provide a gateway to personal side projects | Rabbit Hole becomes the project section; private tools are described, not linked |
 | FR-05 | Show selected work that supports breadth of skills | Card copy approved under #3; implementation under #6 |
-| FR-06 | Retain the Non-Profits presentation and identify it as a local AI output sample | Framing approved under #3; claims review under #4 |
+| FR-06 | Retain the Non-Profits presentation and identify it as a local AI output sample | Framing approved under #3; provenance banner, back link and claim revisions done in #4 |
 | FR-07 | Preserve the tagline, M logo and current palette through an overhaul | Existing identity is the baseline to retain |
 
 The ecommerce entry describes an unpublished project using details Mick supplied. Its repository and demo links should appear only when public destinations exist; both project repositories are currently private. Do not invent project outcomes, metrics or confidential work examples.
