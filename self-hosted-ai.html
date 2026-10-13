@@ -17,6 +17,7 @@
     --hairline: rgba(236,227,214,0.12);
     --gold: #b99a6a;
     --edge: rgba(236,227,214,0.22);
+    --warn: #c8775a;
   }
   *{ box-sizing: border-box; margin: 0; padding: 0; }
   body{
@@ -153,6 +154,157 @@
   .info strong{ color: var(--cream); font-weight: 500; }
 
   .note{ margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--hairline); font-size: 0.8rem; line-height: 1.6; color: var(--muted); }
+  .diagram-wrap{ scroll-margin-top: 16px; }
+  .flow-more{ margin-top: 14px; font-size: 0.9rem; }
+  .flow-more a, .info a, .up-link{ color: var(--gold); text-decoration: none; border-bottom: 1px solid rgba(185,154,106,0.4); }
+  .flow-more a:hover, .info a:hover, .up-link:hover{ color: var(--cream); }
+  .info a{ display: inline-block; margin-top: 10px; }
+
+  /* ---------- Ingestion workflow ---------- */
+  .wf{ margin-top: 72px; padding-top: 40px; border-top: 1px solid var(--hairline); scroll-margin-top: 16px; }
+  .wf h2.wf-title{ font-family: 'Cormorant Garamond', serif; font-weight: 400; font-size: clamp(1.8rem, 4vw, 2.4rem); line-height: 1.2; margin-bottom: 14px; }
+  .wf h2.wf-title:focus{ outline: none; }
+  .up-link{ display: inline-block; font-size: 0.85rem; margin-bottom: 28px; }
+
+  .wf-toolbar{ display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 16px; }
+  .wf-toolbar .flow-buttons{ margin-bottom: 0; }
+  .example-tag{
+    font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold);
+    border: 1px dashed rgba(185,154,106,0.55); padding: 4px 10px; border-radius: 999px; white-space: nowrap;
+  }
+
+  .wf-canvas{ position: relative; background: var(--bg-panel); border: 1px solid var(--hairline); border-radius: 4px; padding: 12px; }
+  @media (min-width: 1200px){
+    /* the canvas breaks out of the 1100px column so labels stay readable */
+    .wf-canvas{ width: min(1340px, calc(100vw - 56px)); margin-left: calc(50% - min(670px, 50vw - 28px)); }
+  }
+  svg.wf-svg{ display: block; width: 100%; height: auto; }
+  .wf-edge{ fill: none; stroke: var(--edge); stroke-width: 2.4; transition: stroke 0.3s; }
+  .wf-edge.err{ stroke-dasharray: 8 7; }
+  .wf-edge.active{ stroke: var(--gold); stroke-width: 3.4; }
+  .wf-edge.active.err{ stroke: var(--warn); }
+  .wf-node{ cursor: pointer; transition: opacity 0.4s; }
+  .wf-node .box{ fill: var(--bg); stroke: var(--edge); stroke-width: 2; transition: stroke 0.3s, fill 0.3s; }
+  .wf-node .icon{ fill: none; stroke: var(--muted); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  .wf-node .icon-text{ fill: var(--muted); stroke: none; font-family: ui-monospace, Consolas, monospace; font-size: 30px; text-anchor: middle; }
+  .wf-node .name{ fill: var(--cream); font-family: 'Jost', sans-serif; font-size: 28px; font-weight: 500; text-anchor: middle; pointer-events: none; }
+  .wf-out{ fill: var(--muted); font-family: 'Jost', sans-serif; font-size: 20px; }
+  .wf-corner{ fill: var(--gold); font-family: 'Jost', sans-serif; font-size: 22px; letter-spacing: 2px; text-anchor: end; }
+  .wf-svg.replaying .wf-node:not(.ok):not(.err):not(.run){ opacity: 0.38; }
+  .wf-node.run .box{ stroke: var(--gold); fill: #1d1912; }
+  .wf-node.ok .box{ stroke: var(--gold); }
+  .wf-node.ok .icon{ stroke: var(--gold); }
+  .wf-node.ok .icon-text{ fill: var(--gold); }
+  .wf-node.err .box{ stroke: var(--warn); }
+  .wf-node .mk{ display: none; }
+  .wf-node.ok .mk-ok, .wf-node.err .mk-err{ display: inline; }
+  .mk-ok circle{ fill: var(--gold); }
+  .mk-err circle{ fill: var(--warn); }
+  .mk path{ fill: none; stroke: var(--bg); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+  .wf-node.selected .box{ stroke: var(--cream); stroke-width: 3.5; }
+  .wf-node:focus{ outline: none; }
+  .wf-node:focus-visible .box{ stroke: var(--gold); stroke-width: 5; }
+  .wf-badge{ display: none; pointer-events: none; }
+  .wf-badge.show{ display: inline; }
+  .wf-badge rect{ fill: var(--bg-panel); stroke: rgba(185,154,106,0.5); stroke-width: 1.5; }
+  .wf-badge text{ fill: var(--gold); font-family: 'Jost', sans-serif; font-size: 22px; text-anchor: middle; }
+  .wf-badge.err rect{ stroke: var(--warn); }
+  .wf-badge.err text{ fill: var(--warn); }
+  .wf-packet{ fill: var(--gold); filter: drop-shadow(0 0 6px rgba(185,154,106,0.9)); }
+  .wf-legend .err-line::before{ border-top-style: dashed; border-top-color: var(--warn); }
+
+  /* stage view: phones and tablets */
+  .wf-stages{ display: none; }
+  .wf-now{
+    position: sticky; top: 0; z-index: 2; background: var(--bg); color: var(--cream);
+    font-size: 0.88rem; line-height: 1.5; padding: 10px 0; margin-bottom: 8px; border-bottom: 1px solid var(--hairline);
+  }
+  .wf-now:empty{ display: none; }
+  .wf-now b{ color: var(--gold); font-weight: 500; }
+  .stage-list{ list-style: none; display: grid; gap: 12px; }
+  .stage{ background: var(--bg-panel); border: 1px solid var(--hairline); border-radius: 4px; padding: 14px; }
+  .stage h3{ font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; font-size: 1.3rem; margin-bottom: 10px; }
+  .stage h3 span{ font-family: 'Jost', sans-serif; font-style: normal; font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-left: 8px; }
+  .chips{ list-style: none; display: grid; gap: 6px; }
+  .chip{
+    width: 100%; min-height: 44px; display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; align-items: center; gap: 10px;
+    text-align: left; background: var(--bg); border: 1px solid var(--hairline); border-radius: 4px; color: var(--cream);
+    font: inherit; font-size: 0.92rem; padding: 8px 12px; cursor: pointer; transition: opacity 0.4s, border-color 0.3s;
+  }
+  .chip .ty{ display: block; font-size: 0.72rem; color: var(--muted); }
+  .chip .in{ font-size: 0.74rem; color: var(--gold); white-space: nowrap; visibility: hidden; }
+  .chip .in.show{ visibility: visible; }
+  .chip .in.err{ color: var(--warn); }
+  .chip .mkc{ width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--edge); display: grid; place-items: center; font-size: 11px; line-height: 1; color: var(--bg); }
+  .chip.run{ border-color: var(--gold); }
+  .chip.ok .mkc{ background: var(--gold); border-color: var(--gold); }
+  .chip.ok .mkc::after{ content: "✓"; }
+  .chip.err{ border-color: var(--warn); }
+  .chip.err .mkc{ background: var(--warn); border-color: var(--warn); }
+  .chip.err .mkc::after{ content: "!"; font-weight: 600; }
+  .wf-stages.replaying .chip:not(.ok):not(.err):not(.run){ opacity: 0.45; }
+  .chip-role{ font-size: 0.86rem; line-height: 1.55; color: var(--muted); padding: 8px 4px 10px 32px; }
+  .stage-note{ font-size: 0.78rem; line-height: 1.5; color: var(--muted); margin-top: 8px; }
+
+  /* zoom: one file becomes chunks, vectors and points */
+  .zoom{ background: #100d0a; border: 1px solid rgba(185,154,106,0.35); border-radius: 4px; padding: 14px 16px; }
+  .zoom.overlay{
+    position: absolute; left: 3%; right: 3%; bottom: 3%; top: var(--ztop, 22%); overflow: hidden;
+    opacity: 0; transform: scale(0.94); transform-origin: 50% 0; pointer-events: none;
+    box-shadow: 0 18px 60px rgba(0,0,0,0.65); visibility: hidden;
+    transition: opacity 0.45s, transform 0.45s, visibility 0s 0.45s;
+  }
+  .wf-canvas.zoomed .zoom.overlay{ opacity: 1; transform: none; pointer-events: auto; visibility: visible; transition-delay: 0s; }
+  .zoom.inline{ margin-top: 12px; }
+  .zoom-head{ display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+  .zoom-title{ font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.35rem; }
+  .zoom-file{ font-size: 0.85rem; color: var(--muted); }
+  .zoom-caption{ font-size: 0.92rem; line-height: 1.5; color: var(--cream); margin: 6px 0 12px; }
+  .zoom-cols, .zrow{ display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr); gap: 12px; align-items: center; }
+  .zoom-cols{ font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .zrows{ list-style: none; }
+  .zrow{ margin-bottom: 0; transition: margin 0.5s; }
+  .zchunk{
+    font-size: 0.8rem; padding: 5px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    color: transparent; background: #1a1611; border-left: 2px solid transparent;
+    background-image: linear-gradient(rgba(154,145,134,0.25), rgba(154,145,134,0.25));
+    background-size: 70% 2px; background-repeat: no-repeat; background-position: 10px 50%;
+    transition: color 0.4s, border-color 0.4s, background-size 0.4s;
+  }
+  .zchunk em{ font-style: normal; color: inherit; opacity: 0.7; margin-left: 6px; }
+  .zvec, .zpt{ opacity: 0; transform: translateX(-24px); transition: opacity 0.45s, transform 0.45s; transition-delay: calc(var(--i, 0) * 70ms); font-size: 0.76rem; white-space: nowrap; overflow: hidden; }
+  .zvec{ display: flex; align-items: center; gap: 6px; color: var(--muted); }
+  .zvec svg{ flex: none; width: 64px; height: 16px; }
+  .zvec rect{ fill: var(--gold); }
+  .zpt{ color: var(--cream); font-family: ui-monospace, Consolas, monospace; }
+  .zpt::before{ content: "●"; color: var(--gold); margin-right: 6px; }
+  .zoom:not([data-stage="doc"]) .zrow{ margin-bottom: 6px; }
+  .zoom:not([data-stage="doc"]) .zchunk{ color: var(--cream); border-left-color: var(--gold); background-size: 0 2px; }
+  .zoom[data-stage="embed"] .zvec, .zoom[data-stage="upsert"] .zvec, .zoom[data-stage="stale"] .zvec,
+  .zoom[data-stage="upsert"] .zpt, .zoom[data-stage="stale"] .zpt{ opacity: 1; transform: none; }
+  .zrow.old .zchunk, .zrow.old .zvec{ visibility: hidden; }
+  .zrow.old .zpt{ opacity: 1; transform: none; color: var(--muted); transition-delay: 0s; }
+  .zrow.old .zpt::before{ color: var(--muted); }
+  .zoom[data-stage="stale"] .zrow.old .zpt{ opacity: 0.4; text-decoration: line-through; }
+  .zoom[data-stage="stale"] .zrow.old .zpt::before{ color: var(--warn); }
+  .zfail, .zidle{ display: none; font-size: 0.9rem; line-height: 1.5; color: var(--muted); }
+  .zoom[data-stage="fail"] .zfail{ display: block; color: var(--warn); border-left: 2px solid var(--warn); padding: 6px 10px; }
+  .zoom[data-stage="fail"] .zoom-cols, .zoom[data-stage="fail"] .zrows{ display: none; }
+  .zoom[data-stage="idle"] .zidle{ display: block; }
+  .zoom[data-stage="idle"] .zoom-caption, .zoom[data-stage="idle"] .zoom-file,
+  .zoom[data-stage="idle"] .zoom-cols, .zoom[data-stage="idle"] .zrows{ display: none; }
+
+  .wf-stats{ display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 14px; font-size: 0.88rem; line-height: 1.5; margin-bottom: 18px; }
+  .wf-stats dt{ color: var(--muted); }
+  .wf-stats dd{ color: var(--cream); }
+  .wf-stats .bad{ color: var(--warn); }
+  .info h3{ font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; font-size: 1.25rem; margin-bottom: 8px; }
+  .info .example-tag{ display: inline-block; margin-bottom: 10px; }
+
+  @media (max-width: 1199px){
+    .wf-canvas, .wf-legend{ display: none; }
+    .wf-stages{ display: block; }
+  }
 
   @media (max-width: 720px){
     .page{ padding: 24px 16px 48px; }
@@ -160,6 +312,13 @@
     .info{ border-left: none; padding-left: 0; border-top: 1px solid var(--hairline); padding-top: 18px; }
     .diagram-wrap{ padding: 8px; }
     .terminal{ font-size: 0.72rem; padding: 14px; }
+    .wf{ margin-top: 56px; padding-top: 32px; }
+    .stage{ padding: 12px 10px; }
+    .zoom{ padding: 12px 10px; }
+    .zoom-cols, .zrow{ grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr) minmax(0, 1fr); gap: 8px; }
+    .zchunk{ white-space: normal; }
+    .zchunk em, .zvec span, .zno{ display: none; }
+    .zvec svg{ width: 100%; max-width: 56px; }
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -180,7 +339,7 @@
     <ol id="bootLines"></ol>
   </section>
 
-  <div class="diagram-wrap">
+  <div class="diagram-wrap" id="architecture">
     <svg class="diagram booting" id="diagram" role="group" aria-labelledby="diagramTitle">
       <title id="diagramTitle">Architecture diagram of the Self-Hosted AI platform</title>
     </svg>
@@ -198,6 +357,60 @@
       <p id="info" aria-live="polite">Select any box in the diagram to see what it does.</p>
     </section>
   </div>
+  <p class="flow-more" id="flowMore" hidden><a href="#ingestion" data-to-ingestion>See the ingestion workflow, node by node →</a></p>
+
+  <section class="wf" id="ingestion" aria-labelledby="wfTitle">
+    <p class="eyebrow">Inside the n8n box</p>
+    <h2 class="wf-title" id="wfTitle" tabindex="-1">How a document gets learned</h2>
+    <p class="intro">The ingestion workflow behind the n8n box keeps a Qdrant index in step with a Google Drive folder. These are its real nodes and connections; pick a scenario to replay a run, and select any node to see what it does.</p>
+    <a class="up-link" href="#architecture">↑ Back to the architecture diagram</a>
+
+    <div class="wf-toolbar">
+      <div class="flow-buttons" id="scenarioButtons" role="group" aria-label="Scenarios"></div>
+      <span class="example-tag">Example run · illustrative figures</span>
+    </div>
+
+    <div class="wf-canvas" id="wfCanvas">
+      <svg class="wf-svg" id="wfSvg" role="group" aria-labelledby="wfSvgTitle">
+        <title id="wfSvgTitle">The n8n knowledge-ingestion workflow: 27 nodes from the schedule trigger to Run summary</title>
+      </svg>
+    </div>
+    <p class="legend wf-legend"><span>main output</span><span class="err-line">error output</span><span>badges: items passed along each connection</span></p>
+
+    <div class="wf-stages" id="wfStages">
+      <p class="wf-now" id="wfNow" aria-hidden="true"></p>
+      <ol class="stage-list" id="stageList"></ol>
+    </div>
+
+    <div class="zoom" id="zoom" data-stage="idle">
+      <div class="zoom-head">
+        <span class="zoom-title">Inside one file</span>
+        <span class="zoom-file" id="zoomFile"></span>
+        <span class="example-tag">Example</span>
+      </div>
+      <p class="zoom-caption" id="zoomCaption"></p>
+      <div class="zoom-cols" aria-hidden="true"><span>Chunks</span><span>Vectors</span><span>Qdrant points</span></div>
+      <ol class="zrows" id="zoomRows"></ol>
+      <p class="zfail" id="zoomFail"></p>
+      <p class="zidle">Play <em>New file</em>, <em>Edited file</em> or <em>File can’t be parsed</em> to watch one file split into chunks, become vectors and land in Qdrant.</p>
+    </div>
+
+    <div class="controls">
+      <section class="flows" aria-labelledby="wfStepsHeading">
+        <h2 id="wfStepsHeading">What happens</h2>
+        <ol class="steps" id="wfSteps" aria-live="polite"></ol>
+      </section>
+      <section class="info" aria-labelledby="wfRunHeading">
+        <h2 id="wfRunHeading">This run</h2>
+        <span class="example-tag">Example run · illustrative figures</span>
+        <dl class="wf-stats" id="wfStats"></dl>
+        <h3 id="wfInfoHeading">Node</h3>
+        <p id="wfInfo" aria-live="polite">Select any node to see what it does.</p>
+      </section>
+    </div>
+
+    <p class="note">Node names, connections and the per-file loop follow the workflow file <code>knowledge-ingestion.json</code> at commit <code>fcc6ed7</code> (2026-10-13). The canvas uses its node positions, folded into two rows at <em>Compare Drive vs index</em> so it fits the page; phones and tablets show the same nodes grouped by stage. Run figures (files, chunks, points and item counts) are an illustrative example, not measurements. Folder IDs, service addresses and credentials are deliberately left out.</p>
+  </section>
 
   <p class="note">Simplified from the platform's technical design (architecture section, October 2026). It shows components and data flow only; ports, storage, hostnames and access policies are deliberately left out. The Non-Profits presentation linked from the portfolio is a sample of what this stack produces.</p>
 </main>
@@ -389,6 +602,13 @@ function selectNode(id) {
   const strong = document.createElement('strong');
   strong.textContent = n.label + '. ';
   infoEl.append(strong, n.role);
+  if (id === 'n8n') {
+    const a = document.createElement('a');
+    a.href = '#ingestion';
+    a.dataset.toIngestion = '';
+    a.textContent = 'See the workflow, node by node →';
+    infoEl.append(document.createElement('br'), a);
+  }
 }
 
 /* ---------- Boot sequence ---------- */
@@ -480,6 +700,7 @@ function clearHighlights() {
 async function playFlow(flow) {
   const token = ++playToken;
   FLOWS.forEach(f => f.button.setAttribute('aria-pressed', String(f === flow)));
+  document.getElementById('flowMore').hidden = flow.id !== 'learn';
   clearHighlights();
   stepsEl.innerHTML = '';
   const items = flow.steps.map(([, text]) => {
@@ -528,6 +749,583 @@ narrowQuery.addEventListener('change', () => {
 
 if (reduceMotion.matches) finishBoot();
 else runBoot();
+
+/* ---------- Ingestion workflow (n8n) ---------- */
+// Node names, types, editor positions (`at`) and connections follow ai-personal
+// n8n/knowledge-ingestion.json at fcc6ed7. `err`: the node's error output is connected.
+const WF = {
+  trig15:   { name: 'Every 15 minutes', lines: ['Every 15', 'minutes'], type: 'schedule', at: [-1400, 200], role: 'Starts a run every 15 minutes.' },
+  manual:   { name: 'Run manually', lines: ['Run', 'manually'], type: 'manual', at: [-1400, 400], role: 'Starts the same run on demand from the n8n editor, for setup and testing.' },
+  config:   { name: 'Config', lines: ['Config'], type: 'code', at: [-1180, 300], role: 'One place for the settings: the watched Drive folder and whether to include subfolders, the Qdrant collection and vector names, the embedding model (nomic-embed-text, 768 dimensions) and the chunk sizes. It also holds the safety switch that refuses to empty the index, and stops the run if no folder has been set.' },
+  ensure:   { name: 'Ensure collection', lines: ['Ensure', 'collection'], type: 'http', at: [-960, 300], role: 'Creates the Qdrant collection if it is missing: a 768-dimension dense vector with cosine distance, plus a sparse vector with IDF weighting for BM25. If it already exists the answer is ignored, so every run can call it safely.' },
+  idxdoc:   { name: 'Index document_id', lines: ['Index', 'document_id'], type: 'http', at: [-740, 300], role: 'Adds a keyword index on document_id, so all chunks of one file can be found or deleted together. Safe to repeat.' },
+  idxchunk: { name: 'Index chunk_index', lines: ['Index', 'chunk_index'], type: 'http', at: [-520, 300], role: 'Adds a number index on chunk_index. It lets the workflow read only the first chunk of each document, and delete the chunks past a document’s new length.' },
+  folders:  { name: 'List Drive folders', lines: ['List Drive', 'folders'], type: 'http', at: [-300, 300], role: 'Lists the Drive folders the connected account can see, page by page.' },
+  tree:     { name: 'Folder tree', lines: ['Folder tree'], type: 'code', at: [-80, 300], role: 'Walks down from the watched folder (guarding against odd folder cycles), records each folder’s path, and builds file queries for up to 40 folders at a time.' },
+  files:    { name: 'List Drive files', lines: ['List Drive', 'files'], type: 'http', at: [140, 300], role: 'Lists the files in those folders, leaving out trashed items and folders, with name, type, modified time, folder and link.' },
+  inv:      { name: 'Drive inventory', lines: ['Drive', 'inventory'], type: 'code', at: [360, 300], role: 'Builds one inventory of supported files: PDF, Office and OpenDocument files, text, email, EPUB, RTF and common image formats. Google Docs, Sheets and Slides are exported as .docx, .xlsx and .pptx. Duplicates and unsupported types are dropped.' },
+  manifest: { name: 'Load index manifest', lines: ['Load index', 'manifest'], type: 'http', at: [580, 300], role: 'Reads what is already indexed by scrolling only the first chunk of each document in Qdrant: its document ID, name, folder and modified time. No vectors are fetched.' },
+  compare:  { name: 'Compare Drive vs index', lines: ['Compare Drive', 'vs index'], type: 'code', at: [800, 300], role: 'Compares Drive with the index. A file is new if it isn’t indexed, changed if its modified time, name or folder differs, and deleted if it is indexed but gone from Drive. Safety stop: if Drive returns no files while the index holds documents, it fails the run instead of deleting everything.' },
+  pickdel:  { name: 'Pick deletions', lines: ['Pick', 'deletions'], type: 'code', at: [1020, 100], role: 'Keeps only the delete actions. With none, the branch ends here.' },
+  del:      { name: 'Delete removed documents', lines: ['Delete removed', 'documents'], type: 'http', at: [1240, 100], role: 'Deletes every chunk of each removed file from Qdrant, matched by document ID.' },
+  picknew:  { name: 'Pick new and changed', lines: ['Pick new', 'and changed'], type: 'code', at: [1020, 500], role: 'Keeps only the new and changed files. With none, the loop and Run summary don’t run.' },
+  loop:     { name: 'Loop files', lines: ['Loop files'], type: 'loop', at: [1240, 500], role: 'Handles one file at a time. Its loop output sends the next file along the row; when none are left, its done output passes every file’s result to Run summary.' },
+  dl:       { name: 'Download file', lines: ['Download', 'file'], type: 'http', at: [1460, 640], err: true, role: 'Downloads the file from Drive, exporting Google Docs, Sheets and Slides to Office formats. If the download fails, the error output sends the file to Skipped (error).' },
+  name:     { name: 'Name the file', lines: ['Name the', 'file'], type: 'code', at: [1680, 640], role: 'Attaches the real file name and type to the download, because Unstructured detects the format from the name.' },
+  parse:    { name: 'Parse with Unstructured', lines: ['Parse with', 'Unstructured'], type: 'http', at: [1900, 640], err: true, role: 'Sends the file to Unstructured, which extracts the text and chunks it by headings: a new chunk after 1,500 characters, at most 1,800, 200 characters of overlap, and sections under 300 characters combined. HTTP errors are passed on for Build chunks to judge; if no answer arrives, the error output goes to Skipped (error).' },
+  chunks:   { name: 'Build chunks', lines: ['Build', 'chunks'], type: 'code', at: [2120, 640], err: true, role: 'Turns the answer into chunks, each with a header naming the document and folder, and an ID derived from the file ID and chunk number, so re-indexing overwrites instead of duplicating. A 4xx answer means the file can’t be parsed: one placeholder chunk is indexed so it isn’t retried until it changes. A 5xx or no answer is temporary: it raises an error, and the file is retried next run.' },
+  embed:    { name: 'Embed chunks', lines: ['Embed', 'chunks'], type: 'http', at: [2340, 640], err: true, role: 'Sends all of a file’s chunks in one request to the local embedding model, nomic-embed-text, with its search_document prefix. It returns one 768-dimension vector per chunk.' },
+  points:   { name: 'Build points', lines: ['Build', 'points'], type: 'code', at: [2560, 640], err: true, role: 'Checks there is one vector per chunk, then builds Qdrant points: the dense vector, a BM25 sparse vector that Qdrant computes from the same text, and the chunk’s text with its document ID, name, folder, link, type, modified time, chunk number, chunk count and page.' },
+  upsert:   { name: 'Upsert points', lines: ['Upsert', 'points'], type: 'http', at: [2780, 640], err: true, role: 'Writes the file’s points to Qdrant and waits until the write is done. The same IDs overwrite the older version of each chunk.' },
+  stale:    { name: 'Remove stale chunks', lines: ['Remove stale', 'chunks'], type: 'http', at: [3000, 640], err: true, role: 'Deletes this file’s chunks numbered at or past the new chunk count: the leftovers when an edited file gets shorter.' },
+  indexed:  { name: 'Indexed', lines: ['Indexed'], type: 'code', at: [3220, 560], role: 'Records the file as indexed with its chunk count, and returns to Loop files.' },
+  skipped:  { name: 'Skipped (error)', lines: ['Skipped', '(error)'], type: 'code', at: [3220, 820], role: 'Records the file as failed, with the error, and returns to Loop files so the other files still run. A file that fails before its points are written is retried next run, because the index doesn’t yet show it as current.' },
+  summary:  { name: 'Run summary', lines: ['Run', 'summary'], type: 'code', at: [1460, 360], role: 'Counts indexed and failed files and the chunks written. If any file failed, it marks the whole run as failed so it shows red in n8n; the failed files are retried next run.' },
+};
+const WF_TYPES = { schedule: 'Schedule Trigger', manual: 'Manual Trigger', code: 'Code', http: 'HTTP Request', loop: 'Loop Over Items' };
+
+// [from, to, output]: 'error' is a node's error output; 'done' / 'loop' are Loop files' outputs
+const WF_EDGES = [
+  ['trig15', 'config'], ['manual', 'config'], ['config', 'ensure'], ['ensure', 'idxdoc'], ['idxdoc', 'idxchunk'],
+  ['idxchunk', 'folders'], ['folders', 'tree'], ['tree', 'files'], ['files', 'inv'], ['inv', 'manifest'], ['manifest', 'compare'],
+  ['compare', 'pickdel'], ['compare', 'picknew'], ['pickdel', 'del'], ['picknew', 'loop'],
+  ['loop', 'summary', 'done'], ['loop', 'dl', 'loop'],
+  ['dl', 'name'], ['dl', 'skipped', 'error'], ['name', 'parse'], ['parse', 'chunks'], ['parse', 'skipped', 'error'],
+  ['chunks', 'embed'], ['chunks', 'skipped', 'error'], ['embed', 'points'], ['embed', 'skipped', 'error'],
+  ['points', 'upsert'], ['points', 'skipped', 'error'], ['upsert', 'stale'], ['upsert', 'skipped', 'error'],
+  ['stale', 'indexed'], ['stale', 'skipped', 'error'], ['indexed', 'loop'], ['skipped', 'loop'],
+];
+
+// the stage view used on phones and tablets
+const WF_STAGES = [
+  ['Setup', ['trig15', 'manual', 'config', 'ensure', 'idxdoc', 'idxchunk']],
+  ['Inventory', ['folders', 'tree', 'files', 'inv']],
+  ['Compare', ['manifest', 'compare']],
+  ['Delete', ['pickdel', 'del']],
+  ['Per-file loop', ['picknew', 'loop', 'dl', 'name', 'parse', 'chunks', 'embed', 'points', 'upsert', 'stale', 'indexed', 'skipped'],
+    'Loop files sends one file at a time down this row. Indexed and Skipped (error) both return to Loop files; a step that fails sends the file to Skipped (error).'],
+  ['Summary', ['summary'], 'Runs once Loop files has no files left.'],
+];
+
+/* Example documents for the zoom (illustrative). Chunk IDs are the workflow's own
+   hash of "<file id>:<chunk number>" for made-up file IDs. */
+const PLAN_IDS = ['e4514807', 'c6157cb7', 'ed4ddfe7', '4c0c8a0c', '019570ae', 'ae0dc9a3', '03b882d3', 'abe1d3a0'];
+const DOCS = {
+  v1: { file: 'Planning notes · Google Doc, exported as .docx', ids: PLAN_IDS, chunks: [['Overview', 1480], ['Goals', 1350], ['Scope', 1610], ['Timeline', 1620], ['Budget', 1210], ['Risks', 1540], ['Open questions', 760], ['Next steps', 980]], old: [] },
+  v2: { file: 'Planning notes · edited, now shorter', ids: PLAN_IDS, chunks: [['Overview', 1480], ['Goals', 1350], ['Timeline', 1620], ['Budget', 1210], ['Risks', 1540], ['Next steps', 980]], old: [6, 7] },
+  locked: { file: 'Locked statement.pdf · password-protected', ids: ['8fdcbc43'], chunks: [['Placeholder (HTTP 422)', null]], old: [], placeholder: true },
+  failed: { file: 'Meeting notes.pdf', ids: [], chunks: [['', null], ['', null], ['', null], ['', null]], old: [],
+    fail: 'Unstructured answered HTTP 503. Build chunks treats that as temporary and stops this file with an error: nothing is written, and the file is retried next run.' },
+};
+
+function setupSteps(drive, compare, compareErr) {
+  return [
+    { t: 'The schedule starts a run. Config loads the watched folder, collection, embedding model and chunk sizes.', h: [['trig15', 'config', 1]] },
+    { t: 'Ensure collection and the two payload indexes create whatever is missing; on later runs they change nothing.', h: [['config', 'ensure', 1], ['ensure', 'idxdoc', 1], ['idxdoc', 'idxchunk', 1]] },
+    { t: drive, h: [['idxchunk', 'folders', 1], ['folders', 'tree', 1], ['tree', 'files', 1], ['files', 'inv', 1]] },
+    { t: compare, h: [['inv', 'manifest', 1], ['manifest', 'compare', 1]], err: compareErr ? ['compare'] : null },
+  ];
+}
+const DRIVE_42 = 'Drive is listed: 6 folders under the watched folder hold 42 supported files (3 unsupported files are skipped).';
+
+// The five scenarios form one illustrative sequence: each run starts from the index the previous one left.
+const SCENARIOS = [
+  { id: 'new', name: 'New file', doc: 'v1',
+    stats: [['Drive', '42 files in 6 folders'], ['Index before', '41 documents · 1,280 points'], ['Changes', '1 new · 0 changed · 0 deleted'], ['Written', '8 chunks'], ['Index after', '42 documents · 1,288 points'], ['Result', 'Succeeded']],
+    steps: [
+      ...setupSteps(DRIVE_42, 'The index manifest lists 41 documents. Compare finds 1 new file, Planning notes, and nothing changed or deleted.'),
+      { t: 'Both branches receive the 1 result. Pick deletions keeps nothing, so Delete removed documents doesn’t run.', h: [['compare', 'pickdel', 1], ['compare', 'picknew', 1]] },
+      { t: 'Loop files takes the new file. Download file exports the Google Doc as .docx, and Name the file labels it so the parser knows the format.', h: [['picknew', 'loop', 1], ['loop', 'dl', 1], ['dl', 'name', 1]] },
+      { t: 'Unstructured splits it at its headings into 8 chunks of at most 1,800 characters. Build chunks gives each an ID made from the file ID and chunk number.', h: [['name', 'parse', 1], ['parse', 'chunks', 1]], z: 'parse' },
+      { t: 'Embed chunks sends all 8 in one request to nomic-embed-text and gets back 8 vectors of 768 numbers. Build points adds a BM25 keyword vector to each.', h: [['chunks', 'embed', 1], ['embed', 'points', 1]], z: 'embed' },
+      { t: 'Upsert points writes 8 points to Qdrant. Running it again would overwrite the same IDs, not add duplicates.', h: [['points', 'upsert', 1]], z: 'upsert' },
+      { t: 'Remove stale chunks deletes this file’s chunks numbered 8 or higher. A new file has none.', h: [['upsert', 'stale', 1]], z: 'stale' },
+      { t: 'No files are left, so Run summary records 1 indexed, 0 failed and 8 chunks. The index now holds 42 documents.', h: [['stale', 'indexed', 1], ['indexed', 'loop', 1], ['loop', 'summary', 1]] },
+    ] },
+  { id: 'edited', name: 'Edited file', doc: 'v2',
+    stats: [['Drive', '42 files in 6 folders'], ['Index before', '42 documents · 1,288 points'], ['Changes', '0 new · 1 changed · 0 deleted'], ['Written', '6 chunks, 2 stale removed'], ['Index after', '42 documents · 1,286 points'], ['Result', 'Succeeded']],
+    steps: [
+      ...setupSteps(DRIVE_42, 'The index manifest lists 42 documents. Compare finds Planning notes changed: its modified time is newer. A rename or a move to another folder would count too.'),
+      { t: 'Both branches receive the 1 result. Pick deletions keeps nothing.', h: [['compare', 'pickdel', 1], ['compare', 'picknew', 1]] },
+      { t: 'Loop files takes the edited file; it is downloaded and named as before.', h: [['picknew', 'loop', 1], ['loop', 'dl', 1], ['dl', 'name', 1]] },
+      { t: 'It now splits into 6 chunks. They get the same IDs as chunks 0–5 of the old version, because an ID follows the file and the chunk’s position.', h: [['name', 'parse', 1], ['parse', 'chunks', 1]], z: 'parse' },
+      { t: 'Embed chunks returns 6 vectors of 768 numbers; Build points adds the BM25 vectors.', h: [['chunks', 'embed', 1], ['embed', 'points', 1]], z: 'embed' },
+      { t: 'Upsert points overwrites the 6 old points with the new text and vectors.', h: [['points', 'upsert', 1]], z: 'upsert' },
+      { t: 'Remove stale chunks deletes chunks 6 and 7, left over from the longer old version.', h: [['upsert', 'stale', 1]], z: 'stale' },
+      { t: 'Run summary records 1 indexed, 0 failed and 6 chunks. Still 42 documents, now 1,286 points.', h: [['stale', 'indexed', 1], ['indexed', 'loop', 1], ['loop', 'summary', 1]] },
+    ] },
+  { id: 'deleted', name: 'Deleted from Drive',
+    stats: [['Drive', '41 files in 6 folders'], ['Index before', '42 documents · 1,286 points'], ['Changes', '0 new · 0 changed · 1 deleted'], ['Written', 'none; 6 points deleted'], ['Index after', '41 documents · 1,280 points'], ['Result', 'Succeeded']],
+    steps: [
+      ...setupSteps('Drive is listed: 6 folders hold 41 supported files (3 unsupported files are skipped).', 'The index manifest lists 42 documents. Compare finds that Planning notes is no longer in Drive: 1 deleted.'),
+      { t: 'Pick deletions passes it on, and Delete removed documents removes all 6 of its points by document ID.', h: [['compare', 'pickdel', 1], ['pickdel', 'del', 1]] },
+      { t: 'Pick new and changed keeps nothing, so the loop and Run summary don’t run. The index holds 41 documents and 1,280 points.', h: [['compare', 'picknew', 1]] },
+    ] },
+  { id: 'parse', name: 'File can’t be parsed', doc: 'locked', bad: true,
+    stats: [['Drive', '43 files in 6 folders'], ['Index before', '41 documents · 1,280 points'], ['Changes', '2 new · 0 changed · 0 deleted'], ['Written', '1 placeholder chunk'], ['Index after', '42 documents · 1,281 points'], ['Result', 'Failed: 1 indexed, 1 retried next run']],
+    steps: [
+      ...setupSteps('Drive is listed: 6 folders hold 43 supported files (3 unsupported files are skipped).', 'The index manifest lists 41 documents. Compare finds 2 new files.'),
+      { t: 'Both branches receive 2 results; Pick deletions keeps none. Loop files will take the 2 new files one at a time.', h: [['compare', 'pickdel', 2], ['compare', 'picknew', 2], ['picknew', 'loop', 2]] },
+      { t: 'File 1 of 2: Locked statement.pdf, a password-protected PDF, is downloaded and named.', h: [['loop', 'dl', 1], ['dl', 'name', 1]] },
+      { t: '4xx: Unstructured answers HTTP 422 because it can’t read the file. Build chunks makes one placeholder chunk from the file name and the reason.', h: [['name', 'parse', 1], ['parse', 'chunks', 1]], z: 'parse' },
+      { t: 'The placeholder is embedded like any chunk.', h: [['chunks', 'embed', 1], ['embed', 'points', 1]], z: 'embed' },
+      { t: 'It is stored as 1 point, so the file is findable by name and isn’t retried until it changes in Drive.', h: [['points', 'upsert', 1], ['upsert', 'stale', 1]], z: 'upsert' },
+      { t: 'File 2 of 2: Meeting notes.pdf is downloaded and named.', h: [['stale', 'indexed', 1], ['indexed', 'loop', 1], ['loop', 'dl', 1], ['dl', 'name', 1]], doc: 'failed' },
+      { t: '5xx: Unstructured answers HTTP 503, temporarily unavailable. Build chunks treats that as temporary and stops this file with an error.', h: [['name', 'parse', 1], ['parse', 'chunks', 1]], err: ['chunks'], z: 'fail' },
+      { t: 'Its error output routes the file to Skipped (error); nothing is written. Run summary counts 1 indexed and 1 failed, and marks the run failed so it shows red. Meeting notes is retried next run.', h: [['chunks', 'skipped', 1], ['skipped', 'loop', 1], ['loop', 'summary', 2]], err: ['summary'] },
+    ] },
+  { id: 'empty', name: 'Drive returns nothing', bad: true,
+    stats: [['Drive', '0 files: the folder looks empty'], ['Index before', '42 documents · 1,281 points'], ['Changes', 'none: stopped at Compare'], ['Written', 'nothing'], ['Index after', '42 documents · 1,281 points, untouched'], ['Result', 'Stopped by the safety check']],
+    steps: [
+      ...setupSteps('Drive returns no files, as it would after a wrong folder ID or a lapsed Drive sign-in.', 'The index manifest still lists 42 documents. Compare refuses to read that as 42 deletions and fails the run with an error.', true),
+      { t: 'Safety stop: nothing is deleted. The index keeps all 42 documents, and the red run flags the problem until Drive is fixed.', h: [] },
+    ] },
+];
+
+const wfSvg = document.getElementById('wfSvg');
+const wfCanvas = document.getElementById('wfCanvas');
+const wfStages = document.getElementById('wfStages');
+const wfNow = document.getElementById('wfNow');
+const wfStepsEl = document.getElementById('wfSteps');
+const wfInfo = document.getElementById('wfInfo');
+const zoomEl = document.getElementById('zoom');
+const stagesQuery = window.matchMedia('(max-width: 1199px)');
+
+// the n8n canvas is one long row; nodes from x = 1020 on are folded into a second row
+const WF_VIEW = { x: -1560, y: 130, w: 2510, h: 1420 };
+const WF_ZOOM = { x: -1050, y: 1105, w: 1740, h: 1740 * 1420 / 2510 };
+const HALF = 45;
+function wfPos(id) {
+  const [x, y] = WF[id].at;
+  return x < 1020 ? [x, y] : [x - 2420, y + 540];
+}
+
+// orthogonal path through points, with rounded corners
+function orth(pts, r = 18) {
+  let d = `M${pts[0]}`;
+  for (let i = 1; i < pts.length - 1; i++) {
+    const [px, py] = pts[i - 1], [x, y] = pts[i], [nx, ny] = pts[i + 1];
+    const c = Math.min(r, Math.hypot(x - px, y - py) / 2, Math.hypot(nx - x, ny - y) / 2);
+    d += ` L${x - Math.sign(x - px) * c},${y - Math.sign(y - py) * c} Q${x},${y} ${x + Math.sign(nx - x) * c},${y + Math.sign(ny - y) * c}`;
+  }
+  return d + ` L${pts[pts.length - 1]}`;
+}
+
+function wfRoute(a, b, out) {
+  const [ax, ay] = wfPos(a), [bx, by] = wfPos(b);
+  const twoOutputs = WF[a].err || WF[a].type === 'loop';
+  const sx = ax + HALF, sy = ay + (twoOutputs ? (out === 'error' || out === 'loop' ? 18 : -18) : 0);
+  const tx = bx - HALF - 3;
+  if (a === 'compare') return orth([[sx, sy], [880, sy], [880, 560], [-1520, 560], [-1520, by], [tx, by]]);
+  if (b === 'loop' && a !== 'picknew') {
+    const [vx, ly] = a === 'indexed' ? [925, 1522] : [900, 1492];
+    return orth([[sx, sy], [vx, sy], [vx, ly], [-1290, ly], [-1290, by], [tx, by]]);
+  }
+  if (out === 'error') return orth([[sx, sy], [ax + 110, sy], [ax + 110, by], [tx, by]]);
+  const dx = Math.max(30, (tx - sx) / 2);
+  return `M${sx},${sy} C${sx + dx},${sy} ${tx - dx},${by} ${tx},${by}`;
+}
+
+function boxPath(x, y, w, h, rl, rr) {
+  return `M${x + rl},${y} H${x + w - rr} Q${x + w},${y} ${x + w},${y + rr} V${y + h - rr} Q${x + w},${y + h} ${x + w - rr},${y + h} ` +
+    `H${x + rl} Q${x},${y + h} ${x},${y + h - rl} V${y + rl} Q${x},${y} ${x + rl},${y} Z`;
+}
+
+function wfIcon(type, g) {
+  if (type === 'code') { el('text', { y: 10, class: 'icon-text' }, g).textContent = '{ }'; return; }
+  const p = { class: 'icon' };
+  if (type === 'schedule') { el('circle', { ...p, r: 17 }, g); el('path', { ...p, d: 'M0,-10 V0 L7,6' }, g); }
+  if (type === 'manual') el('path', { ...p, d: 'M-8,-13 L13,0 L-8,13 Z' }, g);
+  if (type === 'http') { el('circle', { ...p, r: 17 }, g); el('ellipse', { ...p, rx: 7, ry: 17 }, g); el('path', { ...p, d: 'M-17,0 H17' }, g); }
+  if (type === 'loop') { el('path', { ...p, d: 'M15,4 A15,15 0 1,1 9,-12' }, g); el('path', { ...p, d: 'M1,-15 L10,-13 L8,-4' }, g); }
+}
+
+const wfEdgeEls = {}, wfBadgeEls = {}, wfNodeEls = {}, wfChipEls = {};
+let wfPacket;
+
+function renderCanvas() {
+  wfSvg.setAttribute('viewBox', `${WF_VIEW.x} ${WF_VIEW.y} ${WF_VIEW.w} ${WF_VIEW.h}`);
+  const defs = el('defs', {}, wfSvg);
+  const marker = el('marker', { id: 'wfArrow', viewBox: '0 0 10 10', refX: '8', refY: '5', markerWidth: '5', markerHeight: '5', orient: 'auto' }, defs);
+  el('path', { d: 'M0,0 L10,5 L0,10 z', fill: 'rgba(236,227,214,0.4)' }, marker);
+
+  const t = el('text', { x: WF_VIEW.x + WF_VIEW.w - 24, y: WF_VIEW.y + 40, class: 'wf-corner' }, wfSvg);
+  t.textContent = 'EXAMPLE RUN · ILLUSTRATIVE FIGURES';
+
+  const edgeLayer = el('g', {}, wfSvg);
+  for (const [a, b, out] of WF_EDGES) {
+    wfEdgeEls[`${a}-${b}`] = el('path', { d: wfRoute(a, b, out), class: 'wf-edge' + (out === 'error' ? ' err' : ''), 'marker-end': 'url(#wfArrow)' }, edgeLayer);
+  }
+  const [lx, ly] = wfPos('loop');
+  el('text', { x: lx + 52, y: ly - 28, class: 'wf-out' }, wfSvg).textContent = 'done';
+  el('text', { x: lx + 52, y: ly + 44, class: 'wf-out' }, wfSvg).textContent = 'loop';
+
+  const nodeLayer = el('g', {}, wfSvg);
+  for (const id in WF) {
+    const n = WF[id], [x, y] = wfPos(id);
+    const g = el('g', { class: 'wf-node', tabindex: '0', role: 'button', 'aria-label': `${n.name}, ${WF_TYPES[n.type]} node` }, nodeLayer);
+    const trigger = n.type === 'schedule' || n.type === 'manual';
+    el('path', { class: 'box', d: boxPath(x - HALF, y - HALF, 2 * HALF, 2 * HALF, trigger ? 38 : 10, 10) }, g);
+    wfIcon(n.type, el('g', { transform: `translate(${x},${y})` }, g));
+    n.lines.forEach((line, k) => { el('text', { x, y: y + HALF + 34 + k * 32, class: 'name' }, g).textContent = line; });
+    const ok = el('g', { class: 'mk mk-ok', transform: `translate(${x + 34},${y + 34})` }, g);
+    el('circle', { r: 14 }, ok); el('path', { d: 'M-6,0 L-2,5 L6,-5' }, ok);
+    const bad = el('g', { class: 'mk mk-err', transform: `translate(${x + 34},${y + 34})` }, g);
+    el('circle', { r: 14 }, bad); el('path', { d: 'M0,-7 V2 M0,7 V7.01' }, bad);
+    g.addEventListener('click', () => wfSelect(id));
+    g.addEventListener('keydown', ev => {
+      if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); wfSelect(id); }
+    });
+    wfNodeEls[id] = g;
+  }
+
+  const badgeLayer = el('g', {}, wfSvg);
+  for (const [a, b] of WF_EDGES) {
+    const g = el('g', { class: 'wf-badge' }, badgeLayer);
+    el('rect', { y: -40, height: 30, rx: 15 }, g);
+    el('text', { y: -18 }, g);
+    wfBadgeEls[`${a}-${b}`] = g;
+  }
+  wfPacket = el('circle', { r: 9, class: 'wf-packet', cx: -9999, cy: -9999 }, wfSvg);
+}
+
+function renderStages() {
+  const list = document.getElementById('stageList');
+  for (const [title, ids, note] of WF_STAGES) {
+    const stage = document.createElement('li');
+    stage.className = 'stage';
+    stage.innerHTML = `<h3>${title}<span>${ids.length} node${ids.length > 1 ? 's' : ''}</span></h3><ol class="chips"></ol>`;
+    const chips = stage.querySelector('.chips');
+    for (const id of ids) {
+      const n = WF[id];
+      const li = document.createElement('li');
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip';
+      b.setAttribute('aria-expanded', 'false');
+      b.setAttribute('aria-controls', `role-${id}`);
+      b.innerHTML = '<span class="mkc" aria-hidden="true"></span><span><span class="nm"></span><span class="ty"></span></span><span class="in"></span>';
+      b.querySelector('.nm').textContent = n.name;
+      b.querySelector('.ty').textContent = WF_TYPES[n.type];
+      const role = document.createElement('p');
+      role.className = 'chip-role';
+      role.id = `role-${id}`;
+      role.hidden = true;
+      role.textContent = n.role;
+      b.addEventListener('click', () => {
+        const open = b.getAttribute('aria-expanded') !== 'true';
+        b.setAttribute('aria-expanded', String(open));
+        role.hidden = !open;
+      });
+      li.append(b, role);
+      chips.appendChild(li);
+      wfChipEls[id] = b;
+    }
+    if (note) {
+      const p = document.createElement('p');
+      p.className = 'stage-note';
+      p.textContent = note;
+      stage.appendChild(p);
+    }
+    if (title === 'Per-file loop') stage.id = 'loopStage';
+    list.appendChild(stage);
+  }
+}
+
+let wfSelected = null;
+function wfSelect(id) {
+  if (wfSelected) wfNodeEls[wfSelected].classList.remove('selected');
+  wfSelected = id;
+  wfNodeEls[id].classList.add('selected');
+  const n = WF[id];
+  wfInfo.innerHTML = '';
+  const strong = document.createElement('strong');
+  strong.textContent = `${n.name}. `;
+  const type = document.createElement('em');
+  type.textContent = `${WF_TYPES[n.type]} node. `;
+  wfInfo.append(strong, type, n.role);
+}
+
+/* ---------- Zoom: one file -> chunks -> vectors -> points ---------- */
+let zoomDoc = null;
+function vectorBars(i) {
+  let s = '<svg viewBox="0 0 64 16" aria-hidden="true">';
+  for (let k = 0; k < 12; k++) {
+    const h = 3 + ((i * 7 + k * 13 + k * k) % 12);
+    s += `<rect x="${k * 5.3}" y="${16 - h}" width="3.6" height="${h}" opacity="${0.35 + ((k * 5 + i) % 6) / 10}"/>`;
+  }
+  return s + '</svg>';
+}
+
+function setZoomDoc(doc) {
+  if (doc === zoomDoc) return;
+  zoomDoc = doc;
+  const rows = document.getElementById('zoomRows');
+  rows.innerHTML = '';
+  if (!doc) { setZoomStage('idle'); return; }
+  document.getElementById('zoomFile').textContent = doc.file;
+  document.getElementById('zoomFail').textContent = doc.fail || '';
+  const add = (i, old) => {
+    const li = document.createElement('li');
+    li.className = 'zrow' + (old ? ' old' : '');
+    li.style.setProperty('--i', i);
+    const [head, chars] = doc.chunks[i] || ['', null];
+    li.innerHTML = `<span class="zchunk"></span><span class="zvec">${vectorBars(i)}<span>768-d + BM25</span></span><span class="zpt"></span>`;
+    li.firstChild.textContent = doc.placeholder ? head : `#${i} ${head}`;
+    if (chars) li.firstChild.insertAdjacentHTML('beforeend', `<em>${chars.toLocaleString('en-US')} ch</em>`);
+    if (doc.ids[i]) li.lastChild.innerHTML = `${doc.ids[i]}<span class="zno"> · ${old ? 'old ' : ''}#${i}</span>`;
+    rows.appendChild(li);
+  };
+  doc.chunks.forEach((c, i) => add(i, false));
+  doc.old.forEach(i => add(i, true));
+  setZoomStage('doc');
+}
+
+function setZoomStage(stage) {
+  zoomEl.dataset.stage = stage;
+  const d = zoomDoc, n = d ? d.chunks.length : 0;
+  const caption = {
+    idle: '',
+    doc: 'Downloaded, before parsing.',
+    parse: d && d.placeholder ? 'Parse: HTTP 422, the file can’t be read, so one placeholder chunk is made instead.'
+      : `Parse: split at headings into ${n} chunks of at most 1,800 characters. Each ID comes from the file ID and chunk number.`,
+    embed: `Embed: nomic-embed-text turns each chunk into 768 numbers; Qdrant adds a BM25 keyword vector.`,
+    upsert: `Upsert: ${n} point${n > 1 ? 's' : ''} written under the same IDs, so a re-run overwrites instead of duplicating.`,
+    stale: d && d.old.length ? `Remove stale: chunks ${d.old.join(' and ')} from the longer old version are deleted.` : 'Remove stale: no chunks past the last one, so nothing to delete.',
+    fail: 'Parse: HTTP 503, a temporary failure.',
+  }[stage];
+  document.getElementById('zoomCaption').textContent = caption;
+}
+
+function placeZoom() {
+  if (stagesQuery.matches) { document.getElementById('loopStage').appendChild(zoomEl); zoomEl.className = 'zoom inline'; }
+  else if (reduceMotion.matches) { document.querySelector('.wf-legend').after(zoomEl); zoomEl.className = 'zoom inline'; }
+  else { wfCanvas.appendChild(zoomEl); zoomEl.className = 'zoom overlay'; }
+}
+
+/* ---------- Scenario replay ---------- */
+let wfToken = 0;
+let wfZoomed = false;
+let wfCurrent = null;
+let wfView = { ...WF_VIEW };
+
+function setView(v) {
+  wfView = v;
+  wfSvg.setAttribute('viewBox', `${v.x} ${v.y} ${v.w} ${v.h}`);
+}
+
+function animateView(to, token, ms) {
+  const from = { ...wfView };
+  return new Promise(resolve => {
+    const start = performance.now();
+    function frame(now) {
+      if (token !== wfToken) return resolve();
+      const t = Math.min((now - start) / ms, 1);
+      const e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      setView({ x: from.x + (to.x - from.x) * e, y: from.y + (to.y - from.y) * e, w: from.w + (to.w - from.w) * e, h: from.h + (to.h - from.h) * e });
+      if (t < 1) requestAnimationFrame(frame); else resolve();
+    }
+    requestAnimationFrame(frame);
+  });
+}
+
+async function zoomCanvas(on, token) {
+  if (on) {
+    wfZoomed = true;
+    // the overlay starts just under the zoomed row of nodes and their labels
+    const svgH = wfSvg.getBoundingClientRect().height;
+    wfCanvas.style.setProperty('--ztop', `${12 + (1310 - WF_ZOOM.y) / WF_ZOOM.h * svgH}px`);
+    await animateView(WF_ZOOM, token, 900);
+    if (token === wfToken) wfCanvas.classList.add('zoomed');
+    await wait(450);
+  } else {
+    wfZoomed = false;
+    wfCanvas.classList.remove('zoomed');
+    await wait(350);
+    await animateView(WF_VIEW, token, 800);
+  }
+}
+
+function nodeState(id) {
+  return ['ok', 'err', 'run'].find(s => wfNodeEls[id].classList.contains(s)) || null;
+}
+function setNodeState(id, state) {
+  for (const e of [wfNodeEls[id], wfChipEls[id]]) {
+    e.classList.remove('ok', 'err', 'run');
+    if (state) e.classList.add(state);
+  }
+}
+
+function showBadge(a, b, n) {
+  const key = `${a}-${b}`, edge = wfEdgeEls[key], g = wfBadgeEls[key];
+  const text = n === 1 ? '1 item' : `${n} items`;
+  const isErr = edge.classList.contains('err');
+  const total = edge.getTotalLength();
+  const p = edge.getPointAtLength(a === 'compare' ? total - 38 : total / 2);
+  const w = 24 + text.length * 11;
+  g.setAttribute('transform', `translate(${p.x},${p.y})`);
+  g.querySelector('rect').setAttribute('x', -w / 2);
+  g.querySelector('rect').setAttribute('width', w);
+  g.querySelector('text').textContent = text;
+  g.classList.add('show');
+  g.classList.toggle('err', isErr);
+  const chipIn = wfChipEls[b].querySelector('.in');
+  chipIn.textContent = `${text} in`;
+  chipIn.classList.add('show');
+  chipIn.classList.toggle('err', isErr);
+}
+
+function movePacket(path, token) {
+  const total = path.getTotalLength();
+  const duration = Math.min(1100, Math.max(320, total * 0.6));
+  return new Promise(resolve => {
+    const start = performance.now();
+    function frame(now) {
+      if (token !== wfToken) return resolve();
+      const t = Math.min((now - start) / duration, 1);
+      const e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      const p = path.getPointAtLength(e * total);
+      wfPacket.setAttribute('cx', p.x);
+      wfPacket.setAttribute('cy', p.y);
+      if (t < 1) requestAnimationFrame(frame); else resolve();
+    }
+    requestAnimationFrame(frame);
+  });
+}
+
+function wfReset() {
+  Object.keys(WF).forEach(id => setNodeState(id, null));
+  Object.values(wfEdgeEls).forEach(e => e.classList.remove('active'));
+  Object.values(wfBadgeEls).forEach(g => g.classList.remove('show'));
+  Object.values(wfChipEls).forEach(c => c.querySelector('.in').classList.remove('show'));
+  wfPacket.setAttribute('cx', -9999);
+  wfCanvas.classList.remove('zoomed');
+  wfZoomed = false;
+  setView(WF_VIEW);
+  zoomDoc = undefined;
+}
+
+// one hop: the source has run, the item travels, the target runs (or fails)
+async function runHop([a, b, n], step, token, animate) {
+  if (!nodeState(a)) setNodeState(a, 'ok');
+  wfEdgeEls[`${a}-${b}`].classList.add('active');
+  if (animate) {
+    setNodeState(b, 'run');
+    if (stagesQuery.matches) await wait(420);
+    else await movePacket(wfEdgeEls[`${a}-${b}`], token);
+    if (token !== wfToken) return;
+  }
+  showBadge(a, b, n);
+  setNodeState(b, step.err && step.err.includes(b) ? 'err' : 'ok');
+}
+
+function renderStats(sc) {
+  const dl = document.getElementById('wfStats');
+  dl.innerHTML = '';
+  sc.stats.forEach(([k, v], i) => {
+    const dt = document.createElement('dt'), dd = document.createElement('dd');
+    dt.textContent = k;
+    dd.textContent = v;
+    if (sc.bad && i === sc.stats.length - 1) dd.className = 'bad';
+    dl.append(dt, dd);
+  });
+}
+
+async function playScenario(sc) {
+  const token = ++wfToken;
+  wfStarted = true;
+  wfCurrent = sc;
+  SCENARIOS.forEach(s => s.button.setAttribute('aria-pressed', String(s === sc)));
+  wfReset();
+  placeZoom();
+  wfSvg.classList.add('replaying');
+  wfStages.classList.add('replaying');
+  renderStats(sc);
+  setZoomDoc(sc.doc ? DOCS[sc.doc] : null);
+  wfStepsEl.innerHTML = '';
+  const items = sc.steps.map(st => {
+    const li = document.createElement('li');
+    li.textContent = st.t;
+    wfStepsEl.appendChild(li);
+    return li;
+  });
+
+  // reduced motion: the whole path, final counts and numbered steps at once
+  if (reduceMotion.matches) {
+    let lastZ = null;
+    for (const st of sc.steps) {
+      if (st.doc) setZoomDoc(DOCS[st.doc]);
+      for (const hop of st.h) await runHop(hop, st, token, false);
+      if (st.z) lastZ = st.z;
+    }
+    if (lastZ) setZoomStage(lastZ);
+    wfNow.textContent = '';
+    return;
+  }
+
+  for (let i = 0; i < sc.steps.length; i++) {
+    if (token !== wfToken) return;
+    const st = sc.steps[i];
+    items.forEach((li, j) => li.classList.toggle('current', j === i));
+    wfNow.innerHTML = `<b>${i + 1} / ${sc.steps.length}</b> `;
+    wfNow.append(st.t);
+    if (st.z && !stagesQuery.matches && !wfZoomed) await zoomCanvas(true, token);
+    else if (!st.z && wfZoomed) await zoomCanvas(false, token);
+    if (st.doc) setZoomDoc(DOCS[st.doc]);
+    for (const hop of st.h) {
+      if (token !== wfToken) return;
+      await runHop(hop, st, token, true);
+    }
+    if (token !== wfToken) return;
+    if (st.z) setZoomStage(st.z);
+    await wait(st.z ? 2200 : 800);
+  }
+  if (token !== wfToken) return;
+  if (wfZoomed) await zoomCanvas(false, token);
+  items.forEach(li => li.classList.remove('current'));
+}
+
+/* ---------- Ingestion start ---------- */
+renderCanvas();
+renderStages();
+placeZoom();
+
+const scenarioButtons = document.getElementById('scenarioButtons');
+SCENARIOS.forEach(sc => {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.textContent = sc.name;
+  b.setAttribute('aria-pressed', 'false');
+  b.addEventListener('click', () => playScenario(sc));
+  scenarioButtons.appendChild(b);
+  sc.button = b;
+});
+
+// entry points: the n8n box and the "Learn a document" flow
+document.addEventListener('click', ev => {
+  const link = ev.target.closest('[data-to-ingestion]');
+  if (!link) return;
+  ev.preventDefault();
+  document.getElementById('ingestion').scrollIntoView({ behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+  document.getElementById('wfTitle').focus({ preventScroll: true });
+  playScenario(SCENARIOS[0]);
+});
+
+// start the first scenario when the section comes into view
+let wfStarted = false;
+const wfObserver = new IntersectionObserver(entries => {
+  if (wfStarted || !entries.some(e => e.isIntersecting)) return;
+  wfObserver.disconnect();
+  playScenario(SCENARIOS[0]);
+}, { rootMargin: '0px 0px -40% 0px' });
+wfObserver.observe(wfCanvas);
+wfObserver.observe(wfStages);
+
+stagesQuery.addEventListener('change', () => {
+  placeZoom();
+  if (wfCurrent) playScenario(wfCurrent);
+});
+reduceMotion.addEventListener('change', placeZoom);
 </script>
 </body>
 </html>
