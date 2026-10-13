@@ -130,4 +130,14 @@ The overhaul should improve the professional narrative and selected-work present
 
 The current static implementation can support those outcomes. Retaining it is a review recommendation, not an invented owner decision about future frameworks. Any technology change should explain what concrete portfolio requirement needs it. No framework migration is part of this documentation task.
 
-Keep project content curated in source unless an actual editing requirement justifies another system. An unpublished project can have an honest descriptive entry without a dead demo button. Detailed project copy, visual layout, GenMedia's disposition and replacement imagery remain open in the PRD.
+Keep project content curated in source unless an actual editing requirement justifies another system. An unpublished project can have an honest descriptive entry without a dead demo button. Issue #3 resolved project copy, layout, GenMedia and photo roles; see below.
+
+### Composition decisions from issue #3 — 2026-10-14
+
+Content is approved in the [PRD](prd.md#approved-content-issue-3). The technical consequences for implementation:
+
+- **One static page.** Sections in order: intro (tagline, copy, portrait, socials), Rabbit Hole (project cards), experience, footer. No new pages, framework or build step.
+- **Navigation.** With Self Hosted AI unlinked and GenMedia removed, the Rabbit Hole dropdown has only one destination left. Replace it with plain in-page links (RABBIT HOLE → the project section, INFO → experience). This removes the dual hover/`.open` state and incomplete menu roles behind R04 instead of repairing them; #7 keeps keyboard, focus and reduced-motion checks for the new links. The Non-Profits deck is reached from the Self-Hosted AI card.
+- **Images.** `000.jpg`, `001.jpg`, `003.jpg` and `004.jpg` leave the page; `002.jpg` becomes the portrait with a real `alt`, addressing R03. That shrinks #9 to one display-sized portrait (measured against the 15,751,376-byte baseline) plus future project media.
+- **Project clips.** When Mick supplies ~5 s clips, use muted, looping, `playsinline` video with a poster frame, no autoplay under `prefers-reduced-motion`, and a still image fallback. Keep each clip small enough that it does not undo #9's savings; agree a size target then.
+- **No private destinations.** Cards carry no repository or demo links while both project repositories are private and the storefront is unlaunched.

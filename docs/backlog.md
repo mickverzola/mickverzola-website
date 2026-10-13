@@ -1,16 +1,16 @@
 # Backlog
 
-Updated: 2026-10-13. IDs below are local planning references, not GitHub issue numbers.
+Updated: 2026-10-14. IDs below are local planning references, not GitHub issue numbers.
 
 The owner requested problem-focused GitHub tracking aligned with the PRD and TDD. The [Portfolio v1 milestone](https://github.com/mickverzola/mickverzola-website/milestone/1) and issues #1–#10 were created and verified on 2026-10-13. Baseline #1 is accepted; #2's investigation has explicit release prerequisites under #12. No website fixes have been implemented. The sequence below remains suggested, without dates or a promised release; see the [delivery plan](delivery-plan.md) for dependencies and completion rules.
 
 | Item | Status | Suggested sequence |
 | --- | --- | --- |
 | D01 — Review and document the repository | Baseline #1 accepted through merged PR #11; runtime verification excluded | Baseline |
-| B01 — Portfolio content overhaul | Accepted direction to explore; design and delivery unscheduled | Choose content, then preview |
+| B01 — Portfolio content overhaul | #3 decisions recorded: copy, single-page layout, portrait, Rabbit Hole cards; implementation under #5/#6 | Choose content, then preview |
 | B02 — Homepage reading and navigation | Proposed; findings R02–R04/R06 | Address alongside overhaul |
 | B03 — Retained presentation usability | Proposed; findings R05/R06 | Small independent fix |
-| B04 — Image optimization | Proposed; finding R01 | After image role/crops are selected |
+| B04 — Image optimization | Proposed; scope reduced by #3 to the portrait and future project media | After image role/crops are selected |
 | B05 — Confirm hosting and preview configuration | #2 investigation recorded; browser/account/release evidence remains open under #12 | Before next remote release |
 | B06 — Review presentation claims and framing | Proposed; deck retained as AI sample | With its portfolio entry |
 
