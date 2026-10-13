@@ -25,6 +25,13 @@ body{
 
 a{ color: inherit; text-decoration: none; }
 
+/* one visible keyboard focus style for every link/button on the page */
+:focus-visible{
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
 img{ max-width: 100%; display: block; }
 
 .wrap{
@@ -222,7 +229,7 @@ nav a:hover{ opacity: 1; color: var(--gold); }
   text-align: center;
   font-family: 'Jost', sans-serif;
   font-size: 0.85rem;
-  color: rgba(236, 227, 214, 0.22);
+  color: var(--muted);
   padding: 0 28px 40px;
 }
 
@@ -468,4 +475,19 @@ nav a:hover{ opacity: 1; color: var(--gold); }
   .exp-company{ margin-top: 4px; }
   .exp-line{ margin-top: 6px; }
   .hero-copy h1{ font-size: 2rem; }
+}
+
+/* honor reduced-motion: no smooth scrolling, hover zoom or slide-ups;
+   colour/opacity changes still apply instantly so nothing is lost */
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior: auto; }
+  *, *::before, *::after{
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .hero-image:hover img{ transform: none; }
+  .cta:hover .arrow-circle,
+  .social-rail a:hover,
+  .social-footer a:hover{ transform: none; }
 }
