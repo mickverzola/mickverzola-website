@@ -6,14 +6,13 @@
   <title>Non-Profits</title>
   <style>
     :root {
-      --bg-color: #0f172a;
-      --card-bg: #1e293b;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --accent-blue: #38bdf8;
-      --accent-teal: #2dd4bf;
-      --accent-indigo: #818cf8;
-      --border-color: #334155;
+      /* portfolio palette (see styles.css) */
+      --bg-color: #0c0a08;
+      --card-bg: #14110d;
+      --text-main: #ece3d6;
+      --text-muted: #9a9186;
+      --accent: #b99a6a;
+      --border-color: #2a251f;
     }
 
     * {
@@ -86,7 +85,7 @@
 
     .slide-header h1 {
       font-size: clamp(1.4rem, 4vw, 2.2rem);
-      color: var(--accent-blue);
+      color: var(--text-main);
       margin-bottom: 6px;
     }
 
@@ -111,19 +110,19 @@
       text-align: center;
       justify-content: center;
       align-items: center;
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      background: linear-gradient(135deg, #0c0a08 0%, #14110d 100%);
     }
 
     .title-slide h1 {
       font-size: clamp(1.8rem, 6vw, 3rem);
-      color: var(--accent-blue);
+      color: var(--text-main);
       margin-bottom: 16px;
       line-height: 1.2;
     }
 
     .title-slide h2 {
       font-size: clamp(1rem, 3.5vw, 1.5rem);
-      color: var(--accent-teal);
+      color: var(--accent);
       font-weight: 400;
     }
 
@@ -148,7 +147,7 @@
     }
 
     .card h3 {
-      color: var(--accent-teal);
+      color: var(--accent);
       margin-bottom: 10px;
       font-size: 1.05rem;
     }
@@ -160,7 +159,7 @@
     .card ul li {
       margin-bottom: 8px;
       line-height: 1.45;
-      color: #cbd5e1;
+      color: var(--text-muted);
       font-size: 0.9rem;
     }
 
@@ -183,19 +182,19 @@
     }
 
     th {
-      background-color: rgba(56, 189, 248, 0.1);
-      color: var(--accent-blue);
+      background-color: rgba(185, 154, 106, 0.1);
+      color: var(--accent);
       font-size: 1rem;
       font-weight: 700;
     }
 
     td {
-      color: #cbd5e1;
+      color: var(--text-muted);
       line-height: 1.4;
     }
 
     td strong {
-      color: var(--accent-teal);
+      color: var(--accent);
       font-weight: 700;
     }
 
@@ -209,7 +208,7 @@
     }
 
     .option-card h3 {
-      color: var(--accent-blue);
+      color: var(--text-main);
       font-size: 1rem;
       font-weight: 700;
       margin-bottom: 10px;
@@ -225,12 +224,12 @@
 
     .option-meta-item {
       font-size: 0.88rem;
-      color: #cbd5e1;
+      color: var(--text-muted);
       line-height: 1.4;
     }
 
     .option-meta-item strong {
-      color: var(--accent-teal);
+      color: var(--accent);
       font-weight: 700;
     }
 
@@ -250,11 +249,11 @@
     }
 
     .sample-banner strong {
-      color: var(--accent-teal);
+      color: var(--accent);
     }
 
     .back-link {
-      color: var(--accent-blue);
+      color: var(--accent);
       text-decoration: none;
       white-space: nowrap;
       font-weight: 600;
@@ -273,13 +272,13 @@
     }
 
     .source-note a {
-      color: var(--accent-blue);
+      color: var(--accent);
     }
 
     .btn:focus-visible,
     .back-link:focus-visible,
     .source-note a:focus-visible {
-      outline: 2px solid var(--accent-teal);
+      outline: 2px solid var(--accent);
       outline-offset: 3px;
     }
 
@@ -311,8 +310,8 @@
     }
 
     .btn {
-      background-color: var(--accent-blue);
-      color: #0f172a;
+      background-color: var(--accent);
+      color: var(--bg-color);
       border: none;
       padding: 12px 20px;
       border-radius: 8px;
@@ -419,15 +418,15 @@
         <div class="grid-3">
           <div class="card">
             <h3>An Assistant, Not an Author</h3>
-            <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.45;">Handles tedious, repetitive tasks (sorting transcripts, synthesizing notes) while experts handle high-level analysis and strategy.</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.45;">Handles tedious, repetitive tasks (sorting transcripts, synthesizing notes) while experts handle high-level analysis and strategy.</p>
           </div>
           <div class="card">
             <h3>Preserving Integrity</h3>
-            <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.45;">AI outputs are starting points for human review, not final products. Domain experts remain the ultimate authority.</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.45;">AI outputs are starting points for human review, not final products. Domain experts remain the ultimate authority.</p>
           </div>
           <div class="card">
             <h3>Protecting IP & Values</h3>
-            <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.45;">Hybrid and local deployment options help keep proprietary research confidential and behind your firewall.</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.45;">Hybrid and local deployment options help keep proprietary research confidential and behind your firewall.</p>
           </div>
         </div>
       </div>
@@ -587,15 +586,15 @@
         <div class="grid-3">
           <div class="card">
             <h3>1. Identify Pilots</h3>
-            <p style="color: #cbd5e1; font-size: 0.9rem; margin-top: 6px; line-height: 1.45;">Select 1–2 non-sensitive, labor-intensive tasks (e.g., public policy synthesis or grant drafts) to test.</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px; line-height: 1.45;">Select 1–2 non-sensitive, labor-intensive tasks (e.g., public policy synthesis or grant drafts) to test.</p>
           </div>
           <div class="card">
             <h3>2. Audit Data</h3>
-            <p style="color: #cbd5e1; font-size: 0.9rem; margin-top: 6px; line-height: 1.45;">Review organizational workflows and categorize data into Public, Internal, and Confidential.</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px; line-height: 1.45;">Review organizational workflows and categorize data into Public, Internal, and Confidential.</p>
           </div>
           <div class="card">
             <h3>3. Choose Model</h3>
-            <p style="color: #cbd5e1; font-size: 0.9rem; margin-top: 6px; line-height: 1.45;">Select the Cloud, Hybrid, or Local deployment model that aligns with your privacy profile.</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px; line-height: 1.45;">Select the Cloud, Hybrid, or Local deployment model that aligns with your privacy profile.</p>
           </div>
         </div>
       </div>
