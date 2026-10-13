@@ -41,9 +41,23 @@ The layout has a header, hero, four-photo gallery, employment timeline and copyr
 
 **Issue #5 update (2026-10-14):** the hero now names Mick above the tagline, uses the approved intro copy, shows `002.jpg` as a 4:3 portrait with a descriptive `alt`, and adds labeled Email/LinkedIn links visible at every width. On mobile the introduction precedes the portrait. Experience is its own `#info` section after Rabbit Hole, with years, company and approved one-liners readable at rest (muted text 6.4:1, cream 15.6:1 against the background). The 1360 px timeline breakpoint is gone; experience stacks at 560 px. The Rabbit Hole keeps the three remaining placeholder photos until #6, and the dropdown is unchanged until #7.
 
-**Issue #6 update (2026-10-14):** the Rabbit Hole dropdown is replaced by a plain RABBIT HOLE in-page link, which removes R04's dual hover/`.open` state and incomplete menu roles; #7 still owns focus, contrast and reduced-motion checks. “Enter the Rabbit Hole” moved into the intro and now leads to the work section. The section shows two approved project cards (Self-Hosted AI, live, with its sample deck; the MTG singles storefront under What's Next) and no images. No link to `ai.mickverzola.com` remains anywhere on the page. `000.jpg`, `001.jpg`, `003.jpg` and `004.jpg` are no longer referenced; removing the files is left to #9.
+**Issue #6 update (2026-10-14):** the Rabbit Hole dropdown is replaced by a plain RABBIT HOLE in-page link, which removes R04's dual hover/`.open` state and incomplete menu roles; #7 still owns focus, contrast and reduced-motion checks. “Enter the Rabbit Hole” moved into the intro and now leads to the work section. The section shows two approved project cards (Self-Hosted AI, live, with its sample deck; the MTG singles storefront under What's Next) and no images. No link to `ai.mickverzola.com` remains anywhere on the page. `000.jpg`, `001.jpg`, `003.jpg` and `004.jpg` were no longer referenced; #9 removed them.
 
 **Issue #7 update (2026-10-14):** R02 resolved for the homepage: the copyright now uses muted text (6.37:1); all homepage text measures ≥ 6.07:1 on its background (cream/gold/muted on `#0c0a08` and `#14110d`). A shared gold `:focus-visible` outline covers every link. A `prefers-reduced-motion` block disables smooth scrolling, transitions, the portrait hover zoom and hover slide-ups while keeping colour changes. Decorative SVGs are `aria-hidden`; the nav and both social groups are labelled; the logo links to `#top`. R03 is resolved by #5's portrait `alt` and #6 removing the placeholders; R04 by #6 removing the dropdown. The deck's own motion and zoom (R05/R06) remain under #8.
+
+**Issue #9 update (2026-10-14), R01:** the five original photos (15,751,376 bytes, 3024×4032-class JPEGs) are removed. The portrait is pre-cropped to 4:3 (full width, vertical offset 55%, matching the #5 framing) and exported as progressive mozjpeg (q80, no metadata) at five widths:
+
+| File | Size | Bytes |
+| --- | --- | --- |
+| `portrait-640.jpg` | 640×480 | 69,696 |
+| `portrait-800.jpg` | 800×600 | 102,145 |
+| `portrait-1024.jpg` | 1024×768 | 156,390 |
+| `portrait-1280.jpg` | 1280×960 | 227,134 |
+| `portrait-1600.jpg` | 1600×1200 | 333,029 |
+
+`<img srcset sizes="(max-width: 980px) 100vw, min(50vw, 768px)">` lets the browser choose. The image has `width`/`height` (no layout shift), `fetchpriority="high"`, and is not lazy-loaded because it is the hero. WebP was tried and saved only ~3% on this foliage-heavy photo, so it was dropped for simplicity.
+
+Measured locally (Chrome, http-server with caching disabled, DPR 1): the 1440×900 desktop slot of 713×534 resolves to `portrait-800.jpg`, and a 390×844 frame resolved to `portrait-640.jpg` (69,996 B transferred). The whole homepage transferred 82,775 B over that loopback run, excluding cross-origin Google Fonts. Higher-density screens will pick a larger file (at most 333 KB). A worst-case 333,029 B against the 3,586,457 B the portrait previously cost is a 91% reduction, or 98% against the 15.75 MB image baseline. These are loopback measurements, not a page-speed or Vercel/CDN result; production transfer belongs to #12/#10.
 
 At the original review baseline, the Rabbit Hole dropdown linked to Self Hosted AI, GenMedia AI and the local deck, each in a new tab with `rel="noopener"`; the newer base removes GenMedia as noted above. JavaScript changes `.open` and `aria-expanded`; CSS can also reveal the menu through hover. INFO targets the employment block. “Enter the Rabbit Hole” targets the section containing that same link. The four photos are noninteractive, so this section currently provides no selected-work discovery path.
 
