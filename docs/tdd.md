@@ -26,8 +26,8 @@ The diagram records the original owner-reported arrangement, not inspected accou
 | Component | Contract |
 | --- | --- |
 | [index.html](../index.html) | Homepage structure, copy, timeline, SVG identity, links and image references |
-| [styles.css](../styles.css) | Homepage layout, palette, photo treatment and dropdown visibility |
-| [main.js](../main.js) | Dropdown click state, outside-click closing, Escape and focus return |
+| [styles.css](../styles.css) | Homepage layout, palette, portrait treatment and project cards |
+| [main.js](../main.js) | Empty entry point since #6 removed the dropdown; kept for future behavior |
 | [nonprofits.html](../nonprofits.html) | Standalone deck with inline CSS and JavaScript; no dependency on homepage styles or script |
 | `images/` | Five JPEG assets referenced by the homepage |
 
@@ -40,6 +40,8 @@ The homepage uses Cormorant Garamond and Jost from Google Fonts, with serif and 
 The layout has a header, hero, four-photo gallery, employment timeline and copyright. The desktop social rail becomes a footer at widths of 980 px and below. Additional breakpoints at 560, 1360 and 1600 px adjust typography, timeline position and rail placement. These are source observations, not proof of successful device layouts.
 
 **Issue #5 update (2026-10-14):** the hero now names Mick above the tagline, uses the approved intro copy, shows `002.jpg` as a 4:3 portrait with a descriptive `alt`, and adds labeled Email/LinkedIn links visible at every width. On mobile the introduction precedes the portrait. Experience is its own `#info` section after Rabbit Hole, with years, company and approved one-liners readable at rest (muted text 6.4:1, cream 15.6:1 against the background). The 1360 px timeline breakpoint is gone; experience stacks at 560 px. The Rabbit Hole keeps the three remaining placeholder photos until #6, and the dropdown is unchanged until #7.
+
+**Issue #6 update (2026-10-14):** the Rabbit Hole dropdown is replaced by a plain RABBIT HOLE in-page link, which removes R04's dual hover/`.open` state and incomplete menu roles; #7 still owns focus, contrast and reduced-motion checks. “Enter the Rabbit Hole” moved into the intro and now leads to the work section. The section shows two approved project cards (Self-Hosted AI, live, with its sample deck; the MTG singles storefront under What's Next) and no images. No link to `ai.mickverzola.com` remains anywhere on the page. `000.jpg`, `001.jpg`, `003.jpg` and `004.jpg` are no longer referenced; removing the files is left to #9.
 
 At the original review baseline, the Rabbit Hole dropdown linked to Self Hosted AI, GenMedia AI and the local deck, each in a new tab with `rel="noopener"`; the newer base removes GenMedia as noted above. JavaScript changes `.open` and `aria-expanded`; CSS can also reveal the menu through hover. INFO targets the employment block. “Enter the Rabbit Hole” targets the section containing that same link. The four photos are noninteractive, so this section currently provides no selected-work discovery path.
 
