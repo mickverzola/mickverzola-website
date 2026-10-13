@@ -146,6 +146,35 @@ nav a:hover{ opacity: 1; color: var(--gold); }
   position: relative;
 }
 
+/* .hero-copy p would otherwise restyle this as body copy */
+.hero-copy p.eyebrow{
+  font-family: 'Jost', sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 18px;
+}
+
+/* labeled professional contact, visible at every width (the icon rail and
+   footer stay for all five socials) */
+.contact-links{
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 32px;
+}
+.contact-links a{
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--cream);
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--gold);
+  transition: color var(--transition-ui);
+}
+.contact-links a:hover{ color: var(--gold); }
+
 /* social rail — centered against the combined h1+p block for visual symmetry */
 .social-rail{
   position: absolute;
@@ -203,9 +232,10 @@ nav a:hover{ opacity: 1; color: var(--gold); }
   position: relative;
   overflow: hidden;
   min-width: 0;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 4 / 3;
   background: linear-gradient(155deg, #4a3423 0%, #2a1e14 45%, #150f0a 100%);
 }
+.hero-image img{ object-position: center 55%; }
 
 .hero-image img,
 .thumb img{
@@ -278,7 +308,7 @@ nav a:hover{ opacity: 1; color: var(--gold); }
 
 .rabbit-grid{
   display: grid;
-  grid-template-columns: repeat(4, 1fr) 1.05fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
   align-items: stretch;
 }
@@ -303,46 +333,39 @@ nav a:hover{ opacity: 1; color: var(--gold); }
 .thumb.t3{ background: linear-gradient(160deg,#2e2e2e,#0a0a0a); }
 .thumb.t4{ background: linear-gradient(160deg,#3d4436,#12140f); }
 
-.quote-block{
-  padding-left: 40px;
-  border-left: 1px solid var(--hairline);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-width: 0;
+/* ---------- Experience ---------- */
+.experience{
+  padding: 0 64px 96px;
 }
-
-/* one shared grid across all 3 rows so the years/company columns line up
-   with each other, instead of each row sizing itself independently */
-.exp-grid{
-  display: grid;
-  grid-template-columns: auto 1fr;
-  column-gap: 20px;
-  row-gap: 14px;
-}
-
-/* display:contents hands exp-years/exp-company straight to the grid as if
-   unwrapped, while still letting :hover target both spans together */
-.exp-row{
-  display: contents;
-}
-
-.exp-years,
-.exp-company{
-  font-family: 'Jost', sans-serif;
-  font-size: 0.95rem;
-  color: rgba(236, 227, 214, 0.22);
-  transition: color var(--transition-reveal);
-  cursor: default;
-}
-
-.exp-row:hover .exp-years,
-.exp-row:hover .exp-company{
+.experience h2{
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.7rem;
   color: var(--cream);
+  margin-bottom: 32px;
 }
 
-.exp-years{ text-align: left; }
-.exp-company{ text-align: right; }
+/* one shared grid so years/company/line columns align across rows;
+   display:contents hands each <li>'s spans straight to that grid */
+.exp-list{
+  list-style: none;
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  column-gap: 40px;
+  border-top: 1px solid var(--hairline);
+}
+.exp-row{ display: contents; }
+.exp-years,
+.exp-company,
+.exp-line{
+  padding: 18px 0;
+  border-bottom: 1px solid var(--hairline);
+  font-size: 0.95rem;
+}
+.exp-years{ color: var(--muted); white-space: nowrap; }
+.exp-company{ color: var(--cream); font-weight: 500; }
+.exp-line{ color: var(--muted); }
 
 /* once the centered .wrap (max-width 1536px) leaves real whitespace at the
    viewport edge, pin the rail to that edge instead and size it up */
@@ -356,49 +379,27 @@ nav a:hover{ opacity: 1; color: var(--gold); }
   }
 }
 
-/* the years text must never wrap mid-line — once the quote-block column
-   gets too narrow to fit it on one line, drop the whole block below the
-   grid and center it, well before the thumbnail grid itself restacks */
-@media (max-width: 1360px){
-  .rabbit-grid{ grid-template-columns: repeat(4, 1fr); }
-  .quote-block{
-    grid-column: 1 / -1;
-    border-left: none;
-    border-top: 1px solid var(--hairline);
-    padding-left: 0;
-    padding-top: 28px;
-    margin-top: 24px;
-    align-items: center;
-  }
-  .exp-grid{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
-  }
-  .exp-row{
-    display: flex;
-    gap: 10px;
-  }
-  .exp-years, .exp-company{ text-align: center; }
-}
-
 /* ---------- Responsive ---------- */
 @media (max-width: 980px){
   header{ padding: 28px 28px 0; }
   nav{ gap: 26px; font-size: 0.75rem; }
   .hero{ grid-template-columns: 1fr; min-height: auto; }
-  .hero-copy{ padding: 48px 28px 40px; order: 2; }
+  .hero-copy{ padding: 48px 28px 40px; }
   .hero-copy h1{ font-size: 2.4rem; }
-  .hero-image{ order: 1; }
   .social-rail{ display: none; }
   .social-footer{ display: block; }
   .rabbit{ padding: 64px 28px; }
   .rabbit-grid{ grid-template-columns: repeat(2, 1fr); }
+  .experience{ padding: 0 28px 64px; }
 }
 
 @media (max-width: 560px){
   .rabbit-grid{ grid-template-columns: repeat(2, 1fr); }
+  .exp-list{ grid-template-columns: 1fr; }
+  .exp-row{ display: block; padding: 18px 0; border-bottom: 1px solid var(--hairline); }
+  .exp-years, .exp-company, .exp-line{ display: block; padding: 0; border: 0; }
+  .exp-company{ margin-top: 4px; }
+  .exp-line{ margin-top: 6px; }
   .hero-copy h1{ font-size: 2rem; }
 }
 

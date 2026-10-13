@@ -67,9 +67,9 @@ Lines stay deliberately light on specifics; clients are not named. Company names
 
 | ID | Requirement | Current position |
 | --- | --- | --- |
-| FR-01 | Introduce Mick using the retained tagline and a concise professional summary | Intro copy approved under #3; implementation under #5 |
-| FR-02 | Present the employment timeline | Exists: Netflix, Astreya and SolarWinds; one-line descriptions approved under #3 |
-| FR-03 | Provide Facebook, Instagram, GitHub, LinkedIn and email access | Exists in the desktop rail and mobile footer |
+| FR-01 | Introduce Mick using the retained tagline and a concise professional summary | Implemented in #5: name, tagline, approved intro, labeled contact links |
+| FR-02 | Present the employment timeline | Exists: Netflix, Astreya and SolarWinds; approved one-liners shown at rest (#5) |
+| FR-03 | Provide Facebook, Instagram, GitHub, LinkedIn and email access | Exists in the desktop rail and mobile footer; labeled Email/LinkedIn links added under the intro (#5) |
 | FR-04 | Provide a gateway to personal side projects | Rabbit Hole becomes the project section; private tools are described, not linked |
 | FR-05 | Show selected work that supports breadth of skills | Card copy approved under #3; implementation under #6 |
 | FR-06 | Retain the Non-Profits presentation and identify it as a local AI output sample | Framing approved under #3; claims review under #4 |
