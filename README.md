@@ -1,7 +1,8 @@
 # mickverzola.com
 
 Mick Verzola's personal site. One page: a field of dust that starts as turbulence and
-settles into shapes as you scroll (the M mark, a portrait, three years, a horizon).
+settles into shapes as you scroll (the M mark, a portrait, three small diagrams, three years,
+a horizon).
 
 It is a static site with no build step and no dependencies. Vercel deploys the repository
 as it is, and `mickverzola.com` points at it.

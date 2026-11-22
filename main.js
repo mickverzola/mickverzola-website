@@ -1,7 +1,7 @@
 /* mickverzola.com
  *
  * A field of dust that starts as turbulence and settles into shapes as you scroll:
- * the M mark, a portrait, three years, a horizon. Scroll position is the dial.
+ * the M mark, a portrait, three small diagrams, three years, a horizon. Scroll position is the dial.
  *
  * How it works
  * - Every grain has a position and a velocity that live on the graphics card. Each frame a
@@ -30,12 +30,16 @@ const SCENES = [
   { name: 'intro',   frac: 1.00, turb: 1.00, k: 1.5,  damp: 1.9, wave: 0,     focus: -0.3, dof: 0.55, trail: 0.93 },
   { name: 'mark',    frac: 0.55, turb: 0.05, k: 22,   damp: 6.4, wave: 0,     focus: 0,    dof: 0.9,  trail: 0.70 },
   { name: 'about',   frac: 0.90, turb: 0.04, k: 20,   damp: 6.4, wave: 0,     focus: 0,    dof: 0.9,  trail: 0.66 },
+  { name: 'problems', frac: 0.40, turb: 0.05, k: 22,  damp: 6.4, wave: 0,     focus: 0,    dof: 0.9,  trail: 0.70 },
   { name: 'y2018',   frac: 0.52, turb: 0.05, k: 24,   damp: 6.6, wave: 0,     focus: 0,    dof: 0.9,  trail: 0.70 },
   { name: 'y2023',   frac: 0.52, turb: 0.05, k: 24,   damp: 6.6, wave: 0,     focus: 0,    dof: 0.9,  trail: 0.70 },
   { name: 'y2024',   frac: 0.52, turb: 0.05, k: 24,   damp: 6.6, wave: 0,     focus: 0,    dof: 0.9,  trail: 0.70 },
   { name: 'contact', frac: 0.62, turb: 0.00, k: 14,   damp: 5.6, wave: 0.045, focus: -0.7, dof: 0.32, trail: 0.68 },
 ];
-const PORTRAIT_LAYER = 2;
+const layerOf = (name) => SCENES.findIndex((s) => s.name === name);
+const PORTRAIT_LAYER = layerOf('about');
+// Facts about sampled shapes that layout() needs: filled in by buildShapes().
+const SHAPE = { problems: { pitch: 0.8, ratio: 0.15 } };
 // Where the dust gathers at rest: x, y, radius in the intro scene's own -1..1 frame.
 const CLOUDS = [[0.42, 0.22, 0.34], [0.78, -0.4, 0.26], [0.08, 0.74, 0.22], [-0.62, 0.7, 0.2],
   [-0.24, -0.76, 0.24], [0.5, -0.82, 0.2], [0.92, 0.62, 0.22], [-0.9, -0.56, 0.22], [-0.82, 0.1, 0.16]];
@@ -43,7 +47,7 @@ const CLOUDS = [[0.42, 0.22, 0.34], [0.78, -0.4, 0.26], [0.08, 0.74, 0.22], [-0.
 /* Where each shape sits, in world units, for a given screen aspect (width / height).
    Tall screens stack the shape above the words; wide screens put them side by side.
    styles.css uses the same 9/10 threshold. */
-function layout(name, A) {
+function layout(name, A, m) {
   const stacked = A < 0.9;
   let s;
   switch (name) {
@@ -57,6 +61,16 @@ function layout(name, A) {
       return { s: [s, s, s], o: stacked ? [0, 0.4, 0] : [-A * 0.46, 0, 0] };
     case 'contact':
       return { s: [Math.max(A, 0.8) * 3, 1, 3.45], o: [0, stacked ? -0.6 : -0.5, -1.55] };
+    case 'problems': {
+      // Three diagrams, one above each column of words. m is measured from the page:
+      // the first column's left edge, the distance between columns, and the top of the words.
+      const info = SHAPE.problems;
+      if (!m) { s = Math.min(A * 0.8, 0.9); return { s: [s, s, s], o: [0, 0.45, 0] }; }
+      const row = m.pitch > 0.05;
+      s = row ? m.pitch / info.pitch : Math.min(A * 0.8, 0.5);
+      const y = m.top + 0.06 + s * info.ratio;
+      return { s: [s, s, s], o: [row ? m.left + s : 0, y, 0] };
+    }
     default: // the three years
       s = stacked ? A * 0.8 : Math.min(0.66, A * 0.37);
       return { s: [s, s, s], o: stacked ? [0, 0.38, 0] : [A * 0.46, 0.02, 0] };
@@ -362,12 +376,48 @@ function alphaSamplers(canvases, rnd) {
   }
   if (!isFinite(minX)) { minX = minY = 0; maxX = maxY = 1; }
   const cx = (minX + maxX + 1) / 2, cy = (minY + maxY + 1) / 2, half = (maxX - minX + 1) / 2;
-  return lists.map(({ xs, ys }) => (u) => {
+  const frame = { half, ratio: (maxY - minY + 1) / (maxX - minX + 1) };
+  return lists.map(({ xs, ys }) => Object.assign((u) => {
     const n = xs.length;
     if (!n) { const a = rnd() * 6.283, r = Math.sqrt(rnd()) * 0.6; return [Math.cos(a) * r, Math.sin(a) * r, 0, 1]; }
     const i = Math.min(n - 1, Math.floor(u * n));
     return [(xs[i] + rnd() - cx) / half, -(ys[i] + rnd() - cy) / half, 0, 1];
-  });
+  }, { frame }));
+}
+
+/* Three line drawings, one per problem: cards (the store), a price line (the pricing tool)
+   and three linked machines (the home AI cluster). Each starts at a multiple of ICON_PITCH so
+   the page can line them up with its three columns. */
+const ICON_PITCH = 500;
+function iconsCanvas() {
+  const cv = document.createElement('canvas');
+  cv.width = 1300; cv.height = 300;
+  const c = cv.getContext('2d');
+  c.lineWidth = 9; c.lineJoin = 'round'; c.lineCap = 'round';
+  const box = (x, y, w, h, r) => { c.beginPath(); if (c.roundRect) c.roundRect(x, y, w, h, r); else c.rect(x, y, w, h); c.stroke(); };
+  const dot = (x, y, r) => { c.beginPath(); c.arc(x, y, r, 0, 6.2832); c.fill(); };
+
+  // cards: one fanned behind another
+  c.save(); c.translate(84, 160); c.rotate(-0.2); box(-58, -86, 116, 172, 12); c.restore();
+  c.save(); c.translate(134, 152); c.rotate(0.1);
+  c.clearRect(-58, -86, 116, 172); box(-58, -86, 116, 172, 12); dot(0, 0, 15);
+  c.restore();
+
+  // price line: uneven, trending up, over a baseline
+  let x0 = ICON_PITCH + 14;
+  const pts = [[0, 190], [46, 128], [88, 156], [136, 84], [186, 50]];
+  c.beginPath(); pts.forEach(([x, y], i) => (i ? c.lineTo(x0 + x, y) : c.moveTo(x0 + x, y))); c.stroke();
+  pts.forEach(([x, y]) => dot(x0 + x, y, 13));
+  c.beginPath(); c.moveTo(x0 - 4, 244); c.lineTo(x0 + 190, 244); c.stroke();
+
+  // cluster: three machines, linked
+  x0 = ICON_PITCH * 2 + 10;
+  const nodes = [[38, 206], [162, 206], [100, 78]];
+  c.beginPath();
+  nodes.forEach(([x, y], i) => { const [nx, ny] = nodes[(i + 1) % 3]; c.moveTo(x0 + x, y); c.lineTo(x0 + nx, ny); });
+  c.stroke();
+  nodes.forEach(([x, y]) => { c.clearRect(x0 + x - 34, y - 34, 68, 68); box(x0 + x - 34, y - 34, 68, 68, 10); dot(x0 + x, y, 9); });
+  return cv;
 }
 
 function markCanvas() {
@@ -476,12 +526,16 @@ function buildShapes(N, texH, img) {
   };
 
   const [mark] = alphaSamplers([markCanvas()], rnd);
-  fill(1, mark, 0.085, 0.02);
+  fill(layerOf('mark'), mark, 0.085, 0.02);
 
-  fill(2, img ? portraitSampler(img, rnd) : mark, img ? 0.3 : 0.085, 0.012, !!img);
+  fill(PORTRAIT_LAYER, img ? portraitSampler(img, rnd) : mark, img ? 0.3 : 0.085, 0.012, !!img);
+
+  const [icons] = alphaSamplers([iconsCanvas()], rnd);
+  SHAPE.problems = { pitch: ICON_PITCH / icons.frame.half, ratio: icons.frame.ratio };
+  fill(layerOf('problems'), icons, 0.085, 0.012);
 
   const years = alphaSamplers(['2018', '2023', '2024'].map(textCanvas), rnd);
-  years.forEach((sample, i) => fill(3 + i, sample, 0.075, 0.02));
+  years.forEach((sample, i) => fill(layerOf('y2018') + i, sample, 0.075, 0.02));
 
   // last layer: an ordered lattice receding to a horizon, with still points of light above it.
   {
@@ -664,6 +718,19 @@ async function createEngine(canvas, hud) {
     return { a: sceneEls[i].index, b: sceneEls[i + 1].index, mix: smooth(0.2, 0.8, t) };
   }
 
+  // Where the three columns of the problems scene are on screen right now, in world units.
+  // The diagrams follow the words as they scroll, like part of the page.
+  const probEl = document.querySelector('[data-scene="problems"]');
+  const probCopy = probEl && probEl.querySelector('.copy');
+  const probItems = probEl ? probEl.querySelectorAll('.problems > li') : [];
+  function measureProblems() {
+    if (!probCopy || probItems.length < 2) return null;
+    const cw = canvas.clientWidth, hs = canvas.clientHeight / 2;
+    const cr = probCopy.getBoundingClientRect();
+    const a = probItems[0].getBoundingClientRect(), b = probItems[1].getBoundingClientRect();
+    return { left: (a.left - cw / 2) / hs, pitch: (b.left - a.left) / hs, top: (hs - cr.top) / hs };
+  }
+
   /* ---- frame loop ---- */
   let raf = 0, last = 0, time = 0, src = 0, running = true;
   let count = N, resScale = 1, slow = 0, frames = 0, emaDt = 1 / 60;
@@ -725,7 +792,8 @@ async function createEngine(canvas, hud) {
 
     const sc = readScroll();
     const A = SCENES[sc.a], B = SCENES[sc.b];
-    const la = layout(A.name, aspect), lb = layout(B.name, aspect), l0 = layout('intro', aspect);
+    const m = A.name === 'problems' || B.name === 'problems' ? measureProblems() : null;
+    const la = layout(A.name, aspect, m), lb = layout(B.name, aspect, m), l0 = layout('intro', aspect);
     const mix = sc.mix;
 
     // pointer velocity and how stirred up it is

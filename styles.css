@@ -42,8 +42,8 @@ body{
 ::selection{ background: var(--gold); color: var(--bg); }
 
 a{ color: inherit; text-decoration: none; }
-p, h1, h2, ul{ margin: 0; }
-ul{ padding: 0; list-style: none; }
+p, h1, h2, h3, ul, ol{ margin: 0; }
+ul, ol{ padding: 0; list-style: none; }
 
 :focus-visible{
   outline: 2px solid var(--gold);
@@ -191,6 +191,13 @@ h2{
   margin: 0 0 .12em -.03em;
 }
 
+/* problems: three columns of words; main.js forms a small diagram above each */
+.scene-problems{ align-items: end; }
+.scene-problems .copy{ max-width: none; }
+.problems{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem clamp(24px, 4.2vw, 72px); }
+.problems h3{ font-weight: 400; font-size: 1.1em; line-height: 1.12; letter-spacing: -.005em; margin-bottom: .55em; text-wrap: balance; }
+.problems p{ font-size: .8em; line-height: 1.4; color: #d3ccc0; max-width: 26em; }
+
 /* contact */
 .scene-contact{ align-items: start; grid-template-rows: 1fr auto; row-gap: 3rem; }
 .gl .scene-contact .copy{ padding-top: 3vh; }
@@ -257,6 +264,8 @@ html:not(.gl) .cue{ display: none; }
   .tagline{ font-size: clamp(2.5rem, 13vw, 5.4rem); }
   .scene-about, .scene-year{ grid-template-columns: 1fr; }
   .scene-about .copy, .scene-year .copy{ grid-column: 1; }
+  .problems{ grid-template-columns: 1fr; gap: 1.3rem; }
+  .problems p{ font-size: .86em; }
   .gl .scene-about, .gl .scene-year, .gl .scene-mark{ align-items: end; padding-bottom: clamp(84px, 13vh, 150px); }
   html:not(.gl) .scene-about{ row-gap: 2rem; }
   html:not(.gl) .portrait{ grid-row: auto; }
