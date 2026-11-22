@@ -572,7 +572,7 @@ function buildShapes(N, texH, img) {
 
 /* opts.live === false builds an engine that is only stepped by hand (for still frames):
    no input, no frame loop. opts.size gives it a size when its canvas is not on the page. */
-async function createEngine(canvas, hud, opts = {}) {
+async function createEngine(canvas, opts = {}) {
   const live = opts.live !== false;
   const sizeOf = opts.size || (() => [canvas.clientWidth, canvas.clientHeight]);
   const gl = canvas.getContext('webgl2', {
@@ -751,9 +751,7 @@ async function createEngine(canvas, hud, opts = {}) {
   /* ---- frame loop ---- */
   let raf = 0, last = 0, time = 0, src = 0, running = live, snapNext = false;
   let count = N, resScale = 1, slow = 0, frames = 0, emaDt = 1 / 60;
-  let wind = 0, lastScroll = scrollY, camX = 0, camY = 0, clarity = 0;
-  const meterBar = hud.querySelector('.meter-bar i'), meterVal = hud.querySelector('.meter-val');
-  let meterShown = -1;
+  let wind = 0, lastScroll = scrollY, camX = 0, camY = 0;
 
   function resize() {
     const [cw, ch] = sizeOf();
@@ -919,17 +917,6 @@ async function createEngine(canvas, hud, opts = {}) {
       fbos.reverse();
     }
     gl.bindVertexArray(null);
-
-    if (forced) return;
-    // the meter reads the same turbulence value the simulation uses
-    const turbNow = lerp(A.turb, B.turb, mix) + TRANSIT * Math.sin(Math.PI * mix);
-    clarity = lerp(clarity, clamp(1 - turbNow - ptr.energy * 0.3 - burst * 0.5, 0, 1), 1 - Math.exp(-dt * 5));
-    const shown = Math.round(clarity * 100);
-    if (shown !== meterShown) {
-      meterShown = shown;
-      meterVal.textContent = String(shown).padStart(3, '0');
-      meterBar.style.transform = `scaleX(${clarity.toFixed(3)})`;
-    }
   }
 
   let onDead = null;
@@ -1018,7 +1005,7 @@ async function renderPlates() {
   if (plates.key === key) return;                       // frames for this size already hang
   const job = ++plates.job;
   const small = matchMedia('(pointer: coarse)').matches || Math.min(innerWidth, innerHeight) < 600;
-  const baker = await createEngine(document.createElement('canvas'), hud, {
+  const baker = await createEngine(document.createElement('canvas'), {
     live: false, count: small ? 160000 : 320000, size: () => [cw, ch],
   });
   stillNote.textContent = `still · ${baker.stats().of.toLocaleString('en-US')} grains`;
@@ -1052,7 +1039,7 @@ async function setMode(next) {
   try {
     if (next === 'live') {
       if (!engine) {
-        engine = await createEngine(canvas, hud);
+        engine = await createEngine(canvas);
         engine.onDead = () => { engine = null; setMode('plates'); };
         if (query.has('debug')) window.__field = engine;
       }

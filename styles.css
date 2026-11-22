@@ -240,23 +240,18 @@ h2{
 .links a:hover, .links a:focus-visible{ color: var(--gold); border-color: var(--gold); }
 footer{ color: var(--mute); padding-bottom: 34px; }
 
-/* ---------- bottom strip: clarity meter + motion switch ---------- */
+/* ---------- bottom strip: blog link + motion switch ---------- */
 .hud{
   position: fixed; inset: auto 0 0 0; z-index: 10;
-  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  display: flex; align-items: center; gap: 16px;
   padding: 0 var(--pad) clamp(14px, 2.6vh, 24px);
   color: var(--mute);
   pointer-events: none;
 }
-.meter{ display: flex; align-items: center; gap: 12px; visibility: hidden; }
-.gl .meter{ visibility: visible; }
-.plates .meter{ display: none; }
 .still-note{ display: none; }
 .plates .still-note{ display: block; }
-.meter-bar{ display: block; width: clamp(64px, 12vw, 150px); height: 1px; background: var(--line); }
-.meter-bar i{ display: block; height: 100%; width: 100%; background: var(--gold); transform-origin: 0 50%; transform: scaleX(0); }
-.meter-val{ color: var(--ink); font-variant-numeric: tabular-nums; min-width: 3ch; }
-.motion{
+.blog{ margin-right: auto; }
+.blog, .motion{
   pointer-events: auto;
   font: inherit; letter-spacing: inherit; text-transform: inherit;
   color: var(--mute);
@@ -268,7 +263,7 @@ footer{ color: var(--mute); padding-bottom: 34px; }
   white-space: nowrap;
   transition: color .25s, border-color .25s;
 }
-.motion:hover{ color: var(--ink); border-color: var(--mute); }
+.blog:hover, .blog:focus-visible, .motion:hover{ color: var(--ink); border-color: var(--mute); }
 .motion span{ color: var(--gold); }
 .motion[hidden]{ display: none; }
 
