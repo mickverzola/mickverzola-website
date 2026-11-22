@@ -12,8 +12,13 @@
  * - Grains are drawn additively into a half-float buffer with a little persistence, then a
  *   final pass adds bloom, tone mapping, a vignette and grain.
  *
- * No libraries and no build step. If WebGL2 is missing, or motion is turned off, none of this
- * runs and the page is an ordinary still document.
+ * Three ways the page can look
+ * - live:   the field above, running behind the page.
+ * - plates: motion off. A second, throwaway engine with more grains settles each scene once
+ *           and hands back a still frame, which becomes that section's backdrop. Nothing moves.
+ * - plain:  no WebGL2 or no JavaScript. An ordinary document with the photo and the logo.
+ *
+ * No libraries and no build step.
  */
 
 const CAMZ = 3.2;                 // camera distance; at z = 0 the screen is 2 units tall
@@ -31,9 +36,9 @@ const SCENES = [
   { name: 'mark',    frac: 0.55, turb: 0.05, k: 22,   damp: 6.4, wave: 0,     focus: 0,    dof: 0.9,  trail: 0.70 },
   { name: 'about',   frac: 0.90, turb: 0.04, k: 20,   damp: 6.4, wave: 0,     focus: 0,    dof: 0.9,  trail: 0.66 },
   { name: 'problems', frac: 0.40, turb: 0.05, k: 22,  damp: 6.4, wave: 0,     focus: 0,    dof: 0.9,  trail: 0.70 },
-  { name: 'y2018',   frac: 0.52, turb: 0.05, k: 24,   damp: 6.6, wave: 0,     focus: 0,    dof: 0.9,  trail: 0.70 },
-  { name: 'y2023',   frac: 0.52, turb: 0.05, k: 24,   damp: 6.6, wave: 0,     focus: 0,    dof: 0.9,  trail: 0.70 },
   { name: 'y2024',   frac: 0.52, turb: 0.05, k: 24,   damp: 6.6, wave: 0,     focus: 0,    dof: 0.9,  trail: 0.70 },
+  { name: 'y2023',   frac: 0.52, turb: 0.05, k: 24,   damp: 6.6, wave: 0,     focus: 0,    dof: 0.9,  trail: 0.70 },
+  { name: 'y2018',   frac: 0.52, turb: 0.05, k: 24,   damp: 6.6, wave: 0,     focus: 0,    dof: 0.9,  trail: 0.70 },
   { name: 'contact', frac: 0.62, turb: 0.00, k: 14,   damp: 5.6, wave: 0.045, focus: -0.7, dof: 0.32, trail: 0.68 },
 ];
 const layerOf = (name) => SCENES.findIndex((s) => s.name === name);
@@ -94,7 +99,7 @@ layout(location=1) in vec3 aVel;
 layout(location=2) in vec4 aSeed;
 uniform sampler2DArray uTargets;
 uniform int uTexW, uA, uB;
-uniform float uMix, uTime, uDt, uTransit, uPtrEnergy, uBurst, uWind;
+uniform float uMix, uTime, uDt, uTransit, uPtrEnergy, uBurst, uWind, uSnap;
 uniform vec3 uScale0, uOff0, uScaleA, uOffA, uScaleB, uOffB;
 uniform vec4 uParA, uParB;        // turbulence, spring, damping, wave
 uniform vec3 uDust;
@@ -161,6 +166,7 @@ void main(){
   pa = mix(pa, home, dustA);
   pb = mix(pb, home, dustB);
   vec3 target = mix(pa, pb, m);
+  if (uSnap > 0.5) { vPos = target; vVel = vec3(0.0); return; }
 
   vec3 par = mix(mix(uParA.xyz, uDust, dustA), mix(uParB.xyz, uDust, dustB), m);
   float turb = par.x + uTransit * sin(3.14159265 * m);
@@ -316,6 +322,8 @@ const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
 const lerp = (a, b, t) => a + (b - a) * t;
 const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+// Hand control back to the browser for a moment without a timer (timers are slowed in idle tabs).
+const breathe = () => new Promise((r) => { const c = new MessageChannel(); c.port1.onmessage = () => r(); c.port2.postMessage(0); });
 
 function mulberry32(seed) {
   let a = seed >>> 0;
@@ -534,8 +542,8 @@ function buildShapes(N, texH, img) {
   SHAPE.problems = { pitch: ICON_PITCH / icons.frame.half, ratio: icons.frame.ratio };
   fill(layerOf('problems'), icons, 0.085, 0.012);
 
-  const years = alphaSamplers(['2018', '2023', '2024'].map(textCanvas), rnd);
-  years.forEach((sample, i) => fill(layerOf('y2018') + i, sample, 0.075, 0.02));
+  const YEARS = ['2024', '2023', '2018'];
+  alphaSamplers(YEARS.map(textCanvas), rnd).forEach((sample, i) => fill(layerOf('y' + YEARS[i]), sample, 0.075, 0.02));
 
   // last layer: an ordered lattice receding to a horizon, with still points of light above it.
   {
@@ -562,7 +570,11 @@ function buildShapes(N, texH, img) {
 
 /* ------------------------------------------------------------------ engine */
 
-async function createEngine(canvas, hud) {
+/* opts.live === false builds an engine that is only stepped by hand (for still frames):
+   no input, no frame loop. opts.size gives it a size when its canvas is not on the page. */
+async function createEngine(canvas, hud, opts = {}) {
+  const live = opts.live !== false;
+  const sizeOf = opts.size || (() => [canvas.clientWidth, canvas.clientHeight]);
   const gl = canvas.getContext('webgl2', {
     alpha: false, antialias: false, depth: false, stencil: false,
     powerPreference: 'high-performance', preserveDrawingBuffer: false,
@@ -571,7 +583,7 @@ async function createEngine(canvas, hud) {
 
   const query = new URLSearchParams(location.search);
   const small = matchMedia('(pointer: coarse)').matches || Math.min(innerWidth, innerHeight) < 600;
-  const N = clamp(parseInt(query.get('n'), 10) || (small ? 72000 : REF_COUNT), 2000, 400000);
+  const N = clamp(opts.count || parseInt(query.get('n'), 10) || (small ? 72000 : REF_COUNT), 2000, 400000);
   const texH = Math.ceil(N / TEX_W);
 
   // The year shapes are drawn with the page's display font, so wait for it (briefly).
@@ -604,7 +616,7 @@ async function createEngine(canvas, hud) {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
   // grain state: position + velocity, two copies that swap roles each frame
-  let aspect = canvas.clientWidth / Math.max(1, canvas.clientHeight);
+  let aspect = sizeOf()[0] / Math.max(1, sizeOf()[1]);
   const home = layout('intro', aspect);
   const init = new Float32Array(N * 6);
   {
@@ -679,14 +691,17 @@ async function createEngine(canvas, hud) {
     ptr.x = ptr.nx * aspect; ptr.y = ptr.ny;
     if (jump || !ptr.seen) { ptr.px = ptr.x; ptr.py = ptr.y; ptr.seen = true; }
   };
-  on(window, 'pointermove', (e) => { if (e.pointerType !== 'touch') place(e.clientX, e.clientY, false); });
-  on(window, 'touchstart', (e) => { const t = e.touches[0]; if (t) place(t.clientX, t.clientY, true); });
-  on(window, 'touchmove', (e) => { const t = e.touches[0]; if (t) place(t.clientX, t.clientY, false); });
-  on(window, 'click', (e) => { if (e.detail) { place(e.clientX, e.clientY, true); burst = 1; } });
-  // Words fade in near the middle of the screen, so a link reached with Tab is brought there.
-  on(document, 'focusin', (e) => {
-    if (running && e.target.closest('.scene') && e.target.matches(':focus-visible')) e.target.scrollIntoView({ block: 'center' });
-  });
+  if (live) {
+    on(window, 'pointermove', (e) => { if (e.pointerType !== 'touch') place(e.clientX, e.clientY, false); });
+    on(window, 'touchstart', (e) => { const t = e.touches[0]; if (t) place(t.clientX, t.clientY, true); });
+    on(window, 'touchmove', (e) => { const t = e.touches[0]; if (t) place(t.clientX, t.clientY, false); });
+    on(window, 'click', (e) => { if (running && e.detail) { place(e.clientX, e.clientY, true); burst = 1; } });
+    // Words fade in near the middle of the screen, so a link reached with Tab is brought there.
+    on(document, 'focusin', (e) => {
+      if (running && e.target.closest('.scene') && e.target.matches(':focus-visible')) e.target.scrollIntoView({ block: 'center' });
+    });
+    on(document, 'visibilitychange', () => { last = 0; });
+  }
   let contextLost = false;
   canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); contextLost = true; }, { signal: ac.signal });
 
@@ -718,28 +733,30 @@ async function createEngine(canvas, hud) {
     return { a: sceneEls[i].index, b: sceneEls[i + 1].index, mix: smooth(0.2, 0.8, t) };
   }
 
-  // Where the three columns of the problems scene are on screen right now, in world units.
-  // The diagrams follow the words as they scroll, like part of the page.
+  // Where the three columns of the problems scene are, in world units. Live, that is where
+  // they are on screen right now, so the diagrams follow the words as they scroll. For a
+  // still frame it is where they sit when the section is centred, which is how the frame hangs.
   const probEl = document.querySelector('[data-scene="problems"]');
   const probCopy = probEl && probEl.querySelector('.copy');
   const probItems = probEl ? probEl.querySelectorAll('.problems > li') : [];
-  function measureProblems() {
+  function measureProblems(centred) {
     if (!probCopy || probItems.length < 2) return null;
-    const cw = canvas.clientWidth, hs = canvas.clientHeight / 2;
-    const cr = probCopy.getBoundingClientRect();
+    const [cw, ch] = sizeOf(), hs = ch / 2;
+    const cr = probCopy.getBoundingClientRect(), sr = probEl.getBoundingClientRect();
     const a = probItems[0].getBoundingClientRect(), b = probItems[1].getBoundingClientRect();
-    return { left: (a.left - cw / 2) / hs, pitch: (b.left - a.left) / hs, top: (hs - cr.top) / hs };
+    const middle = centred ? sr.top + sr.height / 2 : hs;
+    return { left: (a.left - cw / 2) / hs, pitch: (b.left - a.left) / hs, top: (middle - cr.top) / hs };
   }
 
   /* ---- frame loop ---- */
-  let raf = 0, last = 0, time = 0, src = 0, running = true;
+  let raf = 0, last = 0, time = 0, src = 0, running = live, snapNext = false;
   let count = N, resScale = 1, slow = 0, frames = 0, emaDt = 1 / 60;
   let wind = 0, lastScroll = scrollY, camX = 0, camY = 0, clarity = 0;
   const meterBar = hud.querySelector('.meter-bar i'), meterVal = hud.querySelector('.meter-val');
   let meterShown = -1;
 
   function resize() {
-    const cw = canvas.clientWidth, ch = canvas.clientHeight;
+    const [cw, ch] = sizeOf();
     if (!cw || !ch) return false;
     // cap the pixel count as well as the ratio, so a 4K or 5K screen is not asked for 15 MP
     const cap = Math.sqrt((small ? 2.4e6 : 4.6e6) / (cw * ch));
@@ -786,13 +803,14 @@ async function createEngine(canvas, hud) {
     tick(Math.min(raw, 1 / 30));
   }
 
-  function tick(dt) {
+  // forced = { a, b, mix } pins the scene instead of reading it from the scroll position.
+  function tick(dt, forced) {
     time += dt;
     if (!resize()) return;
 
-    const sc = readScroll();
+    const sc = forced || readScroll();
     const A = SCENES[sc.a], B = SCENES[sc.b];
-    const m = A.name === 'problems' || B.name === 'problems' ? measureProblems() : null;
+    const m = A.name === 'problems' || B.name === 'problems' ? measureProblems(!!forced) : null;
     const la = layout(A.name, aspect, m), lb = layout(B.name, aspect, m), l0 = layout('intro', aspect);
     const mix = sc.mix;
 
@@ -811,6 +829,7 @@ async function createEngine(canvas, hud) {
 
     camX = lerp(camX, ptr.nx * 0.11 + Math.sin(time * 0.21) * 0.05, 1 - Math.exp(-dt * 2.2));
     camY = lerp(camY, -ptr.ny * 0.07 + Math.sin(time * 0.17 + 1.3) * 0.025, 1 - Math.exp(-dt * 2.2));
+    if (forced) { camX = camY = wind = 0; }          // a still frame is seen straight on
 
     /* simulate */
     const dst = 1 - src;
@@ -832,6 +851,8 @@ async function createEngine(canvas, hud) {
     gl.uniform1f(sim.u.uPtrEnergy, ptr.energy);
     gl.uniform1f(sim.u.uBurst, burst);
     gl.uniform1f(sim.u.uWind, wind);
+    gl.uniform1f(sim.u.uSnap, snapNext ? 1 : 0);
+    snapNext = false;
     gl.bindVertexArray(vaos[src]);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
     gl.enable(gl.RASTERIZER_DISCARD);
@@ -899,6 +920,7 @@ async function createEngine(canvas, hud) {
     }
     gl.bindVertexArray(null);
 
+    if (forced) return;
     // the meter reads the same turbulence value the simulation uses
     const turbNow = lerp(A.turb, B.turb, mix) + TRANSIT * Math.sin(Math.PI * mix);
     clarity = lerp(clarity, clamp(1 - turbNow - ptr.energy * 0.3 - burst * 0.5, 0, 1), 1 - Math.exp(-dt * 5));
@@ -925,11 +947,38 @@ async function createEngine(canvas, hud) {
   }
   function destroy() { pause(); ac.abort(); }
 
-  on(document, 'visibilitychange', () => { last = 0; });
-  raf = requestAnimationFrame((now) => { last = now / 1000; raf = requestAnimationFrame(frame); });
+  /* One still frame of a scene at rest. Grains are placed on their targets, then the normal
+     simulation runs for a moment so the turbulence, the shimmer and the persistence buffer
+     reach the state the live field would be in. The intro needs longer: its picture is the motion. */
+  async function bake(name) {
+    const i = layerOf(name), forced = { a: i, b: i, mix: 0 };
+    if (!resize()) throw new Error('no size to draw at');
+    if (fbos) {
+      for (const f of fbos) { gl.bindFramebuffer(gl.FRAMEBUFFER, f.fb); gl.clearColor(0, 0, 0, 1); gl.clear(gl.COLOR_BUFFER_BIT); }
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    }
+    time = 20 + i * 7;
+    snapNext = true;
+    const n = name === 'intro' ? 130 : 26;
+    for (let f = 0; f <= n; f++) {
+      tick(1 / 60, forced);
+      if (f % 10 === 9 && f < n - 1) await breathe();  // never right before the last frame: it is the one kept
+    }
+    // toDataURL, not toBlob: Chrome encodes blobs in idle time, which adds up to a second per frame here.
+    return canvas.toDataURL('image/jpeg', 0.92);
+  }
+
+  // Give the graphics memory back straight away instead of waiting for garbage collection.
+  function release() {
+    destroy();
+    const lose = gl.getExtension('WEBGL_lose_context');
+    if (lose) lose.loseContext();
+  }
+
+  if (live) raf = requestAnimationFrame((now) => { last = now / 1000; raf = requestAnimationFrame(frame); });
 
   return {
-    destroy, pause, resume,
+    destroy, pause, resume, bake, release,
     set onDead(fn) { onDead = fn; },
     step: (n = 1, dt = 1 / 60) => { for (let i = 0; i < n; i++) tick(dt); },
     stats: () => ({ grains: count, of: N, resScale, frameMs: +(emaDt * 1000).toFixed(2), buffer: useFbo ? 'float' : 'direct', w: canvas.width, h: canvas.height }),
@@ -942,33 +991,86 @@ const root = document.documentElement;
 const canvas = document.getElementById('field');
 const hud = document.querySelector('.hud');
 const button = document.querySelector('.motion');
+const stillNote = document.querySelector('.still-note');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+const query = new URLSearchParams(location.search);
 
 const saved = (() => { try { return localStorage.getItem('motion'); } catch { return null; } })();
-let engine = null, busy = false, moving = false;
+let engine = null, busy = false, mode = 'plain';      // 'live' | 'plates' | 'plain'
 
-function reflect(onNow) {
-  root.classList.toggle('gl', onNow);
-  button.setAttribute('aria-pressed', String(onNow));
-  button.querySelector('span').textContent = onNow ? 'on' : 'off';
+function reflect(next) {
+  mode = next;
+  root.classList.toggle('fx', next !== 'plain');
+  root.classList.toggle('gl', next === 'live');
+  root.classList.toggle('plates', next === 'plates');
+  button.setAttribute('aria-pressed', String(next === 'live'));
+  button.querySelector('span').textContent = next === 'live' ? 'on' : 'off';
 }
 
-async function setMotion(wanted) {
+/* Motion off. Each section gets a still frame of its scene as a backdrop. The frames are
+   drawn by a second engine that exists only for this: with no frame rate to hold, it uses
+   more grains than the live field, renders each scene once, and is thrown away. */
+const plates = { key: '', job: 0, done: Promise.resolve() };
+
+async function renderPlates() {
+  const cw = canvas.clientWidth, ch = canvas.clientHeight;
+  const key = `${cw}x${ch}`;
+  if (plates.key === key) return;                       // frames for this size already hang
+  const job = ++plates.job;
+  const small = matchMedia('(pointer: coarse)').matches || Math.min(innerWidth, innerHeight) < 600;
+  const baker = await createEngine(document.createElement('canvas'), hud, {
+    live: false, count: small ? 160000 : 320000, size: () => [cw, ch],
+  });
+  stillNote.textContent = `still · ${baker.stats().of.toLocaleString('en-US')} grains`;
+  // nearest to the reader first
+  const far = (el) => { const r = el.getBoundingClientRect(); return Math.abs(r.top + r.height / 2 - innerHeight / 2); };
+  const sections = [...document.querySelectorAll('[data-scene]')].sort((a, b) => far(a) - far(b));
+  try {
+    for (const el of sections) {
+      if (job !== plates.job || mode !== 'plates') return;
+      const picture = await baker.bake(el.dataset.scene);
+      if (job !== plates.job) return;
+      let img = el.querySelector('.plate');
+      if (!img) {
+        img = new Image();
+        img.className = 'plate'; img.alt = ''; img.decoding = 'async';
+        img.setAttribute('aria-hidden', 'true');
+        el.prepend(img);
+      }
+      img.src = picture;
+      await breathe();
+    }
+    plates.key = key;
+  } finally {
+    baker.release();
+  }
+}
+
+async function setMode(next) {
   if (busy) return;
   busy = true;
   try {
-    if (wanted && !engine) {
-      engine = await createEngine(canvas, hud);
-      engine.onDead = () => { engine = null; moving = false; reflect(false); button.hidden = true; };
-      if (new URLSearchParams(location.search).has('debug')) window.__field = engine;
+    if (next === 'live') {
+      if (!engine) {
+        engine = await createEngine(canvas, hud);
+        engine.onDead = () => { engine = null; setMode('plates'); };
+        if (query.has('debug')) window.__field = engine;
+      }
+      plates.job++;                                      // stop any still frames in progress
+      engine.resume();
+      reflect('live');
+    } else {
+      if (engine) engine.pause();
+      reflect('plates');
+      plates.done = renderPlates().catch((err) => {
+        console.warn('Still frames unavailable, showing the plain page.', err);
+        if (mode === 'plates') reflect('plain');
+      });
     }
-    if (engine) { if (wanted) engine.resume(); else engine.pause(); }
-    moving = wanted && !!engine;
-    reflect(moving);
   } catch (err) {
-    console.warn('Dust field unavailable, showing the still page.', err);
-    engine = null; moving = false;
-    reflect(false);
+    console.warn('Dust field unavailable, showing the plain page.', err);
+    engine = null;
+    reflect('plain');
     button.hidden = true;
   } finally {
     busy = false;
@@ -979,13 +1081,27 @@ const canRun = (() => {
   try { return !!document.createElement('canvas').getContext('webgl2'); } catch { return false; }
 })();
 
-if (canRun && !new URLSearchParams(location.search).has('still')) {
+if (canRun && !query.has('still')) {
+  if (query.has('debug')) window.__plates = plates;
   button.hidden = false;
   button.addEventListener('click', () => {
-    const next = !moving;
-    try { localStorage.setItem('motion', next ? 'on' : 'off'); } catch { /* private mode */ }
-    setMotion(next);
+    const next = mode === 'live' ? 'plates' : 'live';
+    try { localStorage.setItem('motion', next === 'live' ? 'on' : 'off'); } catch { /* private mode */ }
+    setMode(next);
   });
   // Motion follows the system setting unless the visitor has chosen with the switch.
-  setMotion(saved ? saved === 'on' : !reduce.matches);
+  const wantLive = query.has('plates') ? false : saved ? saved === 'on' : !reduce.matches;
+  setMode(wantLive ? 'live' : 'plates');
+
+  // Still frames are drawn for one window size; draw them again when it really changes
+  // (a phone's address bar sliding away does not count).
+  let timer = 0, lastW = innerWidth, lastH = innerHeight;
+  addEventListener('resize', () => {
+    if (innerWidth === lastW && Math.abs(innerHeight - lastH) < 120) return;
+    lastW = innerWidth; lastH = innerHeight;
+    clearTimeout(timer);
+    timer = setTimeout(() => { if (mode === 'plates') plates.done = renderPlates().catch(() => {}); }, 350);
+  }, { passive: true });
+} else {
+  reflect('plain');                                      // index.html assumed the dust could run
 }

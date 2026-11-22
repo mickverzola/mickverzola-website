@@ -21,6 +21,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<!-- Use the scene layout from the first paint when the dust can run, so the page does not jump. -->
+<script>if (window.WebGL2RenderingContext && !/[?&]still/.test(location.search)) document.documentElement.classList.add('fx');</script>
 <script type="module" src="main.js"></script>
 </head>
 <body>
@@ -73,8 +75,8 @@
          alt="Mick Verzola in a cap and sunglasses, smiling outdoors under a tree">
     <div class="copy">
       <p class="label">About</p>
-      <h2>I solve problems.</h2>
-      <p>Hello, I’m Mick. Here are three I took on in my own time.</p>
+      <h2>I solve problems nobody asked me to.</h2>
+      <p>Hello, I’m Mick. When something bugs me for long enough, I build my way out of it. Here are three times that got out of hand.</p>
     </div>
   </section>
 
@@ -88,23 +90,23 @@
         </li>
         <li>
           <h3>Then the store needed a way to price effectively.</h3>
-          <p>So I built Gitaxian Probe. It reads the local market and works out prices from real supply and demand. It’s private. It’s also the money maker, and nobody shows a winning hand.</p>
+          <p>So I built Gitaxian Probe. It reads the local market and works out prices from real supply and demand. It’s private, nobody shows a winning hand <span class="wink">;)</span></p>
         </li>
         <li>
-          <h3>At home, AI tokens are not unlimited.</h3>
-          <p>So I reused hardware I had lying around and built a micro AI cluster out of consumer equipment.</p>
+          <h3>At my last job, AI tokens felt unlimited. At home, they come with a bill.</h3>
+          <p>So I rounded up the hardware I had lying around and turned it into a micro AI cluster: three consumer machines doing their best impression of a data center. It doesn’t charge by the token.</p>
         </li>
       </ol>
     </div>
   </section>
 
-  <section class="scene scene-year" id="experience" data-scene="y2018">
+  <section class="scene scene-year" id="experience" data-scene="y2024">
     <div class="copy">
       <p class="label">Experience <span aria-hidden="true">· 1 / 3</span></p>
-      <p class="static-only big-year" aria-hidden="true">2018</p>
-      <h2>SolarWinds</h2>
-      <p class="range">2018 – 2023</p>
-      <p>Led IT service delivery across APAC.</p>
+      <p class="static-only big-year" aria-hidden="true">2024</p>
+      <h2>Netflix</h2>
+      <p class="range">2024 – 2026</p>
+      <p>Led a team focused on access for production partners.</p>
     </div>
   </section>
 
@@ -118,13 +120,13 @@
     </div>
   </section>
 
-  <section class="scene scene-year" data-scene="y2024">
+  <section class="scene scene-year" data-scene="y2018">
     <div class="copy">
       <p class="label">Experience <span aria-hidden="true">· 3 / 3</span></p>
-      <p class="static-only big-year" aria-hidden="true">2024</p>
-      <h2>Netflix</h2>
-      <p class="range">2024 – 2026</p>
-      <p>Led a team focused on access for production partners.</p>
+      <p class="static-only big-year" aria-hidden="true">2018</p>
+      <h2>SolarWinds</h2>
+      <p class="range">2018 – 2023</p>
+      <p>Led IT service delivery across APAC.</p>
     </div>
   </section>
 
@@ -151,6 +153,7 @@
     <span class="meter-bar"><i></i></span>
     <span class="meter-val">000</span>
   </div>
+  <p class="still-note" aria-hidden="true"></p>
   <button class="motion" type="button" aria-pressed="false" hidden>Motion <span>off</span></button>
 </div>
 

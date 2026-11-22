@@ -1,7 +1,8 @@
 /* mickverzola.com
-   Two modes share this stylesheet:
-   - default: a still, complete page (no JavaScript, no WebGL, or motion turned off)
-   - html.gl: main.js is drawing the dust field behind the page, one scene per screen */
+   Three modes share this stylesheet (main.js sets the classes on <html>):
+   - fx gl      live: the dust field runs behind the page, one scene per screen
+   - fx plates  motion off: the same scenes, each with a still frame of its dust as a backdrop
+   - (neither)  plain: no JavaScript or no WebGL2; an ordinary page with the photo and logo */
 
 :root{
   --bg: #07070a;
@@ -37,7 +38,7 @@ body{
     var(--bg);
   background-attachment: fixed;
 }
-.gl body{ background: var(--bg); }
+.fx body{ background: var(--bg); }
 
 ::selection{ background: var(--gold); color: var(--bg); }
 
@@ -74,6 +75,27 @@ ul, ol{ padding: 0; list-style: none; }
 }
 .gl #field{ opacity: 1; }
 
+/* A still frame of a scene, hung behind its section and faded out toward its neighbours. */
+.plate{
+  display: none;
+  position: absolute; left: 0; top: 50%; z-index: -1;
+  width: 100%; height: 100vh; height: 100lvh;
+  transform: translateY(-50%);
+  object-fit: cover;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 13%, #000 87%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 13%, #000 87%, transparent);
+}
+.plates .plate{ display: block; }
+.scene-intro .plate{
+  -webkit-mask-image: linear-gradient(to bottom, #000 87%, transparent);
+  mask-image: linear-gradient(to bottom, #000 87%, transparent);
+}
+.scene-contact .plate{
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 13%);
+  mask-image: linear-gradient(to bottom, transparent, #000 13%);
+}
+
 /* ---------- header ---------- */
 .bar{
   position: fixed; inset: 0 0 auto 0; z-index: 10;
@@ -108,10 +130,10 @@ main{ position: relative; z-index: 1; }
   padding: clamp(84px, 14vh, 150px) var(--pad);
 }
 .scene-intro{ min-height: 100vh; min-height: 100svh; align-items: center; }
-.gl .scene{ min-height: 100vh; min-height: 100svh; }
+.fx .scene{ min-height: 100vh; min-height: 100svh; }
 
 .copy{ max-width: 23em; will-change: opacity, transform; }
-.gl .copy{ text-shadow: 0 0 30px rgba(7,7,10,.9), 0 0 8px rgba(7,7,10,.65); }
+.fx .copy{ text-shadow: 0 0 30px rgba(7,7,10,.9), 0 0 8px rgba(7,7,10,.65); }
 .copy p + p{ margin-top: .6em; }
 
 .label{ display: block; margin-bottom: 1.5rem; color: var(--mute); font-weight: 400; }
@@ -197,10 +219,11 @@ h2{
 .problems{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem clamp(24px, 4.2vw, 72px); }
 .problems h3{ font-weight: 400; font-size: 1.1em; line-height: 1.12; letter-spacing: -.005em; margin-bottom: .55em; text-wrap: balance; }
 .problems p{ font-size: .8em; line-height: 1.4; color: #d3ccc0; max-width: 26em; }
+.wink{ color: var(--gold); white-space: nowrap; }
 
 /* contact */
 .scene-contact{ align-items: start; grid-template-rows: 1fr auto; row-gap: 3rem; }
-.gl .scene-contact .copy{ padding-top: 3vh; }
+.fx .scene-contact .copy{ padding-top: 3vh; }
 .email{
   display: inline-block;
   font-size: clamp(1.7rem, min(4.6vw, 9vh), 5.4rem);
@@ -227,6 +250,9 @@ footer{ color: var(--mute); padding-bottom: 34px; }
 }
 .meter{ display: flex; align-items: center; gap: 12px; visibility: hidden; }
 .gl .meter{ visibility: visible; }
+.plates .meter{ display: none; }
+.still-note{ display: none; }
+.plates .still-note{ display: block; }
 .meter-bar{ display: block; width: clamp(64px, 12vw, 150px); height: 1px; background: var(--line); }
 .meter-bar i{ display: block; height: 100%; width: 100%; background: var(--gold); transform-origin: 0 50%; transform: scaleX(0); }
 .meter-val{ color: var(--ink); font-variant-numeric: tabular-nums; min-width: 3ch; }
@@ -247,15 +273,15 @@ footer{ color: var(--mute); padding-bottom: 34px; }
 .motion[hidden]{ display: none; }
 
 /* ---------- still page: everything visible, nothing depends on the canvas ---------- */
-.gl .static-only{ display: none; }
-.gl .portrait{
+.fx .static-only{ display: none; }
+.fx .portrait{
   position: absolute; width: 1px; height: 1px; overflow: hidden;
   clip-path: inset(50%); white-space: nowrap;
 }
-html:not(.gl) .scene:not(.scene-intro){ padding-block: clamp(48px, 8vh, 100px); }
-html:not(.gl) .scene-mark{ row-gap: 2.4rem; }
-html:not(.gl) .scene-year{ grid-template-columns: 1fr; border-top: 1px solid var(--line); }
-html:not(.gl) .scene-year ~ .scene-year .label{ display: none; }
+html:not(.fx) .scene:not(.scene-intro){ padding-block: clamp(48px, 8vh, 100px); }
+html:not(.fx) .scene-mark{ row-gap: 2.4rem; }
+html:not(.fx) .scene-year{ grid-template-columns: 1fr; border-top: 1px solid var(--line); }
+html:not(.fx) .scene-year ~ .scene-year .label{ display: none; }
 html:not(.gl) .cue{ display: none; }
 
 /* ---------- tall, narrow screens: shape on top, words below ---------- */
@@ -266,9 +292,9 @@ html:not(.gl) .cue{ display: none; }
   .scene-about .copy, .scene-year .copy{ grid-column: 1; }
   .problems{ grid-template-columns: 1fr; gap: 1.3rem; }
   .problems p{ font-size: .86em; }
-  .gl .scene-about, .gl .scene-year, .gl .scene-mark{ align-items: end; padding-bottom: clamp(84px, 13vh, 150px); }
-  html:not(.gl) .scene-about{ row-gap: 2rem; }
-  html:not(.gl) .portrait{ grid-row: auto; }
+  .fx .scene-about, .fx .scene-year, .fx .scene-mark{ align-items: end; padding-bottom: clamp(84px, 13vh, 150px); }
+  html:not(.fx) .scene-about{ row-gap: 2rem; }
+  html:not(.fx) .portrait{ grid-row: auto; }
 }
 
 @media (prefers-reduced-motion: reduce){
