@@ -1,46 +1,48 @@
-# Mick Verzola — personal portfolio
+# mickverzola.com
 
-A simple personal portfolio and gateway to side projects at [mickverzola.com](https://mickverzola.com). It introduces Mick, shares an employment timeline, links to social profiles and personal projects, and includes a sample presentation produced with his local AI stack.
+Mick Verzola's personal site. One page: a field of dust that starts as turbulence and
+settles into shapes as you scroll (the M mark, a portrait, three small diagrams, three years,
+a horizon).
 
-The intended audience includes recruiters and potential employers. A future content overhaul should leave visitors with the impression that Mick is multi-skilled, with current people leadership at Netflix and practical side projects as supporting evidence. Preserve the tagline, M logo, color scheme and social links.
+It is a static site with no build step and no dependencies. Vercel deploys the repository
+as it is, and `mickverzola.com` points at it.
 
-## Run locally
+## Files
 
-Open `index.html` in a browser for a basic preview. There is no installation or build step. For an HTTP preview, with Python 3 installed, run from the repository root:
+| File | What it is |
+| --- | --- |
+| `index.html` | All content: the tagline, about, experience, contact links. Readable with JavaScript off. |
+| `styles.css` | Layout and type for all three modes (live, motion off, plain); the comment at the top lists them. |
+| `main.js` | The dust: a WebGL2 particle simulation, written by hand. The comment at the top explains how it works. |
+| `favicon.svg` | The M mark; dark on light tabs, light on dark tabs. |
+| `images/portrait-*.jpg` | The portrait at four widths. `main.js` samples `portrait-800.jpg` into dust. |
+| `images/og.jpg` | The 1200×630 picture shown when the link is shared. |
 
-```powershell
-python -m http.server 8000 --bind 127.0.0.1
+## Run it locally
+
+Any static file server works. From this folder, in PowerShell or Git Bash:
+
+```
+python -m http.server 8137 --bind 127.0.0.1
 ```
 
-Visit `http://127.0.0.1:8000/` and `http://127.0.0.1:8000/nonprofits.html`. Stop the server with Ctrl+C. This command serves the whole working directory; use it locally only.
+Then open http://127.0.0.1:8137/. Opening `index.html` straight from disk may show the still
+page only, because browsers restrict module scripts and image reads on `file://`.
 
-## Source
+## Things worth knowing
 
-| File | Purpose |
-| --- | --- |
-| [index.html](index.html) | Portfolio content, navigation, logo and social links |
-| [styles.css](styles.css) | Homepage palette, layout, typography and responsive behavior |
-| [main.js](main.js) | Rabbit Hole dropdown behavior |
-| [nonprofits.html](nonprofits.html) | Self-contained seven-slide AI presentation |
-| `images/000.jpg`–`004.jpg` | Hero and four gallery placeholders |
-
-The site uses plain HTML, CSS and browser JavaScript. Google Fonts supplies the homepage fonts. There is no application backend, database, package manifest or build pipeline in this repository.
-
-## Documentation
-
-- [Documentation guide](docs/README.md)
-- [Product requirements](docs/prd.md)
-- [Technical design and repository review](docs/tdd.md)
-- [Development workflow](docs/workflow.md)
-- [Backlog](docs/backlog.md)
-- [Portfolio v1 delivery plan](docs/delivery-plan.md)
-- [Operations](docs/operations.md)
-- [Architecture decision records](docs/adr/README.md)
-
-## Hosting and status
-
-The GitHub source repository is private; its visibility was changed at the owner's request and verified through GitHub on 2026-10-13.
-
-The owner reports GitHub → Vercel deployment with the domain managed through Cloudflare. Issue #2 observed successful Vercel deployment metadata for the merged baseline, an apex redirect to `www`, and HTTP 200 responses for the canonical homepage/deck/assets. Account settings, configured production branch and browser behavior still need confirmation; see [operations findings](docs/operations.md#issue-2-hosting-investigation--2026-10-13).
-
-The original 2026-10-13 review used source commit `0dea6ca`; the published baseline uses runtime base `1121b62`, which removed the GenMedia link. PR #11 merged at `df58ff754f8ddeea554509dc19e0a8616e42b0a9`. The overhaul and review fixes remain backlog work. Earlier source checks found valid JavaScript syntax and intact local page references, plus accessibility and image-size issues. Issue #2 adds measured HTTP image transfers; browser/device behavior and the custom domain's active deployment SHA remain unverified. See the [investigation evidence](docs/tdd.md#issue-2-investigation--2026-10-13) and open [follow-up #12](https://github.com/mickverzola/mickverzola-website/issues/12).
+- **Motion is optional.** The switch at the bottom right turns motion off and on, and the
+  choice is remembered. If the system asks for reduced motion, the site starts with motion off.
+- **Motion off is still the dust.** A second, short-lived engine with more grains settles each
+  scene once and hangs a still frame of it behind that section. Nothing moves after that.
+- **Plain page.** With no WebGL2 or no JavaScript, visitors get an ordinary page with the photo
+  and the logo.
+- **Scenes are data.** `SCENES` in `main.js` lists each scene's settings in page order, matched
+  to the `data-scene` attributes in `index.html`. `layout()` says where each shape sits, and
+  uses the same 9/10 aspect threshold as the stacked layout in `styles.css`.
+- **Changing the words is safe.** The text lives only in `index.html`. Changing a year means
+  changing it in the HTML and in the `['2018', '2023', '2024']` list in `main.js`.
+- **Quality adapts.** If frames run long, the field sheds grains, then resolution. It checks
+  that a step actually helped before keeping it.
+- **Test hooks.** `?plates` starts with motion off. `?still` forces the plain page. `?n=60000` sets the grain count. `?debug`
+  exposes `window.__field` with `stats()` and `step(frames)` for stepping the simulation by hand.
