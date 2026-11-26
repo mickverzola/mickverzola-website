@@ -19,8 +19,8 @@ as it is, and `mickverzola.com` points at it.
 | `images/og.jpg` | The 1200×630 picture shown when the link is shared. |
 | `blog/index.html` | The blog's list of posts, newest first. "Read my blog" on the homepage opens it. |
 | `blog/<slug>/index.html` | One post per folder, so its address is `/blog/<slug>/`. |
-| `blog/blog.css` | Look of the list and the posts. Same palette and fonts as `styles.css`, no dust. |
-| `blog/blog.js` | Builds each post's "On this page" list from its `h2`/`h3` headings. Posts read fine without it. |
+| `blog/blog.css` | Look of the list and the posts. Same palette and fonts as `styles.css`, no dust. Pages are centered at 96rem, so ultrawide screens split the spare room evenly. Diagrams are HTML boxes (`.dg`, see the comment there) that fall into one column on phones. |
+| `blog/blog.js` | Builds each post's "On this page" list from its `h2`/`h3` headings: a sidebar on wide screens, a floating button on phones. Posts read fine without it. |
 | `blog/_template.html` | The page to copy for a new post. Kept off the live site by `.vercelignore`. |
 
 ## Run it locally
