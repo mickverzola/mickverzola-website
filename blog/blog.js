@@ -37,8 +37,14 @@ if (toc && prose) {
     const sync = () => { details.open = wide.matches; };
     sync();
     wide.addEventListener('change', sync);
-    // On narrow screens, fold the list away again after a jump.
+    // On narrow screens the list is a floating button: fold it away after a jump,
+    // or when the reader taps anywhere else.
     list.addEventListener('click', e => { if (e.target.closest('a') && !wide.matches) details.open = false; });
+    document.addEventListener('click', e => {
+      if (!wide.matches && details.open && !toc.contains(e.target)) details.open = false;
+    });
+    // The button names the section being read.
+    const here = toc.querySelector('.toc-current');
 
     // The current section is the last heading that has scrolled past the top third.
     let current = null;
@@ -53,6 +59,7 @@ if (toc && prose) {
       const a = links.get(pick);
       a.setAttribute('aria-current', 'true');
       current = pick;
+      if (here) here.textContent = a.textContent;
       // Keep the marked entry visible when the list is taller than its box (scrolls the list, not the page).
       if (wide.matches && details.scrollHeight > details.clientHeight) {
         details.scrollTop = a.offsetTop - details.clientHeight / 2;

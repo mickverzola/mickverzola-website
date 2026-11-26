@@ -58,7 +58,7 @@
 
 <nav class="toc" aria-label="On this page" hidden>
   <details open>
-    <summary>On this page</summary>
+    <summary>On this page <span class="toc-current"></span></summary>
     <ol></ol>
   </details>
 </nav>
@@ -121,58 +121,37 @@
 
 <figure class="figure">
   <p class="fig-title">Today one NUC runs everything people use; two GPU machines run the models</p>
-  <div class="scroll">
-  <svg viewBox="0 40 760 468" role="img" aria-labelledby="d-now">
-    <title id="d-now">Today one NUC runs everything people use, and two GPU machines run the models</title>
-    <defs><marker id="now-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="d-arrowhead"/></marker></defs>
-    <rect class="d-box" x="24" y="48" width="346" height="72" rx="8"/>
-    <text class="d-head" x="40" y="72">Cloudflare</text>
-    <text class="d-text" x="40" y="90">The tunnel: the way in from the internet</text>
-    <text class="d-text" x="40" y="106">Access email code; set up by hand</text>
-    <rect class="d-box" x="390" y="48" width="346" height="72" rx="8"/>
-    <text class="d-head" x="406" y="72">Cloud models</text>
-    <text class="d-text" x="406" y="90">Anthropic models, called</text>
-    <text class="d-text" x="406" y="106">only through LiteLLM</text>
-    <path class="d-edge" d="M197 120V150" marker-end="url(#now-arrow)"/>
-    <path class="d-edge" d="M563 152V122" marker-end="url(#now-arrow)"/>
-    <text class="d-quiet" x="207" y="140">people come in</text>
-    <text class="d-quiet" x="573" y="140">to cloud models</text>
-    <rect class="d-accent" x="24" y="152" width="712" height="162" rx="8"/>
-    <text class="d-head" x="40" y="176">The NUC: always on, Docker Compose</text>
-    <text class="d-quiet" x="40" y="194">If it stops, chat, the gateway, the agent and home lookups stop with it</text>
-    <rect class="d-box" x="40" y="210" width="216" height="88" rx="8"/>
-    <text class="d-head" x="56" y="234">Front door</text>
-    <text class="d-text" x="56" y="250">Caddy</text>
-    <text class="d-text" x="56" y="266">Cloudflare tunnel</text>
-    <text class="d-text" x="56" y="282">Pi-hole for home lookups</text>
-    <rect class="d-box" x="272" y="210" width="216" height="88" rx="8"/>
-    <text class="d-head" x="288" y="234">Apps people use</text>
-    <text class="d-text" x="288" y="250">Portal</text>
-    <text class="d-text" x="288" y="266">Open WebUI</text>
-    <text class="d-text" x="288" y="282">Hermes Agent (owner only)</text>
-    <rect class="d-box" x="504" y="210" width="216" height="88" rx="8"/>
-    <text class="d-head" x="520" y="234">Gateway and data</text>
-    <text class="d-text" x="520" y="250">LiteLLM, Rhystic Study</text>
-    <text class="d-text" x="520" y="266">PostgreSQL</text>
-    <text class="d-text" x="520" y="282">Nightly backups, same disk</text>
-    <path class="d-edge" d="M198 314V344" marker-end="url(#now-arrow)"/>
-    <path class="d-edge" d="M562 314V344" marker-end="url(#now-arrow)"/>
-    <text class="d-quiet" x="208" y="334">model requests</text>
-    <text class="d-quiet" x="572" y="334">model requests</text>
-    <rect class="d-box" x="24" y="346" width="348" height="114" rx="8"/>
-    <text class="d-head" x="40" y="370">mickserver-ai: always on, 2 × RTX 5060 Ti</text>
-    <text class="d-quiet" x="40" y="388">Docker Compose, its own deploy scripts</text>
-    <text class="d-text" x="40" y="412">llama-swap: loads models, referees the cards</text>
-    <text class="d-text" x="40" y="428">Chat engine (Strata) and the chat models</text>
-    <text class="d-text" x="40" y="444">ComfyUI and our adapter for pictures</text>
-    <rect class="d-box" x="388" y="346" width="348" height="114" rx="8"/>
-    <text class="d-head" x="404" y="370">Workstation: on when in use, RTX 4090</text>
-    <text class="d-quiet" x="404" y="388">Docker Compose, its own deploy scripts</text>
-    <text class="d-text" x="404" y="412">llama-swap: loads models, referees the card</text>
-    <text class="d-text" x="404" y="428">Chat engine (Strata) and the chat models</text>
-    <text class="d-text" x="404" y="444">ComfyUI and our adapter for pictures</text>
-    <text class="d-quiet" x="24" y="488">Secrets sit in a hand-edited .env on each machine. Watching is Portal dots and one Cloudflare email.</text>
-  </svg>
+  <div class="dg">
+    <div class="dg-row" style="--cols:2">
+      <div class="dg-cell">
+        <div class="dg-box"><span class="dg-name">Cloudflare</span><p>The tunnel: the way in from the internet</p><p>Access email code; set up by hand</p></div>
+        <p class="dg-link down">people come in to the NUC</p>
+      </div>
+      <div class="dg-cell">
+        <div class="dg-box"><span class="dg-name">Cloud models</span><p>Anthropic models, called only through LiteLLM</p></div>
+        <p class="dg-link up">the NUC calls cloud models</p>
+      </div>
+    </div>
+    <div class="dg-box accent">
+      <span class="dg-name">The NUC: always on, Docker Compose</span>
+      <span class="dg-sub">If it stops, chat, the gateway, the agent and home lookups stop with it</span>
+      <div class="dg-row tight">
+        <div class="dg-box"><span class="dg-name">Front door</span><p>Caddy</p><p>Cloudflare tunnel</p><p>Pi-hole for home lookups</p></div>
+        <div class="dg-box"><span class="dg-name">Apps people use</span><p>Portal</p><p>Open WebUI</p><p>Hermes Agent (owner only)</p></div>
+        <div class="dg-box"><span class="dg-name">Gateway and data</span><p>LiteLLM, Rhystic Study</p><p>PostgreSQL</p><p>Nightly backups, same disk</p></div>
+      </div>
+    </div>
+    <div class="dg-row" style="--cols:2">
+      <div class="dg-cell">
+        <p class="dg-link down">model requests from the NUC</p>
+        <div class="dg-box"><span class="dg-name">mickserver-ai: always on, 2 × RTX 5060 Ti</span><span class="dg-sub">Docker Compose, its own deploy scripts</span><p>llama-swap: loads models, referees the cards</p><p>Chat engine (Strata) and the chat models</p><p>ComfyUI and our adapter for pictures</p></div>
+      </div>
+      <div class="dg-cell">
+        <p class="dg-link down">model requests from the NUC</p>
+        <div class="dg-box"><span class="dg-name">Workstation: on when in use, RTX 4090</span><span class="dg-sub">Docker Compose, its own deploy scripts</span><p>llama-swap: loads models, referees the card</p><p>Chat engine (Strata) and the chat models</p><p>ComfyUI and our adapter for pictures</p></div>
+      </div>
+    </div>
+    <p class="dg-note">Secrets sit in a hand-edited .env on each machine. Watching is Portal dots and one Cloudflare email.</p>
   </div>
   <figcaption>Current state: Cloudflare, the NUC, two GPU machines.</figcaption>
 </figure>
@@ -184,89 +163,51 @@
 <figure class="figure">
   <p class="fig-title">The cluster takes in two machines; the workstation lends its GPU from outside</p>
   <p class="key"><span class="k-new">New in the future state</span><span class="k-have">Same as today</span></p>
-  <div class="scroll">
-  <svg viewBox="0 58 760 802" role="img" aria-labelledby="d-map">
-    <title id="d-map">The cluster takes in the NUC and the 5060 Ti machine; the workstation lends its GPU from outside</title>
-    <defs><marker id="map-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="d-arrowhead"/></marker></defs>
-    <rect class="d-box" x="24" y="64" width="226" height="72" rx="8"/>
-    <text class="d-head" x="40" y="88">Cloudflare</text>
-    <text class="d-text" x="40" y="106">The way in from the internet</text>
-    <text class="d-text" x="40" y="122">Set up by OpenTofu (new)</text>
-    <rect class="d-new" x="267" y="64" width="226" height="72" rx="8"/>
-    <text class="d-head" x="283" y="88">Google Cloud</text>
-    <text class="d-text" x="283" y="106">Off-site backups, a monitor</text>
-    <text class="d-text" x="283" y="122">from outside, speech fallback</text>
-    <rect class="d-box" x="510" y="64" width="226" height="72" rx="8"/>
-    <text class="d-head" x="526" y="88">Cloud model providers</text>
-    <text class="d-text" x="526" y="106">Anthropic models today,</text>
-    <text class="d-text" x="526" y="122">always through LiteLLM</text>
-    <path class="d-edge" d="M137 136V168" marker-end="url(#map-arrow)"/>
-    <path class="d-edge" d="M380 168V136" marker-end="url(#map-arrow)"/>
-    <path class="d-edge" d="M623 168V136" marker-end="url(#map-arrow)"/>
-    <text class="d-quiet" x="147" y="156">people come in</text>
-    <text class="d-quiet" x="390" y="156">backups go out</text>
-    <text class="d-quiet" x="633" y="156">to cloud models</text>
-    <rect class="d-accent" x="24" y="168" width="712" height="514" rx="8"/>
-    <text class="d-head" x="40" y="190">One K3s cluster: three managers and two workers, run as one pool</text>
-    <text class="d-quiet" x="40" y="208">Any one manager can fail and its services restart on the others. Deploys follow git.</text>
-    <text class="d-quiet" x="40" y="232">SERVICES, PLACED ON ANY NODE THAT FITS</text>
-    <rect class="d-box" x="40" y="240" width="216" height="88" rx="8"/>
-    <text class="d-head" x="56" y="264">Front door</text>
-    <text class="d-text" x="56" y="282">Caddy, Cloudflare tunnel,</text>
-    <text class="d-text" x="56" y="298">Pi-hole for home lookups,</text>
-    <text class="d-text" x="56" y="314">one address, any live PC</text>
-    <rect class="d-box" x="272" y="240" width="216" height="88" rx="8"/>
-    <text class="d-head" x="288" y="264">Apps people use</text>
-    <text class="d-text" x="288" y="282">Portal, Open WebUI,</text>
-    <text class="d-text" x="288" y="298">Hermes Agent (owner only),</text>
-    <text class="d-text" x="288" y="314">web search (planned)</text>
-    <rect class="d-box" x="504" y="240" width="216" height="88" rx="8"/>
-    <text class="d-head" x="520" y="264">Gateways</text>
-    <text class="d-text" x="520" y="282">LiteLLM for every model,</text>
-    <text class="d-text" x="520" y="298">Rhystic Study (routing),</text>
-    <text class="d-text" x="520" y="314">tool gateway (new)</text>
-    <rect class="d-box" x="40" y="344" width="216" height="88" rx="8"/>
-    <text class="d-head" x="56" y="368">Data</text>
-    <text class="d-text" x="56" y="386">PostgreSQL with a replica,</text>
-    <text class="d-text" x="56" y="402">Valkey, ClickHouse (new),</text>
-    <text class="d-text" x="56" y="418">nightly backups</text>
-    <rect class="d-new" x="272" y="344" width="216" height="88" rx="8"/>
-    <text class="d-head" x="288" y="368">Watching</text>
-    <text class="d-text" x="288" y="386">Uptime Kuma and alerts,</text>
-    <text class="d-text" x="288" y="402">Prometheus, Grafana,</text>
-    <text class="d-text" x="288" y="418">Langfuse (optional)</text>
-    <rect class="d-new" x="504" y="344" width="216" height="88" rx="8"/>
-    <text class="d-head" x="520" y="368">Secrets</text>
-    <text class="d-text" x="520" y="386">OpenBao holds every key</text>
-    <text class="d-text" x="520" y="402">and gives each app</text>
-    <text class="d-text" x="520" y="418">only its own</text>
-    <text class="d-quiet" x="40" y="456">NODES</text>
-    <rect class="d-new" x="40" y="464" width="448" height="72" rx="8"/>
-    <text class="d-head" x="56" y="488">Three small PCs: managers</text>
-    <text class="d-text" x="56" y="506">Hold the cluster's state and vote; two of three keep it running</text>
-    <text class="d-text" x="56" y="522">Also run the services above</text>
-    <rect class="d-box" x="504" y="464" width="216" height="72" rx="8"/>
-    <text class="d-head" x="520" y="488">NUC: worker</text>
-    <text class="d-text" x="520" y="506">Extra room for services</text>
-    <text class="d-text" x="520" y="522">and my two other projects</text>
-    <rect class="d-box" x="40" y="552" width="680" height="114" rx="8"/>
-    <text class="d-head" x="56" y="576">GPU worker: 2 × RTX 5060 Ti</text>
-    <text class="d-quiet" x="56" y="594">Always on; today's mickserver-ai. Its cards can be lent to another project from git.</text>
-    <text class="d-text" x="56" y="618">llama-swap still referees the cards</text>
-    <text class="d-text" x="56" y="634">Chat engine (Strata) and the chat models</text>
-    <text class="d-text" x="56" y="650">ComfyUI and our adapter for pictures</text>
-    <text class="d-text" x="388" y="618">Celery worker and metrics (new)</text>
-    <path class="d-edge" d="M380 682V712" marker-end="url(#map-arrow)"/>
-    <text class="d-quiet" x="390" y="702">Rhystic Study sends work to its llama-swap</text>
-    <rect class="d-box" x="24" y="714" width="712" height="104" rx="8"/>
-    <text class="d-head" x="40" y="738">Workstation: RTX 4090, outside the cluster</text>
-    <text class="d-quiet" x="40" y="756">On when in use; stays on Docker Compose and adds its GPU to the cluster's when it is on</text>
-    <text class="d-text" x="40" y="780">llama-swap still referees the card</text>
-    <text class="d-text" x="40" y="796">Chat engine (Strata) and the chat models</text>
-    <text class="d-text" x="388" y="780">ComfyUI and our adapter for pictures</text>
-    <text class="d-text" x="388" y="796">Celery worker and metrics (new)</text>
-    <text class="d-quiet" x="24" y="846">Kubernetes hands each card to one workload at a time; inside it, llama-swap still swaps the models.</text>
-  </svg>
+  <div class="dg">
+    <div class="dg-row">
+      <div class="dg-cell">
+        <div class="dg-box"><span class="dg-name">Cloudflare</span><p>The way in from the internet. Set up by OpenTofu (new)</p></div>
+        <p class="dg-link down">people come in to the cluster</p>
+      </div>
+      <div class="dg-cell">
+        <div class="dg-box new"><span class="dg-name">Google Cloud</span><p>Off-site backups, a monitor from outside, speech fallback</p></div>
+        <p class="dg-link up">backups go out from the cluster</p>
+      </div>
+      <div class="dg-cell">
+        <div class="dg-box"><span class="dg-name">Cloud model providers</span><p>Anthropic models today, always through LiteLLM</p></div>
+        <p class="dg-link up">the cluster calls cloud models</p>
+      </div>
+    </div>
+    <div class="dg-box accent">
+      <span class="dg-name">One K3s cluster: three managers and two workers, run as one pool</span>
+      <span class="dg-sub">Any one manager can fail and its services restart on the others. Deploys follow git.</span>
+      <p class="dg-label">Services, placed on any node that fits</p>
+      <div class="dg-row">
+        <div class="dg-box"><span class="dg-name">Front door</span><p>Caddy, Cloudflare tunnel, Pi-hole for home lookups, one address, any live PC</p></div>
+        <div class="dg-box"><span class="dg-name">Apps people use</span><p>Portal, Open WebUI, Hermes Agent (owner only), web search (planned)</p></div>
+        <div class="dg-box"><span class="dg-name">Gateways</span><p>LiteLLM for every model, Rhystic Study (routing), tool gateway (new)</p></div>
+        <div class="dg-box"><span class="dg-name">Data</span><p>PostgreSQL with a replica, Valkey, ClickHouse (new), nightly backups</p></div>
+        <div class="dg-box new"><span class="dg-name">Watching</span><p>Uptime Kuma and alerts, Prometheus, Grafana, Langfuse (optional)</p></div>
+        <div class="dg-box new"><span class="dg-name">Secrets</span><p>OpenBao holds every key and gives each app only its own</p></div>
+      </div>
+      <p class="dg-label">Nodes</p>
+      <div class="dg-row">
+        <div class="dg-box new dg-span2"><span class="dg-name">Three small PCs: managers</span><p>Hold the cluster's state and vote; two of three keep it running</p><p>Also run the services above</p></div>
+        <div class="dg-box"><span class="dg-name">NUC: worker</span><p>Extra room for services and my two other projects</p></div>
+      </div>
+      <div class="dg-box">
+        <span class="dg-name">GPU worker: 2 × RTX 5060 Ti</span>
+        <span class="dg-sub">Always on; today's mickserver-ai. Its cards can be lent to another project from git.</span>
+        <div class="dg-cols"><div><p>llama-swap still referees the cards</p><p>Chat engine (Strata) and the chat models</p></div><div><p>ComfyUI and our adapter for pictures</p><p>Celery worker and metrics (new)</p></div></div>
+      </div>
+    </div>
+    <p class="dg-link down">Rhystic Study sends work to its llama-swap</p>
+    <div class="dg-box">
+      <span class="dg-name">Workstation: RTX 4090, outside the cluster</span>
+      <span class="dg-sub">On when in use; stays on Docker Compose and adds its GPU to the cluster's when it is on</span>
+      <div class="dg-cols"><div><p>llama-swap still referees the card</p><p>Chat engine (Strata) and the chat models</p></div><div><p>ComfyUI and our adapter for pictures</p><p>Celery worker and metrics (new)</p></div></div>
+    </div>
+    <p class="dg-note">Kubernetes hands each card to one workload at a time; inside it, llama-swap still swaps the models.</p>
   </div>
   <figcaption>Machine map: cloud edge, core cluster, two GPU machines.</figcaption>
 </figure>
@@ -352,62 +293,38 @@
 
 <figure class="figure">
   <p class="fig-title">Command Tower shows every node, model, job and alert on one page</p>
-  <div class="scroll">
-  <svg viewBox="0 34 760 566" role="img" aria-labelledby="d-ct">
-    <title id="d-ct">Command Tower mock-up: node tiles, models loaded, job queue, gateway today, latest alerts and links to detail</title>
-    <rect class="d-box" x="24" y="40" width="712" height="536" rx="10"/>
-    <path class="d-tint" d="M24 80V50a10 10 0 0 1 10 -10h692a10 10 0 0 1 10 10v30z"/>
-    <line class="d-edge" x1="24" x2="736" y1="80" y2="80"/>
-    <text class="d-head" x="40" y="65">Command Tower</text>
-    <text class="d-quiet" x="160" y="65">command-tower.domain.com</text>
-    <rect x="566" y="50" width="154" height="20" rx="10" fill="rgba(143,207,156,.15)" stroke="#8fcf9c"/>
-    <text class="d-quiet d-mid" x="643" y="64" style="fill:var(--ink)">All systems normal</text>
-    <text class="d-quiet" x="40" y="104">NODES</text>
-    <rect class="d-box" x="40" y="112" width="106" height="76" rx="8"/><circle class="d-dot-good" cx="136" cy="126" r="4"/>
-    <text class="d-head" x="52" y="134">Manager 1</text><text class="d-quiet" x="52" y="154">CPU 14%</text><text class="d-quiet" x="52" y="172">19/32 GB RAM</text>
-    <rect class="d-box" x="154" y="112" width="106" height="76" rx="8"/><circle class="d-dot-good" cx="250" cy="126" r="4"/>
-    <text class="d-head" x="166" y="134">Manager 2</text><text class="d-quiet" x="166" y="154">CPU 22%</text><text class="d-quiet" x="166" y="172">23/32 GB RAM</text>
-    <rect class="d-box" x="268" y="112" width="106" height="76" rx="8"/><circle class="d-dot-good" cx="364" cy="126" r="4"/>
-    <text class="d-head" x="280" y="134">Manager 3</text><text class="d-quiet" x="280" y="154">CPU 11%</text><text class="d-quiet" x="280" y="172">17/32 GB RAM</text>
-    <rect class="d-box" x="382" y="112" width="106" height="76" rx="8"/><circle class="d-dot-good" cx="478" cy="126" r="4"/>
-    <text class="d-head" x="394" y="134">NUC worker</text><text class="d-quiet" x="394" y="154">CPU 9%</text><text class="d-quiet" x="394" y="172">12/32 GB RAM</text>
-    <rect class="d-box" x="496" y="112" width="106" height="76" rx="8"/><circle class="d-dot-good" cx="592" cy="126" r="4"/>
-    <text class="d-head" x="508" y="134">GPU worker</text><text class="d-quiet" x="508" y="154">2 × 5060 Ti</text><text class="d-quiet" x="508" y="172">27/32 GB VRAM</text>
-    <rect class="d-box" x="610" y="112" width="106" height="76" rx="8"/><circle class="d-dot-off" cx="706" cy="126" r="4"/>
-    <text class="d-head" x="622" y="134">Workstation</text><text class="d-quiet" x="622" y="154">RTX 4090</text><text class="d-quiet" x="622" y="172">Off, on call</text>
-    <rect class="d-box" x="40" y="204" width="220" height="148" rx="8"/>
-    <text class="d-head" x="54" y="228">Models loaded</text>
-    <text class="d-quiet" x="54" y="256">Card 1</text><text class="d-text d-end" x="246" y="256">Flash-Next (chat)</text>
-    <text class="d-quiet" x="54" y="280">Card 2</text><text class="d-text d-end" x="246" y="280">ComfyUI (pictures)</text>
-    <text class="d-quiet" x="54" y="304">Workstation</text><text class="d-text d-end" x="246" y="304">Off</text>
-    <text class="d-quiet" x="54" y="328">Last swap</text><text class="d-text d-end" x="246" y="328">4 min ago</text>
-    <rect class="d-box" x="270" y="204" width="220" height="148" rx="8"/>
-    <text class="d-head" x="284" y="228">Job queue</text>
-    <text class="d-quiet" x="284" y="256">Waiting</text><text class="d-text d-end" x="476" y="256">2</text>
-    <text class="d-quiet" x="284" y="280">Running</text><text class="d-text d-end" x="476" y="280">1 video clip</text>
-    <text class="d-quiet" x="284" y="304">Oldest wait</text><text class="d-text d-end" x="476" y="304">18 min</text>
-    <text class="d-quiet" x="284" y="328">Waiting for</text><text class="d-text d-end" x="476" y="328">Workstation</text>
-    <rect class="d-box" x="500" y="204" width="220" height="148" rx="8"/>
-    <text class="d-head" x="514" y="228">Gateway today</text>
-    <text class="d-quiet" x="514" y="256">Requests</text><text class="d-text d-end" x="706" y="256">1,284</text>
-    <text class="d-quiet" x="514" y="280">Tokens</text><text class="d-text d-end" x="706" y="280">3.1 M</text>
-    <text class="d-quiet" x="514" y="304">Cloud, this month</text><text class="d-text d-end" x="706" y="304">$11 of $40</text>
-    <text class="d-quiet" x="514" y="328">Guardrail blocks</text><text class="d-text d-end" x="706" y="328">3</text>
-    <rect class="d-box" x="40" y="368" width="450" height="156" rx="8"/>
-    <text class="d-head" x="54" y="392">Latest alerts</text>
-    <circle class="d-dot-warn" cx="60" cy="416" r="4"/><text class="d-text" x="72" y="420">Disk on manager 2 at 71%</text><text class="d-quiet d-end" x="476" y="420">12:40</text>
-    <circle class="d-dot-good" cx="60" cy="442" r="4"/><text class="d-text" x="72" y="446">Workstation switched off; 2 jobs wait for it</text><text class="d-quiet d-end" x="476" y="446">11:58</text>
-    <circle class="d-dot-good" cx="60" cy="468" r="4"/><text class="d-text" x="72" y="472">Manager 3 restarted; its services came back</text><text class="d-quiet d-end" x="476" y="472">09:15</text>
-    <circle class="d-dot-good" cx="60" cy="494" r="4"/><text class="d-text" x="72" y="498">Off-site backup copy finished</text><text class="d-quiet d-end" x="476" y="498">02:10</text>
-    <rect class="d-box" x="500" y="368" width="220" height="156" rx="8"/>
-    <text class="d-head" x="514" y="392">Open the detail</text>
-    <text class="d-link" x="514" y="420">Grafana</text><text class="d-link" x="614" y="420">Langfuse</text>
-    <text class="d-link" x="514" y="446">Uptime Kuma</text><text class="d-link" x="614" y="446">Keycloak</text>
-    <text class="d-link" x="514" y="472">OpenBao</text><text class="d-link" x="614" y="472">Open WebUI</text>
-    <text class="d-link" x="514" y="498">Loki logs</text><text class="d-link" x="614" y="498">Git deploys</text>
-    <line class="d-grid" x1="40" x2="720" y1="540" y2="540"/>
-    <text class="d-quiet" x="40" y="562">Every value is an example. Command Tower shows state only; acting on it is Phase 2, the control plane.</text>
-  </svg>
+  <div class="dg ct">
+    <div class="ct-bar"><span class="dg-name">Command Tower</span><span class="ct-url">command-tower.domain.com</span><span class="ct-ok">All systems normal</span></div>
+    <div class="ct-body">
+      <p class="dg-label">Nodes</p>
+      <div class="ct-nodes">
+        <div class="dg-box ct-node"><span class="dg-name">Manager 1</span><i class="dot" title="on"></i><span class="dg-sub">CPU 14%</span><span class="dg-sub">19/32 GB RAM</span></div>
+        <div class="dg-box ct-node"><span class="dg-name">Manager 2</span><i class="dot" title="on"></i><span class="dg-sub">CPU 22%</span><span class="dg-sub">23/32 GB RAM</span></div>
+        <div class="dg-box ct-node"><span class="dg-name">Manager 3</span><i class="dot" title="on"></i><span class="dg-sub">CPU 11%</span><span class="dg-sub">17/32 GB RAM</span></div>
+        <div class="dg-box ct-node"><span class="dg-name">NUC worker</span><i class="dot" title="on"></i><span class="dg-sub">CPU 9%</span><span class="dg-sub">12/32 GB RAM</span></div>
+        <div class="dg-box ct-node"><span class="dg-name">GPU worker</span><i class="dot" title="on"></i><span class="dg-sub">2 × 5060 Ti</span><span class="dg-sub">27/32 GB VRAM</span></div>
+        <div class="dg-box ct-node"><span class="dg-name">Workstation</span><i class="dot off" title="off"></i><span class="dg-sub">RTX 4090</span><span class="dg-sub">Off, on call</span></div>
+      </div>
+      <div class="ct-panels">
+        <div class="dg-box"><span class="dg-name">Models loaded</span><dl class="ct-kv"><dt>Card 1</dt><dd>Flash-Next (chat)</dd><dt>Card 2</dt><dd>ComfyUI (pictures)</dd><dt>Workstation</dt><dd>Off</dd><dt>Last swap</dt><dd>4 min ago</dd></dl></div>
+        <div class="dg-box"><span class="dg-name">Job queue</span><dl class="ct-kv"><dt>Waiting</dt><dd>2</dd><dt>Running</dt><dd>1 video clip</dd><dt>Oldest wait</dt><dd>18 min</dd><dt>Waiting for</dt><dd>Workstation</dd></dl></div>
+        <div class="dg-box"><span class="dg-name">Gateway today</span><dl class="ct-kv"><dt>Requests</dt><dd>1,284</dd><dt>Tokens</dt><dd>3.1 M</dd><dt>Cloud, this month</dt><dd>$11 of $40</dd><dt>Guardrail blocks</dt><dd>3</dd></dl></div>
+      </div>
+      <div class="ct-lower">
+        <div class="dg-box"><span class="dg-name">Latest alerts</span>
+          <ul class="ct-alerts">
+            <li><i class="dot warn"></i><span>Disk on manager 2 at 71%</span><time>12:40</time></li>
+            <li><i class="dot"></i><span>Workstation switched off; 2 jobs wait for it</span><time>11:58</time></li>
+            <li><i class="dot"></i><span>Manager 3 restarted; its services came back</span><time>09:15</time></li>
+            <li><i class="dot"></i><span>Off-site backup copy finished</span><time>02:10</time></li>
+          </ul>
+        </div>
+        <div class="dg-box"><span class="dg-name">Open the detail</span>
+          <ul class="ct-links"><li>Grafana</li><li>Langfuse</li><li>Uptime Kuma</li><li>Keycloak</li><li>OpenBao</li><li>Open WebUI</li><li>Loki logs</li><li>Git deploys</li></ul>
+        </div>
+      </div>
+      <p class="dg-note">Every value is an example. Command Tower shows state only; acting on it is Phase 2, the control plane.</p>
+    </div>
   </div>
   <figcaption>In this version it only shows state. Acting from it, such as draining a node or lending the GPUs, is Phase 2: a separate project that turns it into a control plane.</figcaption>
 </figure>
@@ -417,40 +334,24 @@
 
 <figure class="figure">
   <p class="fig-title">Rhystic Study sends each request to the machine that can answer it soonest</p>
-  <div class="scroll">
-  <svg viewBox="0 38 760 334" role="img" aria-labelledby="d-rs">
-    <title id="d-rs">A local model request: if a chat is already under way it stays on its machine; otherwise Rhystic Study asks each machine what is loaded and picks, in order, model ready, model loading, the model's home, or fails fast when no machine is on</title>
-    <defs><marker id="rs-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="d-arrowhead"/></marker></defs>
-    <path class="d-edge" d="M164 150H183" marker-end="url(#rs-arrow)"/>
-    <path class="d-edge" d="M260 190V226" marker-end="url(#rs-arrow)"/>
-    <path class="d-edge" d="M335 150H368" marker-end="url(#rs-arrow)"/>
-    <path class="d-edge" d="M540 150H564" marker-end="url(#rs-arrow)"/>
-    <text class="d-quiet" x="268" y="212">yes</text>
-    <text class="d-quiet" x="342" y="142">no</text>
-    <rect class="d-box" x="24" y="122" width="140" height="56" rx="8"/>
-    <text class="d-head d-mid" x="94" y="146">Local model</text>
-    <text class="d-head d-mid" x="94" y="164">request</text>
-    <polygon class="d-box" points="185,150 260,110 335,150 260,190"/>
-    <text class="d-text d-mid" x="260" y="146">Chat already</text>
-    <text class="d-text d-mid" x="260" y="162">under way?</text>
-    <rect class="d-box" x="185" y="228" width="150" height="56" rx="8"/>
-    <text class="d-text d-mid" x="260" y="252">Stay on its machine</text>
-    <text class="d-quiet d-mid" x="260" y="270">keeps its context</text>
-    <rect class="d-box" x="370" y="122" width="170" height="56" rx="8"/>
-    <text class="d-text d-mid" x="455" y="146">Ask each machine</text>
-    <text class="d-text d-mid" x="455" y="164">what is loaded</text>
-    <rect class="d-box" x="566" y="60" width="170" height="256" rx="8"/>
-    <text class="d-quiet" x="578" y="52">PICK, IN THIS ORDER</text>
-    <rect class="d-new" x="572" y="72" width="158" height="48" rx="6"/>
-    <text class="d-head" x="584" y="92">1. Model ready</text><text class="d-quiet" x="584" y="110">answers now</text>
-    <rect class="d-new" x="572" y="132" width="158" height="48" rx="6"/>
-    <text class="d-head" x="584" y="152">2. Model loading</text><text class="d-quiet" x="584" y="170">answers soon</text>
-    <rect class="d-new" x="572" y="192" width="158" height="48" rx="6"/>
-    <text class="d-head" x="584" y="212">3. Model's home</text><text class="d-quiet" x="584" y="230">loads it, up to 2 min</text>
-    <rect class="d-warn" x="572" y="252" width="158" height="48" rx="6"/>
-    <text class="d-head" x="584" y="272">4. No machine on</text><text class="d-quiet" x="584" y="290">fails in about 1 s</text>
-    <text class="d-quiet" x="24" y="352">Pictures use the same check and spread over three cards without evicting the asker's chat model.</text>
-  </svg>
+  <div class="dg">
+    <div class="dg-flow">
+      <div class="dg-box"><span class="dg-name">Local model request</span></div>
+      <span class="dg-arrow" aria-hidden="true"></span>
+      <div class="dg-box"><span class="dg-name">Chat already under way?</span><span class="dg-sub">Yes: it stays on its machine, which keeps its context.</span></div>
+      <span class="dg-arrow"><span>no</span></span>
+      <div class="dg-box"><span class="dg-name">Ask each machine what is loaded</span></div>
+      <span class="dg-arrow" aria-hidden="true"></span>
+      <div class="dg-box wide"><span class="dg-sub">PICK, IN THIS ORDER</span>
+        <ol class="dg-steps">
+          <li class="dg-box new"><span class="dg-name">1. Model ready</span><span class="dg-sub">answers now</span></li>
+          <li class="dg-box new"><span class="dg-name">2. Model loading</span><span class="dg-sub">answers soon</span></li>
+          <li class="dg-box new"><span class="dg-name">3. Model's home</span><span class="dg-sub">loads it, up to 2 min</span></li>
+          <li class="dg-box warn"><span class="dg-name">4. No machine on</span><span class="dg-sub">fails in about 1 s</span></li>
+        </ol>
+      </div>
+    </div>
+    <p class="dg-note">Pictures use the same check and spread over three cards without evicting the asker's chat model.</p>
   </div>
   <figcaption>In this version its memory moves into Valkey, so it survives a restart and both LiteLLM copies agree. Cloud models stay available when no GPU machine is on.</figcaption>
 </figure>
@@ -461,38 +362,21 @@
 
 <figure class="figure">
   <p class="fig-title">Any app calls Worldly Tutor through one gateway</p>
-  <div class="scroll">
-  <svg viewBox="0 70 760 290" role="img" aria-labelledby="d-wt">
-    <title id="d-wt">Open WebUI, Hermes or any other app, each with its own key, call LiteLLM's MCP gateway, which checks the key and passes the request to Worldly Tutor; Worldly Tutor fills in the chosen ComfyUI workflow and ComfyUI runs it</title>
-    <defs><marker id="wt-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="d-arrowhead"/></marker></defs>
-    <path class="d-edge" d="M172 112H188V240H172"/>
-    <path class="d-edge" d="M172 176H188"/>
-    <path class="d-edge" d="M188 176H204" marker-end="url(#wt-arrow)"/>
-    <path class="d-edge" d="M352 176H384" marker-end="url(#wt-arrow)"/>
-    <path class="d-edge" d="M532 176H564" marker-end="url(#wt-arrow)"/>
-    <path class="d-edge" d="M458 260V212" marker-end="url(#wt-arrow)"/>
-    <rect class="d-box" x="24" y="90" width="148" height="44" rx="8"/><text class="d-text d-mid" x="98" y="116">Open WebUI</text>
-    <rect class="d-box" x="24" y="154" width="148" height="44" rx="8"/><text class="d-text d-mid" x="98" y="180">Hermes</text>
-    <rect class="d-box" x="24" y="218" width="148" height="44" rx="8"/><text class="d-text d-mid" x="98" y="244">Any other app</text>
-    <text class="d-quiet" x="24" y="286">each app with its own key</text>
-    <rect class="d-box" x="204" y="140" width="148" height="72" rx="8"/>
-    <text class="d-head d-mid" x="278" y="164">LiteLLM</text>
-    <text class="d-quiet d-mid" x="278" y="182">MCP gateway</text>
-    <text class="d-quiet d-mid" x="278" y="198">checks the key</text>
-    <rect class="d-new" x="384" y="140" width="148" height="72" rx="8"/>
-    <text class="d-head d-mid" x="458" y="164">Worldly Tutor</text>
-    <text class="d-text d-mid" x="458" y="182">fills in the</text>
-    <text class="d-text d-mid" x="458" y="198">ComfyUI workflow</text>
-    <rect class="d-box" x="564" y="148" width="148" height="56" rx="8"/>
-    <text class="d-head d-mid" x="638" y="172">ComfyUI</text>
-    <text class="d-quiet d-mid" x="638" y="190">runs the workflow</text>
-    <rect class="d-box" x="384" y="260" width="148" height="88" rx="8"/>
-    <text class="d-head d-mid" x="458" y="284">Workflows</text>
-    <text class="d-quiet d-mid" x="458" y="302">per model, today</text>
-    <text class="d-quiet d-mid" x="458" y="318">community-supported,</text>
-    <text class="d-quiet d-mid" x="458" y="334">added in the plan</text>
-    <text class="d-quiet" x="468" y="240">you pick one</text>
-  </svg>
+  <div class="dg">
+    <div class="dg-flow">
+      <div class="dg-cell">
+        <div class="dg-stack"><div class="dg-box">Open WebUI</div><div class="dg-box">Hermes</div><div class="dg-box">Any other app</div></div>
+        <span class="dg-sub" style="margin-top:.6em">each app with its own key</span>
+      </div>
+      <span class="dg-arrow" aria-hidden="true"></span>
+      <div class="dg-box"><span class="dg-name">LiteLLM</span><span class="dg-sub">MCP gateway; checks the key</span></div>
+      <span class="dg-arrow" aria-hidden="true"></span>
+      <div class="dg-box new wide"><span class="dg-name">Worldly Tutor</span><p>fills in the ComfyUI workflow</p>
+        <div class="dg-box"><span class="dg-name">Workflows: you pick one</span><span class="dg-sub">Per model today; community-supported workflows added in the plan.</span></div>
+      </div>
+      <span class="dg-arrow" aria-hidden="true"></span>
+      <div class="dg-box"><span class="dg-name">ComfyUI</span><span class="dg-sub">runs the workflow</span></div>
+    </div>
   </div>
   <figcaption>Worldly Tutor, future state: apps → LiteLLM MCP gateway → Worldly Tutor → ComfyUI.</figcaption>
 </figure>

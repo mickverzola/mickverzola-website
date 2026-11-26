@@ -62,7 +62,7 @@
 
 <nav class="toc" aria-label="On this page" hidden>
   <details open>
-    <summary>On this page</summary>
+    <summary>On this page <span class="toc-current"></span></summary>
     <ol></ol>
   </details>
 </nav>
@@ -76,7 +76,9 @@
        Give each heading different words, so each gets its own link.
      - Paragraphs <p>; the first can be <p class="lead"> for a slightly larger opening.
      - A picture or diagram: wrap it in <figure class="figure"> with <figcaption>.
-       Wide SVG diagrams go inside <div class="scroll"> so they scroll on phones.
+       Build diagrams from the .dg boxes listed in blog/blog.css ("diagrams"), not a wide
+       picture: boxes rearrange into one column on phones, so nobody scrolls sideways.
+       The Thoracle post has five worked examples.
      - A service or item with a status pill:
        <p class="item"><strong>Name</strong><span class="tag new">new</span></p> -->
 
