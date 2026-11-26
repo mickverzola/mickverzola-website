@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Thoracle: An AI-native homelab platform · Mick Verzola</title>
+<meta name="description" content="Enterprise AI platform, home edition: what runs today on a few consumer machines, what the cluster version adds, and the parts I built myself.">
+<meta name="theme-color" content="#07070a">
+<meta name="color-scheme" content="dark">
+<link rel="canonical" href="https://www.mickverzola.com/blog/thoracle-ai-native-homelab/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Thoracle: An AI-native homelab platform">
+<meta property="og:description" content="Enterprise AI platform, home edition: what runs today, what the cluster version adds, and the parts I built myself.">
+<meta property="og:url" content="https://www.mickverzola.com/blog/thoracle-ai-native-homelab/">
+<meta property="og:image" content="https://www.mickverzola.com/images/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="article:published_time" content="2026-11-26">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/blog/blog.css">
+<script type="module" src="/blog/blog.js"></script>
+</head>
+<body>
+
+<svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <symbol id="m" viewBox="79 74 332 211">
+    <path d="M 361.0 229.0 L 359.0 227.0 L 352.0 227.0 L 328.0 244.0 L 301.0 259.0 L 288.0 264.0 L 285.0 264.0 L 282.0 261.0 L 282.0 249.0 L 286.0 238.0 L 288.0 226.0 L 317.0 152.0 L 317.0 139.0 L 309.0 130.0 L 298.0 131.0 L 273.0 149.0 L 240.0 178.0 L 213.0 208.0 L 210.0 209.0 L 208.0 207.0 L 214.0 187.0 L 216.0 174.0 L 226.0 147.0 L 236.0 105.0 L 236.0 86.0 L 234.0 80.0 L 228.0 74.0 L 223.0 74.0 L 216.0 80.0 L 197.0 103.0 L 131.0 195.0 L 99.0 247.0 L 95.0 251.0 L 93.0 256.0 L 79.0 276.0 L 79.0 281.0 L 83.0 284.0 L 88.0 284.0 L 102.0 270.0 L 128.0 229.0 L 149.0 201.0 L 151.0 196.0 L 176.0 160.0 L 210.0 115.0 L 218.0 107.0 L 221.0 110.0 L 215.0 123.0 L 210.0 145.0 L 199.0 175.0 L 185.0 223.0 L 184.0 244.0 L 190.0 252.0 L 197.0 251.0 L 222.0 225.0 L 254.0 188.0 L 289.0 156.0 L 295.0 153.0 L 297.0 155.0 L 297.0 158.0 L 293.0 170.0 L 288.0 179.0 L 287.0 185.0 L 282.0 194.0 L 281.0 200.0 L 264.0 239.0 L 262.0 260.0 L 263.0 267.0 L 267.0 273.0 L 272.0 277.0 L 279.0 279.0 L 285.0 279.0 L 299.0 275.0 L 349.0 246.0 L 360.0 237.0 Z"/>
+    <path d="M 398.0 246.0 L 390.0 253.0 L 390.0 263.0 L 396.0 269.0 L 402.0 269.0 L 409.0 262.0 L 410.0 254.0 L 403.0 247.0 Z"/>
+  </symbol>
+</svg>
+
+<a class="skip" href="#post">Skip to the post</a>
+
+<header class="bar">
+  <a class="logo" href="/" aria-label="Mick Verzola, home">
+    <svg viewBox="0 0 332 211" aria-hidden="true" focusable="false"><use href="#m"/></svg>
+  </a>
+  <nav aria-label="Blog">
+    <a href="/blog/">All posts</a>
+    <a href="/">Home</a>
+  </nav>
+</header>
+
+<main id="post">
+<article>
+
+<header class="post-head">
+  <p class="label">Blog</p>
+  <h1>Thoracle: An <em>AI-native</em> homelab platform</h1>
+  <p class="meta"><span><time datetime="2026-11-26">Nov 26, 2026</time></span><span>19 min read</span></p>
+</header>
+
+<div class="post-layout">
+
+<nav class="toc" aria-label="On this page" hidden>
+  <details open>
+    <summary>On this page</summary>
+    <ol></ol>
+  </details>
+</nav>
+
+<div class="prose">
+
+<h2>Goal</h2>
+<p class="lead">Thoracle is my infrastructure playground: an environment I fully control, built the way larger organizations deploy their services. It has three jobs:</p>
+<ul>
+  <li><strong>Test bench.</strong> Plug in a new service or app to try it, without asking anyone.</li>
+  <li><strong>Home for my dev work.</strong> My own projects are built and run here.</li>
+  <li><strong>Bleeding edge.</strong> Run the newest infrastructure ideas, not only the ones an employer already uses.</li>
+</ul>
+<p>Work experience only teaches the infrastructure an organization already has. Owning the whole stack is how I find better ways to run it.</p>
+
+<h2>What Thoracle Is</h2>
+<p>Thoracle is a homelab project that simulates how enterprise AI platforms work, scaled down to a few users on consumer equipment. Each layer a large company would run, from the front door to the secrets store, has a homelab stand-in.</p>
+
+<figure class="figure">
+  <div class="table-wrap">
+  <table class="compare">
+    <caption>All 18 functions now have a plan: built, partly built or chosen</caption>
+    <thead>
+      <tr><th scope="col">Function</th><th scope="col">Enterprise (typical)</th><th scope="col">Thoracle</th></tr>
+    </thead>
+    <tbody>
+      <tr class="built"><th scope="row">Edge access</th><td>Zscaler, Cloudflare Zero Trust</td><td>Cloudflare Tunnel and Access<span class="sr-only"> (built)</span></td></tr>
+      <tr class="todo"><th scope="row">Identity and SSO</th><td>Okta or Entra ID, roles per app</td><td>Keycloak<span class="sr-only"> (not yet built)</span></td></tr>
+      <tr class="built"><th scope="row">Chat and agent apps</th><td>ChatGPT Enterprise, Copilot</td><td>Open WebUI, Hermes, Portal<span class="sr-only"> (built)</span></td></tr>
+      <tr class="built"><th scope="row">LLM gateway</th><td>Kong AI, Portkey, LiteLLM</td><td>LiteLLM and Rhystic Study<span class="sr-only"> (built)</span></td></tr>
+      <tr class="built"><th scope="row">Usage and cost control</th><td>Per-team keys and budgets</td><td>LiteLLM keys you can limit<span class="sr-only"> (built)</span></td></tr>
+      <tr class="todo"><th scope="row">Guardrails</th><td>Presidio, Lakera, Bedrock</td><td>Presidio via LiteLLM<span class="sr-only"> (not yet built)</span></td></tr>
+      <tr class="todo"><th scope="row">Tool gateway (MCP)</th><td>MCP gateway, tool registry</td><td>LiteLLM as tool gateway<span class="sr-only"> (not yet built)</span></td></tr>
+      <tr class="built"><th scope="row">Retrieval (RAG)</th><td>pgvector or Pinecone, ingestion</td><td>Open WebUI built-in retrieval<span class="sr-only"> (built)</span></td></tr>
+      <tr class="built"><th scope="row">Model serving</th><td>vLLM or Triton on GPU clusters</td><td>llama-swap, Strata, ComfyUI<span class="sr-only"> (built)</span></td></tr>
+      <tr class="todo"><th scope="row">Background jobs</th><td>Kafka, SQS, Celery</td><td>Celery and Valkey<span class="sr-only"> (not yet built)</span></td></tr>
+      <tr class="todo"><th scope="row">Container platform</th><td>Kubernetes: EKS, GKE, OpenShift</td><td>K3s on three small PCs<span class="sr-only"> (not yet built)</span></td></tr>
+      <tr class="part"><th scope="row">Data and backups</th><td>Managed DBs, cross-region DR</td><td>Postgres; replica, off-site next<span class="sr-only"> (partly built)</span></td></tr>
+      <tr class="todo"><th scope="row">Shared storage</th><td>SAN or Ceph, Amazon S3</td><td>Longhorn and Garage<span class="sr-only"> (not yet built)</span></td></tr>
+      <tr class="todo"><th scope="row">Secrets</th><td>HashiCorp Vault, cloud KMS</td><td>OpenBao<span class="sr-only"> (not yet built)</span></td></tr>
+      <tr class="todo"><th scope="row">Monitoring and alerts</th><td>Datadog, Prometheus, PagerDuty</td><td>Uptime Kuma, Prometheus, Grafana<span class="sr-only"> (not yet built)</span></td></tr>
+      <tr class="todo"><th scope="row">Logs</th><td>Splunk, Elastic, Loki</td><td>Grafana Loki and Alloy<span class="sr-only"> (not yet built)</span></td></tr>
+      <tr class="part"><th scope="row">LLM tracing and evals</th><td>Langfuse, LangSmith, Arize</td><td>LiteLLM log; Langfuse later<span class="sr-only"> (partly built)</span></td></tr>
+      <tr class="todo"><th scope="row">Infrastructure as code</th><td>Terraform</td><td>OpenTofu<span class="sr-only"> (not yet built)</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <figcaption>
+    <span class="key" aria-hidden="true"><span class="k-built">Built</span><span class="k-part">Partly built</span><span class="k-todo">Not yet built</span></span>
+    What Thoracle is: enterprise layers and their homelab stand-ins.
+  </figcaption>
+</figure>
+
+<p>Because it runs at home, chats, pictures and documents stay fully local. A local model costs nothing per request, and no provider sees what you ask it. The software is free, and the cloud spend fits inside a $40 monthly credit.</p>
+<p>It does not make a model faster or smarter, and a cluster does not survive a power cut or a dead router.</p>
+
+<h2>Current State</h2>
+<p>Thoracle runs today on three machines and Cloudflare. One always-on NUC runs everything people touch: the front door, the apps, the model gateway and the database. Two GPU machines run the private models, and Cloudflare lets people in from outside.</p>
+<p>It works, but the NUC is a single point of failure. If it stops, chat, the gateway, the agent and home lookups stop with it.</p>
+
+<figure class="figure">
+  <p class="fig-title">Today one NUC runs everything people use; two GPU machines run the models</p>
+  <div class="scroll">
+  <svg viewBox="0 40 760 468" role="img" aria-labelledby="d-now">
+    <title id="d-now">Today one NUC runs everything people use, and two GPU machines run the models</title>
+    <defs><marker id="now-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="d-arrowhead"/></marker></defs>
+    <rect class="d-box" x="24" y="48" width="346" height="72" rx="8"/>
+    <text class="d-head" x="40" y="72">Cloudflare</text>
+    <text class="d-text" x="40" y="90">The tunnel: the way in from the internet</text>
+    <text class="d-text" x="40" y="106">Access email code; set up by hand</text>
+    <rect class="d-box" x="390" y="48" width="346" height="72" rx="8"/>
+    <text class="d-head" x="406" y="72">Cloud models</text>
+    <text class="d-text" x="406" y="90">Anthropic models, called</text>
+    <text class="d-text" x="406" y="106">only through LiteLLM</text>
+    <path class="d-edge" d="M197 120V150" marker-end="url(#now-arrow)"/>
+    <path class="d-edge" d="M563 152V122" marker-end="url(#now-arrow)"/>
+    <text class="d-quiet" x="207" y="140">people come in</text>
+    <text class="d-quiet" x="573" y="140">to cloud models</text>
+    <rect class="d-accent" x="24" y="152" width="712" height="162" rx="8"/>
+    <text class="d-head" x="40" y="176">The NUC: always on, Docker Compose</text>
+    <text class="d-quiet" x="40" y="194">If it stops, chat, the gateway, the agent and home lookups stop with it</text>
+    <rect class="d-box" x="40" y="210" width="216" height="88" rx="8"/>
+    <text class="d-head" x="56" y="234">Front door</text>
+    <text class="d-text" x="56" y="250">Caddy</text>
+    <text class="d-text" x="56" y="266">Cloudflare tunnel</text>
+    <text class="d-text" x="56" y="282">Pi-hole for home lookups</text>
+    <rect class="d-box" x="272" y="210" width="216" height="88" rx="8"/>
+    <text class="d-head" x="288" y="234">Apps people use</text>
+    <text class="d-text" x="288" y="250">Portal</text>
+    <text class="d-text" x="288" y="266">Open WebUI</text>
+    <text class="d-text" x="288" y="282">Hermes Agent (owner only)</text>
+    <rect class="d-box" x="504" y="210" width="216" height="88" rx="8"/>
+    <text class="d-head" x="520" y="234">Gateway and data</text>
+    <text class="d-text" x="520" y="250">LiteLLM, Rhystic Study</text>
+    <text class="d-text" x="520" y="266">PostgreSQL</text>
+    <text class="d-text" x="520" y="282">Nightly backups, same disk</text>
+    <path class="d-edge" d="M198 314V344" marker-end="url(#now-arrow)"/>
+    <path class="d-edge" d="M562 314V344" marker-end="url(#now-arrow)"/>
+    <text class="d-quiet" x="208" y="334">model requests</text>
+    <text class="d-quiet" x="572" y="334">model requests</text>
+    <rect class="d-box" x="24" y="346" width="348" height="114" rx="8"/>
+    <text class="d-head" x="40" y="370">mickserver-ai: always on, 2 × RTX 5060 Ti</text>
+    <text class="d-quiet" x="40" y="388">Docker Compose, its own deploy scripts</text>
+    <text class="d-text" x="40" y="412">llama-swap: loads models, referees the cards</text>
+    <text class="d-text" x="40" y="428">Chat engine (Strata) and the chat models</text>
+    <text class="d-text" x="40" y="444">ComfyUI and our adapter for pictures</text>
+    <rect class="d-box" x="388" y="346" width="348" height="114" rx="8"/>
+    <text class="d-head" x="404" y="370">Workstation: on when in use, RTX 4090</text>
+    <text class="d-quiet" x="404" y="388">Docker Compose, its own deploy scripts</text>
+    <text class="d-text" x="404" y="412">llama-swap: loads models, referees the card</text>
+    <text class="d-text" x="404" y="428">Chat engine (Strata) and the chat models</text>
+    <text class="d-text" x="404" y="444">ComfyUI and our adapter for pictures</text>
+    <text class="d-quiet" x="24" y="488">Secrets sit in a hand-edited .env on each machine. Watching is Portal dots and one Cloudflare email.</text>
+  </svg>
+  </div>
+  <figcaption>Current state: Cloudflare, the NUC, two GPU machines.</figcaption>
+</figure>
+
+<h2>Future State</h2>
+<p>Thoracle's future shape is one K3s cluster in place of the single NUC. Three small PCs run it as managers, and the NUC and the 5060 Ti machine join as workers. The RTX 4090 workstation stays outside and lends its GPU through Rhystic Study, my routing filter, when it is on.</p>
+<p>Around that core it adds a secrets store, monitoring, a job queue and an off-site backup copy, so no one machine can take the platform down.</p>
+
+<figure class="figure">
+  <p class="fig-title">The cluster takes in two machines; the workstation lends its GPU from outside</p>
+  <p class="key"><span class="k-new">New in the future state</span><span class="k-have">Same as today</span></p>
+  <div class="scroll">
+  <svg viewBox="0 58 760 802" role="img" aria-labelledby="d-map">
+    <title id="d-map">The cluster takes in the NUC and the 5060 Ti machine; the workstation lends its GPU from outside</title>
+    <defs><marker id="map-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="d-arrowhead"/></marker></defs>
+    <rect class="d-box" x="24" y="64" width="226" height="72" rx="8"/>
+    <text class="d-head" x="40" y="88">Cloudflare</text>
+    <text class="d-text" x="40" y="106">The way in from the internet</text>
+    <text class="d-text" x="40" y="122">Set up by OpenTofu (new)</text>
+    <rect class="d-new" x="267" y="64" width="226" height="72" rx="8"/>
+    <text class="d-head" x="283" y="88">Google Cloud</text>
+    <text class="d-text" x="283" y="106">Off-site backups, a monitor</text>
+    <text class="d-text" x="283" y="122">from outside, speech fallback</text>
+    <rect class="d-box" x="510" y="64" width="226" height="72" rx="8"/>
+    <text class="d-head" x="526" y="88">Cloud model providers</text>
+    <text class="d-text" x="526" y="106">Anthropic models today,</text>
+    <text class="d-text" x="526" y="122">always through LiteLLM</text>
+    <path class="d-edge" d="M137 136V168" marker-end="url(#map-arrow)"/>
+    <path class="d-edge" d="M380 168V136" marker-end="url(#map-arrow)"/>
+    <path class="d-edge" d="M623 168V136" marker-end="url(#map-arrow)"/>
+    <text class="d-quiet" x="147" y="156">people come in</text>
+    <text class="d-quiet" x="390" y="156">backups go out</text>
+    <text class="d-quiet" x="633" y="156">to cloud models</text>
+    <rect class="d-accent" x="24" y="168" width="712" height="514" rx="8"/>
+    <text class="d-head" x="40" y="190">One K3s cluster: three managers and two workers, run as one pool</text>
+    <text class="d-quiet" x="40" y="208">Any one manager can fail and its services restart on the others. Deploys follow git.</text>
+    <text class="d-quiet" x="40" y="232">SERVICES, PLACED ON ANY NODE THAT FITS</text>
+    <rect class="d-box" x="40" y="240" width="216" height="88" rx="8"/>
+    <text class="d-head" x="56" y="264">Front door</text>
+    <text class="d-text" x="56" y="282">Caddy, Cloudflare tunnel,</text>
+    <text class="d-text" x="56" y="298">Pi-hole for home lookups,</text>
+    <text class="d-text" x="56" y="314">one address, any live PC</text>
+    <rect class="d-box" x="272" y="240" width="216" height="88" rx="8"/>
+    <text class="d-head" x="288" y="264">Apps people use</text>
+    <text class="d-text" x="288" y="282">Portal, Open WebUI,</text>
+    <text class="d-text" x="288" y="298">Hermes Agent (owner only),</text>
+    <text class="d-text" x="288" y="314">web search (planned)</text>
+    <rect class="d-box" x="504" y="240" width="216" height="88" rx="8"/>
+    <text class="d-head" x="520" y="264">Gateways</text>
+    <text class="d-text" x="520" y="282">LiteLLM for every model,</text>
+    <text class="d-text" x="520" y="298">Rhystic Study (routing),</text>
+    <text class="d-text" x="520" y="314">tool gateway (new)</text>
+    <rect class="d-box" x="40" y="344" width="216" height="88" rx="8"/>
+    <text class="d-head" x="56" y="368">Data</text>
+    <text class="d-text" x="56" y="386">PostgreSQL with a replica,</text>
+    <text class="d-text" x="56" y="402">Valkey, ClickHouse (new),</text>
+    <text class="d-text" x="56" y="418">nightly backups</text>
+    <rect class="d-new" x="272" y="344" width="216" height="88" rx="8"/>
+    <text class="d-head" x="288" y="368">Watching</text>
+    <text class="d-text" x="288" y="386">Uptime Kuma and alerts,</text>
+    <text class="d-text" x="288" y="402">Prometheus, Grafana,</text>
+    <text class="d-text" x="288" y="418">Langfuse (optional)</text>
+    <rect class="d-new" x="504" y="344" width="216" height="88" rx="8"/>
+    <text class="d-head" x="520" y="368">Secrets</text>
+    <text class="d-text" x="520" y="386">OpenBao holds every key</text>
+    <text class="d-text" x="520" y="402">and gives each app</text>
+    <text class="d-text" x="520" y="418">only its own</text>
+    <text class="d-quiet" x="40" y="456">NODES</text>
+    <rect class="d-new" x="40" y="464" width="448" height="72" rx="8"/>
+    <text class="d-head" x="56" y="488">Three small PCs: managers</text>
+    <text class="d-text" x="56" y="506">Hold the cluster's state and vote; two of three keep it running</text>
+    <text class="d-text" x="56" y="522">Also run the services above</text>
+    <rect class="d-box" x="504" y="464" width="216" height="72" rx="8"/>
+    <text class="d-head" x="520" y="488">NUC: worker</text>
+    <text class="d-text" x="520" y="506">Extra room for services</text>
+    <text class="d-text" x="520" y="522">and my two other projects</text>
+    <rect class="d-box" x="40" y="552" width="680" height="114" rx="8"/>
+    <text class="d-head" x="56" y="576">GPU worker: 2 × RTX 5060 Ti</text>
+    <text class="d-quiet" x="56" y="594">Always on; today's mickserver-ai. Its cards can be lent to another project from git.</text>
+    <text class="d-text" x="56" y="618">llama-swap still referees the cards</text>
+    <text class="d-text" x="56" y="634">Chat engine (Strata) and the chat models</text>
+    <text class="d-text" x="56" y="650">ComfyUI and our adapter for pictures</text>
+    <text class="d-text" x="388" y="618">Celery worker and metrics (new)</text>
+    <path class="d-edge" d="M380 682V712" marker-end="url(#map-arrow)"/>
+    <text class="d-quiet" x="390" y="702">Rhystic Study sends work to its llama-swap</text>
+    <rect class="d-box" x="24" y="714" width="712" height="104" rx="8"/>
+    <text class="d-head" x="40" y="738">Workstation: RTX 4090, outside the cluster</text>
+    <text class="d-quiet" x="40" y="756">On when in use; stays on Docker Compose and adds its GPU to the cluster's when it is on</text>
+    <text class="d-text" x="40" y="780">llama-swap still referees the card</text>
+    <text class="d-text" x="40" y="796">Chat engine (Strata) and the chat models</text>
+    <text class="d-text" x="388" y="780">ComfyUI and our adapter for pictures</text>
+    <text class="d-text" x="388" y="796">Celery worker and metrics (new)</text>
+    <text class="d-quiet" x="24" y="846">Kubernetes hands each card to one workload at a time; inside it, llama-swap still swaps the models.</text>
+  </svg>
+  </div>
+  <figcaption>Machine map: cloud edge, core cluster, two GPU machines.</figcaption>
+</figure>
+
+<p>Read it against the current-state map above: what ran on the NUC now spreads across the cluster, and gold marks what is new. People still come in through Cloudflare, and a copy of the backups now leaves the house.</p>
+<p>The machines this shape needs come next, then what the change makes possible.</p>
+
+<h3>Hardware specifications</h3>
+
+<figure class="figure">
+  <p class="fig-title">Six machines in four roles: what each node brings</p>
+  <div class="specs">
+    <div class="spec new">
+      <h4>K3s Manager × 3 (to buy)</h4>
+      <dl>
+        <dt>Machine</dt><dd>Refurbished Dell Optiplex Micro</dd>
+        <dt>Role</dt><dd>Managers</dd>
+        <dt>CPU</dt><dd>At least an Intel Core i5, 8th gen</dd>
+        <dt>Memory</dt><dd>At least 32 GB each</dd>
+        <dt>SSD</dt><dd>At least 512 GB NVMe each</dd>
+        <dt>GPU</dt><dd>None</dd>
+        <dt>Notes</dt><dd>16 GB each gives 48 GB in all, and Langfuse alone needs about 25 GB. Each needs wired gigabit Ethernet.</dd>
+      </dl>
+    </div>
+    <div class="spec">
+      <h4>K3s Worker</h4>
+      <dl>
+        <dt>Machine</dt><dd>Intel NUC</dd>
+        <dt>Role</dt><dd>Worker</dd>
+        <dt>CPU</dt><dd>Intel Core i7 12th Gen</dd>
+        <dt>Memory</dt><dd>32 GB DDR4</dd>
+        <dt>SSD</dt><dd>512 GB NVMe</dd>
+        <dt>GPU</dt><dd>None</dd>
+        <dt>Notes</dt><dd>Today's always-on core</dd>
+      </dl>
+    </div>
+    <div class="spec">
+      <h4>K3s GPU Worker</h4>
+      <dl>
+        <dt>Machine</dt><dd>Custom Workstation with 2 × RTX 5060 Ti</dd>
+        <dt>Role</dt><dd>GPU worker</dd>
+        <dt>CPU</dt><dd>Intel Core i5 11th Gen</dd>
+        <dt>Memory</dt><dd>128 GB DDR4</dd>
+        <dt>SSD</dt><dd>2x 512 GB NVMe, 1x 512 GB SATA SSD</dd>
+        <dt>GPU</dt><dd>2 × RTX 5060 Ti, 16 GB each</dd>
+        <dt>Notes</dt><dd>Docker Compose today; running on Ubuntu Server</dd>
+      </dl>
+    </div>
+    <div class="spec">
+      <h4>Workstation (outside the cluster)</h4>
+      <dl>
+        <dt>Machine</dt><dd>Personal Workstation</dd>
+        <dt>Role</dt><dd>Outside the cluster; GPU on-call when it is on</dd>
+        <dt>CPU</dt><dd>Ryzen 9 7900</dd>
+        <dt>Memory</dt><dd>192 GB DDR5</dd>
+        <dt>SSD</dt><dd>3x 1 TB NVMe</dd>
+        <dt>GPU</dt><dd>RTX 4090, 24 GB</dd>
+        <dt>Notes</dt><dd>Windows 11 with Docker on WSL2, stays on Compose</dd>
+      </dl>
+    </div>
+  </div>
+  <figcaption>Hardware specifications: manager, worker, GPU worker, workstation. Gold marks the machines still to buy.</figcaption>
+</figure>
+
+<h3>What This Change Enables</h3>
+<p><strong>Always-on core.</strong> Thoracle keeps running when a machine dies. Today one NUC carries chat, the gateway, the agent and home lookups, so its failure stops all four. Three small PCs run as one K3s cluster instead, and when one fails, Kubernetes restarts its services on the other two.</p>
+<p><strong>GPU use.</strong> The GPUs can serve more than Thoracle. The 5060 Ti machine joins the cluster as a GPU worker, so its cards can be lent to another project from git and handed back, without two workloads fighting over a card. The workstation stays outside on Compose, and Rhystic Study still sends it work through its own llama-swap when it is on.</p>
+<p><strong>Data.</strong> A dead machine no longer means a restore. Today PostgreSQL lives only on the NUC. In the cluster a live replica runs on a second PC and takes over by itself.</p>
+<p><strong>Backups.</strong> Backups survive losing the machine that made them. Today the nightly copy sits on the NUC's own disk. The future state keeps three copies: on the cluster, on the 5060 Ti machine's spare disk, and encrypted in Google Cloud.</p>
+<p><strong>Slow jobs.</strong> Video and music jobs can run for minutes without being lost. Today a picture request holds the line until it is done, so a restart loses it. A Celery queue in Valkey gives each job a ticket, and the job waits until a GPU is free or the workstation is switched on.</p>
+<p><strong>Secrets.</strong> Each app sees only its own keys. Today every key sits in a hand-edited .env on each machine. OpenBao holds them in one place and hands each app only what it needs.</p>
+<p><strong>Watching.</strong> I hear about a problem before anyone notices it. Today there are Portal dots and one Cloudflare email. Uptime Kuma, Prometheus and Grafana add alerts to my phone and charts of every machine, and LiteLLM's log keeps a record of every request.</p>
+<p><strong>Tools.</strong> Every app uses one list of tools. Today each app wires up its own. LiteLLM becomes the tool gateway, so a tool added once shows up in Open WebUI and Hermes alike.</p>
+<p><strong>Cloudflare setup.</strong> The edge can be rebuilt from files, not from memory. Today it is six dashboard steps done by hand. OpenTofu writes those steps as files that are reviewed like code and applied the same way every time.</p>
+<p>The last gain is practice: Kubernetes, infrastructure as code, a secrets store, a job queue and monitoring each run for real, the way an enterprise platform runs them.</p>
+
+<h2>Custom Engineering</h2>
+<p>These are the parts I built myself. Off-the-shelf equivalents exist for some of them, but they are made for data-centre hardware, for models that stay loaded, and for teams that run each tool on its own. Thoracle runs on a few consumer machines that swap models in and out and get switched off, and it needs its pieces to work as one system. Where the available tools did not fit that shape, I built the part that did.</p>
+<p>Most of this carries over to the future state unchanged. Only the parts that run the core today would be rewritten for the cluster.</p>
+
+<h3 id="command-tower" data-toc="Command Tower">Command Tower: Thoracle's dashboard</h3>
+<p>Command Tower shows the state of all of Thoracle: every node, the models loaded on each GPU, the job queue, the gateway's day and the latest alerts. For detail, it links out to Grafana, Langfuse and the other tools. Equivalents exist: Backstage is the usual enterprise portal, and Homepage or Homarr fill the same role in homelabs. I grew the portal I already had instead, because Thoracle's own signals, such as the models loaded on each card and the job queue, would need custom plugins in any of them.</p>
+
+<figure class="figure">
+  <p class="fig-title">Command Tower shows every node, model, job and alert on one page</p>
+  <div class="scroll">
+  <svg viewBox="0 34 760 566" role="img" aria-labelledby="d-ct">
+    <title id="d-ct">Command Tower mock-up: node tiles, models loaded, job queue, gateway today, latest alerts and links to detail</title>
+    <rect class="d-box" x="24" y="40" width="712" height="536" rx="10"/>
+    <path class="d-tint" d="M24 80V50a10 10 0 0 1 10 -10h692a10 10 0 0 1 10 10v30z"/>
+    <line class="d-edge" x1="24" x2="736" y1="80" y2="80"/>
+    <text class="d-head" x="40" y="65">Command Tower</text>
+    <text class="d-quiet" x="160" y="65">command-tower.domain.com</text>
+    <rect x="566" y="50" width="154" height="20" rx="10" fill="rgba(143,207,156,.15)" stroke="#8fcf9c"/>
+    <text class="d-quiet d-mid" x="643" y="64" style="fill:var(--ink)">All systems normal</text>
+    <text class="d-quiet" x="40" y="104">NODES</text>
+    <rect class="d-box" x="40" y="112" width="106" height="76" rx="8"/><circle class="d-dot-good" cx="136" cy="126" r="4"/>
+    <text class="d-head" x="52" y="134">Manager 1</text><text class="d-quiet" x="52" y="154">CPU 14%</text><text class="d-quiet" x="52" y="172">19/32 GB RAM</text>
+    <rect class="d-box" x="154" y="112" width="106" height="76" rx="8"/><circle class="d-dot-good" cx="250" cy="126" r="4"/>
+    <text class="d-head" x="166" y="134">Manager 2</text><text class="d-quiet" x="166" y="154">CPU 22%</text><text class="d-quiet" x="166" y="172">23/32 GB RAM</text>
+    <rect class="d-box" x="268" y="112" width="106" height="76" rx="8"/><circle class="d-dot-good" cx="364" cy="126" r="4"/>
+    <text class="d-head" x="280" y="134">Manager 3</text><text class="d-quiet" x="280" y="154">CPU 11%</text><text class="d-quiet" x="280" y="172">17/32 GB RAM</text>
+    <rect class="d-box" x="382" y="112" width="106" height="76" rx="8"/><circle class="d-dot-good" cx="478" cy="126" r="4"/>
+    <text class="d-head" x="394" y="134">NUC worker</text><text class="d-quiet" x="394" y="154">CPU 9%</text><text class="d-quiet" x="394" y="172">12/32 GB RAM</text>
+    <rect class="d-box" x="496" y="112" width="106" height="76" rx="8"/><circle class="d-dot-good" cx="592" cy="126" r="4"/>
+    <text class="d-head" x="508" y="134">GPU worker</text><text class="d-quiet" x="508" y="154">2 × 5060 Ti</text><text class="d-quiet" x="508" y="172">27/32 GB VRAM</text>
+    <rect class="d-box" x="610" y="112" width="106" height="76" rx="8"/><circle class="d-dot-off" cx="706" cy="126" r="4"/>
+    <text class="d-head" x="622" y="134">Workstation</text><text class="d-quiet" x="622" y="154">RTX 4090</text><text class="d-quiet" x="622" y="172">Off, on call</text>
+    <rect class="d-box" x="40" y="204" width="220" height="148" rx="8"/>
+    <text class="d-head" x="54" y="228">Models loaded</text>
+    <text class="d-quiet" x="54" y="256">Card 1</text><text class="d-text d-end" x="246" y="256">Flash-Next (chat)</text>
+    <text class="d-quiet" x="54" y="280">Card 2</text><text class="d-text d-end" x="246" y="280">ComfyUI (pictures)</text>
+    <text class="d-quiet" x="54" y="304">Workstation</text><text class="d-text d-end" x="246" y="304">Off</text>
+    <text class="d-quiet" x="54" y="328">Last swap</text><text class="d-text d-end" x="246" y="328">4 min ago</text>
+    <rect class="d-box" x="270" y="204" width="220" height="148" rx="8"/>
+    <text class="d-head" x="284" y="228">Job queue</text>
+    <text class="d-quiet" x="284" y="256">Waiting</text><text class="d-text d-end" x="476" y="256">2</text>
+    <text class="d-quiet" x="284" y="280">Running</text><text class="d-text d-end" x="476" y="280">1 video clip</text>
+    <text class="d-quiet" x="284" y="304">Oldest wait</text><text class="d-text d-end" x="476" y="304">18 min</text>
+    <text class="d-quiet" x="284" y="328">Waiting for</text><text class="d-text d-end" x="476" y="328">Workstation</text>
+    <rect class="d-box" x="500" y="204" width="220" height="148" rx="8"/>
+    <text class="d-head" x="514" y="228">Gateway today</text>
+    <text class="d-quiet" x="514" y="256">Requests</text><text class="d-text d-end" x="706" y="256">1,284</text>
+    <text class="d-quiet" x="514" y="280">Tokens</text><text class="d-text d-end" x="706" y="280">3.1 M</text>
+    <text class="d-quiet" x="514" y="304">Cloud, this month</text><text class="d-text d-end" x="706" y="304">$11 of $40</text>
+    <text class="d-quiet" x="514" y="328">Guardrail blocks</text><text class="d-text d-end" x="706" y="328">3</text>
+    <rect class="d-box" x="40" y="368" width="450" height="156" rx="8"/>
+    <text class="d-head" x="54" y="392">Latest alerts</text>
+    <circle class="d-dot-warn" cx="60" cy="416" r="4"/><text class="d-text" x="72" y="420">Disk on manager 2 at 71%</text><text class="d-quiet d-end" x="476" y="420">12:40</text>
+    <circle class="d-dot-good" cx="60" cy="442" r="4"/><text class="d-text" x="72" y="446">Workstation switched off; 2 jobs wait for it</text><text class="d-quiet d-end" x="476" y="446">11:58</text>
+    <circle class="d-dot-good" cx="60" cy="468" r="4"/><text class="d-text" x="72" y="472">Manager 3 restarted; its services came back</text><text class="d-quiet d-end" x="476" y="472">09:15</text>
+    <circle class="d-dot-good" cx="60" cy="494" r="4"/><text class="d-text" x="72" y="498">Off-site backup copy finished</text><text class="d-quiet d-end" x="476" y="498">02:10</text>
+    <rect class="d-box" x="500" y="368" width="220" height="156" rx="8"/>
+    <text class="d-head" x="514" y="392">Open the detail</text>
+    <text class="d-link" x="514" y="420">Grafana</text><text class="d-link" x="614" y="420">Langfuse</text>
+    <text class="d-link" x="514" y="446">Uptime Kuma</text><text class="d-link" x="614" y="446">Keycloak</text>
+    <text class="d-link" x="514" y="472">OpenBao</text><text class="d-link" x="614" y="472">Open WebUI</text>
+    <text class="d-link" x="514" y="498">Loki logs</text><text class="d-link" x="614" y="498">Git deploys</text>
+    <line class="d-grid" x1="40" x2="720" y1="540" y2="540"/>
+    <text class="d-quiet" x="40" y="562">Every value is an example. Command Tower shows state only; acting on it is Phase 2, the control plane.</text>
+  </svg>
+  </div>
+  <figcaption>In this version it only shows state. Acting from it, such as draining a node or lending the GPUs, is Phase 2: a separate project that turns it into a control plane.</figcaption>
+</figure>
+
+<h3 data-toc="Rhystic Study">Rhystic Study: A model-aware router</h3>
+<p>Rhystic Study sits inside LiteLLM and decides which GPU machine answers each local request. LiteLLM alone cannot see which machine has a model loaded, and a wrong pick costs up to two minutes of loading, so Rhystic Study asks each machine first and keeps a chat on the machine that holds its context. Equivalents exist: NVIDIA Dynamo, llm-d and the Kubernetes Gateway API inference extension route requests the same way. They assume models stay loaded on data-centre GPUs under Kubernetes, not models swapped in and out by llama-swap on consumer cards, so I built my own.</p>
+
+<figure class="figure">
+  <p class="fig-title">Rhystic Study sends each request to the machine that can answer it soonest</p>
+  <div class="scroll">
+  <svg viewBox="0 38 760 334" role="img" aria-labelledby="d-rs">
+    <title id="d-rs">A local model request: if a chat is already under way it stays on its machine; otherwise Rhystic Study asks each machine what is loaded and picks, in order, model ready, model loading, the model's home, or fails fast when no machine is on</title>
+    <defs><marker id="rs-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="d-arrowhead"/></marker></defs>
+    <path class="d-edge" d="M164 150H183" marker-end="url(#rs-arrow)"/>
+    <path class="d-edge" d="M260 190V226" marker-end="url(#rs-arrow)"/>
+    <path class="d-edge" d="M335 150H368" marker-end="url(#rs-arrow)"/>
+    <path class="d-edge" d="M540 150H564" marker-end="url(#rs-arrow)"/>
+    <text class="d-quiet" x="268" y="212">yes</text>
+    <text class="d-quiet" x="342" y="142">no</text>
+    <rect class="d-box" x="24" y="122" width="140" height="56" rx="8"/>
+    <text class="d-head d-mid" x="94" y="146">Local model</text>
+    <text class="d-head d-mid" x="94" y="164">request</text>
+    <polygon class="d-box" points="185,150 260,110 335,150 260,190"/>
+    <text class="d-text d-mid" x="260" y="146">Chat already</text>
+    <text class="d-text d-mid" x="260" y="162">under way?</text>
+    <rect class="d-box" x="185" y="228" width="150" height="56" rx="8"/>
+    <text class="d-text d-mid" x="260" y="252">Stay on its machine</text>
+    <text class="d-quiet d-mid" x="260" y="270">keeps its context</text>
+    <rect class="d-box" x="370" y="122" width="170" height="56" rx="8"/>
+    <text class="d-text d-mid" x="455" y="146">Ask each machine</text>
+    <text class="d-text d-mid" x="455" y="164">what is loaded</text>
+    <rect class="d-box" x="566" y="60" width="170" height="256" rx="8"/>
+    <text class="d-quiet" x="578" y="52">PICK, IN THIS ORDER</text>
+    <rect class="d-new" x="572" y="72" width="158" height="48" rx="6"/>
+    <text class="d-head" x="584" y="92">1. Model ready</text><text class="d-quiet" x="584" y="110">answers now</text>
+    <rect class="d-new" x="572" y="132" width="158" height="48" rx="6"/>
+    <text class="d-head" x="584" y="152">2. Model loading</text><text class="d-quiet" x="584" y="170">answers soon</text>
+    <rect class="d-new" x="572" y="192" width="158" height="48" rx="6"/>
+    <text class="d-head" x="584" y="212">3. Model's home</text><text class="d-quiet" x="584" y="230">loads it, up to 2 min</text>
+    <rect class="d-warn" x="572" y="252" width="158" height="48" rx="6"/>
+    <text class="d-head" x="584" y="272">4. No machine on</text><text class="d-quiet" x="584" y="290">fails in about 1 s</text>
+    <text class="d-quiet" x="24" y="352">Pictures use the same check and spread over three cards without evicting the asker's chat model.</text>
+  </svg>
+  </div>
+  <figcaption>In this version its memory moves into Valkey, so it survives a restart and both LiteLLM copies agree. Cloud models stay available when no GPU machine is on.</figcaption>
+</figure>
+
+<h3 data-toc="Worldly Tutor">Worldly Tutor: ComfyUI without ComfyUI</h3>
+<p>ComfyUI is powerful but intimidating: every picture is a graph of nodes to wire and settings to tune. Ready-made workflows help, yet someone still has to open one and fill in the right boxes. Worldly Tutor closes that gap. You describe the picture in chat, and it fills in the ComfyUI workflow for you. You still choose which workflow to use, but that is a far smaller ask than learning to drive one.</p>
+<p>Today it lives in Open WebUI as a custom tool. The plan is to serve it through LiteLLM's MCP gateway, so Hermes and any other app can call it with their own key, and to let it run community-supported ComfyUI workflows.</p>
+
+<figure class="figure">
+  <p class="fig-title">Any app calls Worldly Tutor through one gateway</p>
+  <div class="scroll">
+  <svg viewBox="0 70 760 290" role="img" aria-labelledby="d-wt">
+    <title id="d-wt">Open WebUI, Hermes or any other app, each with its own key, call LiteLLM's MCP gateway, which checks the key and passes the request to Worldly Tutor; Worldly Tutor fills in the chosen ComfyUI workflow and ComfyUI runs it</title>
+    <defs><marker id="wt-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="d-arrowhead"/></marker></defs>
+    <path class="d-edge" d="M172 112H188V240H172"/>
+    <path class="d-edge" d="M172 176H188"/>
+    <path class="d-edge" d="M188 176H204" marker-end="url(#wt-arrow)"/>
+    <path class="d-edge" d="M352 176H384" marker-end="url(#wt-arrow)"/>
+    <path class="d-edge" d="M532 176H564" marker-end="url(#wt-arrow)"/>
+    <path class="d-edge" d="M458 260V212" marker-end="url(#wt-arrow)"/>
+    <rect class="d-box" x="24" y="90" width="148" height="44" rx="8"/><text class="d-text d-mid" x="98" y="116">Open WebUI</text>
+    <rect class="d-box" x="24" y="154" width="148" height="44" rx="8"/><text class="d-text d-mid" x="98" y="180">Hermes</text>
+    <rect class="d-box" x="24" y="218" width="148" height="44" rx="8"/><text class="d-text d-mid" x="98" y="244">Any other app</text>
+    <text class="d-quiet" x="24" y="286">each app with its own key</text>
+    <rect class="d-box" x="204" y="140" width="148" height="72" rx="8"/>
+    <text class="d-head d-mid" x="278" y="164">LiteLLM</text>
+    <text class="d-quiet d-mid" x="278" y="182">MCP gateway</text>
+    <text class="d-quiet d-mid" x="278" y="198">checks the key</text>
+    <rect class="d-new" x="384" y="140" width="148" height="72" rx="8"/>
+    <text class="d-head d-mid" x="458" y="164">Worldly Tutor</text>
+    <text class="d-text d-mid" x="458" y="182">fills in the</text>
+    <text class="d-text d-mid" x="458" y="198">ComfyUI workflow</text>
+    <rect class="d-box" x="564" y="148" width="148" height="56" rx="8"/>
+    <text class="d-head d-mid" x="638" y="172">ComfyUI</text>
+    <text class="d-quiet d-mid" x="638" y="190">runs the workflow</text>
+    <rect class="d-box" x="384" y="260" width="148" height="88" rx="8"/>
+    <text class="d-head d-mid" x="458" y="284">Workflows</text>
+    <text class="d-quiet d-mid" x="458" y="302">per model, today</text>
+    <text class="d-quiet d-mid" x="458" y="318">community-supported,</text>
+    <text class="d-quiet d-mid" x="458" y="334">added in the plan</text>
+    <text class="d-quiet" x="468" y="240">you pick one</text>
+  </svg>
+  </div>
+  <figcaption>Worldly Tutor, future state: apps → LiteLLM MCP gateway → Worldly Tutor → ComfyUI.</figcaption>
+</figure>
+
+<p>Every app reaches Worldly Tutor through the same gateway with its own key, and the workflow library grows to include community-supported ComfyUI workflows.</p>
+
+<h2>Services</h2>
+<p>Thoracle is built from about two dozen services, almost all open source. They run from the bottom up: the platform everything sits on, then the front door, the apps people open, and the layers that keep those apps fast, safe and watched. A tag after each name says whether it runs today, is new in the future state, or is planned.</p>
+
+<h3>Platform</h3>
+<p>The platform is what everything runs on and how it changes. This is where the rebuild happens.</p>
+<p class="item"><strong>K3s cluster</strong> <span class="tag new">new</span></p>
+<p>K3s is the foundation the future state stands on. It is Kubernetes in a small package, so three small PCs are run as one pool instead of three separate machines. When one PC dies, its services restart on the other two, which ends the NUC's role as the single point of failure. I picked K3s over full Kubernetes because it fits on consumer hardware yet uses the same commands and files as an enterprise cluster. Every always-on service below runs on it, and updates roll through one PC at a time while everything stays up. It does not move data by itself; the data stores further down do that.</p>
+<p class="item"><strong>Docker Compose</strong> <span class="tag">have today, shrinks</span></p>
+<p>Compose keeps running the RTX 4090 workstation and the dev copy, along with the deploy scripts that already work. The workstation stays outside the cluster because it is a Windows machine that gets switched off, and Rhystic Study still reaches it through its own llama-swap when it is on. The 5060 Ti machine leaves Compose and joins the cluster as a GPU worker.</p>
+<p class="item"><strong>Argo CD</strong> <span class="tag new">new</span></p>
+<p>Nothing reaches prod except from git, and Argo CD carries that rule onto the cluster. It runs inside the cluster, watches the repo and changes the cluster to match, so my go-ahead becomes the merge. Its web UI shows each app's sync state, which Command Tower can link to for detail. It replaces custom shell scripts for the core, while the workstation keeps its deploy scripts. Only its bootstrap lives outside: one command that installs it on a fresh cluster and lets it restore everything else from the repo.</p>
+<p class="item"><strong>OpenTofu</strong> <span class="tag new">new</span></p>
+<p>OpenTofu turns setup done by clicking into files. The Cloudflare edge, Google Cloud and GitHub's repository rules become code that shows a plan before it applies, the same dry-run habit Thoracle uses everywhere. The edge can then be rebuilt from files rather than memory, and a hand edit in a dashboard shows up as a difference. It is the open continuation of Terraform.</p>
+<p class="item"><strong>Sandbox</strong> <span class="tag new">new</span></p>
+<p>The sandbox is where a new service gets tried without risking what my users rely on. By default a try-out runs in a fenced-off namespace, an area of the cluster with its own memory and CPU cap that cannot reach anyone's data. A test of the platform itself, such as a new Argo CD or Longhorn version, gets a virtual cluster (vcluster): a whole K3s of its own inside the real one, free to break. Anything that needs a whole machine, such as another operating system or a Docker Compose stack, gets a VM on the cluster through KubeVirt.</p>
+
+<h3>Front door</h3>
+<p>Three services make one address work from the couch or from another country. All three run today.</p>
+<p class="item"><strong>Cloudflare Tunnel and Access</strong> <span class="tag">have today, grows</span></p>
+<p>The tunnel is the only way in from outside. A connector dials out from the house to Cloudflare, so no router port is ever open, and Access puts an email-code gate in front of the portal and admin pages. In the future state two connectors run on different PCs, so losing one does not cut the way in.</p>
+<p class="item"><strong>Caddy</strong> <span class="tag">have today</span></p>
+<p>Caddy is the doorman inside the house. It sends each web address to the right app and gives home devices a real certificate, so nobody sees a browser warning. On the cluster two copies stand behind one address that follows a live PC. Whether Caddy stays or K3s's built-in front door takes over is still open.</p>
+<p class="item"><strong>Pi-hole</strong> <span class="tag">have today</span></p>
+<p>Pi-hole answers “where is the chat?” for every device at home and points it straight at the stack. That is faster than going out through Cloudflare and keeps working when the internet is down.</p>
+
+<h3>Apps</h3>
+<p>Only four things are ever opened by a person. Everything else in Thoracle exists to keep these four fast, private and available.</p>
+<p class="item"><strong>Open WebUI</strong> <span class="tag">have today, grows</span></p>
+<p>Open WebUI is the chat my users know. It holds their accounts and chats, the picture tools and the entry that summons Hermes. In the future state two copies run on different PCs, sharing files through common storage and live state through Valkey, so a chat survives a PC being replaced or an update rolling out.</p>
+<p class="item"><strong>Hermes Agent</strong> <span class="tag">have today</span></p>
+<p>Hermes is the agent that does the work: it runs commands and reads and writes the folders I allow. It gains the most from the tool gateway, since every tool added there reaches it the same day. Its fence today is a firewall rule tied to one machine and address, so it needs a new design on the cluster, and that decision is still open.</p>
+<p class="item"><strong>Command Tower</strong> <span class="tag">have today, grows</span></p>
+<p><em>Command Tower</em> is the operator's front page: which machines are on, which model is loaded where, the job queue and the latest alerts. It shows the headline and links out to Grafana and Langfuse for detail. <a href="#command-tower">Custom Engineering</a> covers why I built it.</p>
+<p class="item"><strong>Samba</strong> <span class="tag">have today, grows</span></p>
+<p>A shared drive gives my users one place for files, opened like any network drive from File Explorer or Finder. Samba serves it, and its files sit on a Longhorn drive, so when a PC dies it restarts on another with its files intact.</p>
+
+<h3>Gateways</h3>
+<p>A gateway makes many things look like one, so new parts can be added behind it without touching what is in front. That idea is why Thoracle can grow.</p>
+<p class="item"><strong>LiteLLM</strong> <span class="tag">have today, grows</span></p>
+<p>LiteLLM puts every model, local or cloud, behind one door. Apps never hold a provider's key; each carries a LiteLLM key that can be limited or revoked, and a model added once appears everywhere. <em>Rhystic Study</em> lives inside it and picks the GPU machine for each local request. In the future state two copies share their state through Valkey, and LiteLLM switches on features it already has: a tool gateway, a key and budget per person, and a log of every request.</p>
+<p class="item"><strong>MCP Tool Gateway</strong> <em>(via LiteLLM)</em> <span class="tag new">new</span></p>
+<p>Today a tool belongs to one app, so Hermes cannot use the picture tools that live in Open WebUI. The tool gateway puts every tool server behind one address, limits each key to its own tools and records every call. A tool is added once and works everywhere, which is how <em>Worldly Tutor</em> reaches Hermes. It also widens what Hermes can reach, so each tool it gets is my call.</p>
+<p class="item"><strong>SearXNG</strong> <span class="tag new">new</span></p>
+<p>A model that cannot search answers from memory. Web search puts one endpoint in front of many search engines, so a chat model can look things up and show its sources. It becomes one more tool behind the gateway, running on the cluster.</p>
+
+<h3>Model serving and jobs</h3>
+<p>The GPU machines hold the private models and change least. The 5060 Ti machine joins the cluster as a GPU worker, the workstation stays on Compose, and the new job queue feeds both work that takes minutes rather than seconds.</p>
+<p class="item"><strong>llama-swap</strong> <span class="tag">have today</span></p>
+<p>The cards cannot hold every model at once, so llama-swap is the referee on each GPU machine. It loads and unloads models on demand, lets a chat evict a picture model, and refuses a picture rather than evict a chat. Rhystic Study and Celery's workers both send work through it, so each machine keeps a single referee.</p>
+<p class="item"><strong>Strata</strong> <span class="tag">have today</span></p>
+<p>Strata is the chat engine that runs Flash-Next, the long-context model, on both machines. It makes long chats and long agent tasks possible on my own cards, privately and at no cost per request.</p>
+<p class="item"><strong>ComfyUI</strong> <span class="tag">have today</span></p>
+<p>ComfyUI makes the pictures. <em>Worldly Tutor</em> translates a plain request into the right workflow for it, so pictures travel through the same gateway as chat and LiteLLM can place them on whichever machine is free. Video and music will use the same engine later, arriving through the job queue because they run for minutes.</p>
+<p class="item"><strong>Celery</strong> <span class="tag new">new</span></p>
+<p>A video takes minutes, and holding a request open that long breaks things: a restart loses the job, and a workstation that is off cannot be waited for. Celery fixes this with a ticket. A tool hands in the job, the job waits in Valkey, and a worker on a GPU machine takes it when a card is free, so “make this clip when the 4090 is on” becomes a normal request. It sits beside <em>Rhystic Study</em> rather than replacing it: live chat streams word by word, slow jobs wait in line. A queue inside PostgreSQL would do for six people; Celery is here to scale.</p>
+
+<h3>Data</h3>
+<p>A cluster moves a program to a surviving PC, but not the program's data. These services make the data follow.</p>
+<p class="item"><strong>PostgreSQL</strong> <span class="tag">have today, grows</span></p>
+<p>PostgreSQL holds everything worth restoring: accounts, chats and keys. Today it lives only on the NUC, so a dead NUC means a restore. In the cluster a live replica runs on a second PC and takes over by itself, managed by a Kubernetes add-on (CloudNativePG).</p>
+<p class="item"><strong>Valkey</strong> <span class="tag new">new</span></p>
+<p>Valkey is the system's whiteboard, a fast in-memory store for small, short-lived values. It is Celery's waiting room, <em>Rhystic Study</em>'s memory, Langfuse's queue, and the shared state that lets two copies of LiteLLM or Open WebUI run side by side. Without it no app can run as two copies, so it is what makes the redundancy above real.</p>
+<p class="item"><strong>Longhorn, Garage</strong> <span class="tag new">new</span></p>
+<p>Shared storage makes “any PC can fail” true for files, not just programs. Without it, Open WebUI's uploads and pictures stay on the PC that died. It comes in two kinds, and each app uses the one it needs. Shared disks (Longhorn) give an app a drive that is copied to other PCs as it writes, for apps that save to a folder. A file store (Garage) takes whole files and hands them back by name, S3-style, for apps like Langfuse that need one. Garage replaces MinIO, whose free edition was retired.</p>
+<p class="item"><strong>ClickHouse</strong> <span class="tag new">new, comes with Langfuse</span></p>
+<p>ClickHouse answers sums and averages over millions of rows at once, such as average reply time per model this month. Only Langfuse needs it, to hold traces, and it is Langfuse's hungriest part at an 8 GB memory minimum.</p>
+
+<h3>Watching</h3>
+<p>Today I learn about a problem by running into it. These services tell me first, show you where, and keep a record of what happened.</p>
+<p class="item"><strong>Uptime Kuma</strong> <span class="tag new">new</span></p>
+<p>Uptime Kuma checks every service about once a minute and sends an alert to my phone when one stops answering. It also expects a “done” signal from the nightly backup and speaks up when none arrives. One copy runs on the cluster and a tiny one on a free Google Cloud machine, the only thing that can tell me the whole house is offline.</p>
+<p class="item"><strong>Prometheus and Grafana</strong> <span class="tag new">new</span></p>
+<p>An alert says something broke; Prometheus says what was happening before it did. It collects numbers from every machine every few seconds, such as GPU memory, disk space and request counts, and keeps their history. Grafana turns those numbers into charts and holds the alert rules, with its dashboards kept in git. Together they turn surprises into warnings, like a backup disk that will be full in three weeks.</p>
+<p class="item"><strong>LiteLLM request log</strong> <span class="tag">built in, off by default</span></p>
+<p>Machines are only half the story; the other half is what people asked and what came back. LiteLLM can store each request's prompt, reply, time and token count, grouped by chat, with no new service to run.</p>
+<p class="item"><strong>Langfuse</strong> <span class="tag new">new, optional</span></p>
+<p>Langfuse shows an agent task or a picture loop as a tree of steps and compares runs, so “why was that slow?” has an answer. It is the heaviest tool here, needing ClickHouse, Valkey, a file store and PostgreSQL, about 25 GB of memory in all. It comes last, and only if LiteLLM's own log falls short.</p>
+
+<h3>Secrets and cloud</h3>
+<p>Thoracle stays private and self-hosted. Secrets move into one guarded place, and the cloud is used only for what three machines in one house cannot do.</p>
+<p class="item"><strong>OpenBao</strong> <span class="tag new">new</span></p>
+<p>OpenBao holds every key in one guarded service and hands each app only its own, replacing a hand-edited .env on each machine. A shared key is changed once, every read is on record, and short-lived passwords expire within an hour, so a leaked one is soon worthless. A small helper fetches each app's secrets at start-up, so services move over one at a time without code changes. It is the open continuation of HashiCorp Vault. After a power cut it comes up locked, so automatic unlocking has to be designed in.</p>
+<p class="item"><strong>Google Cloud</strong> <span class="tag new">new, paid</span></p>
+<p>Google Cloud does the three things a house cannot: keep a backup copy somewhere else, watch the house from outside, and stand in for the workstation's speech models when it is off. It also gives a place to practice Kubernetes with OpenTofu used for real.</p>
+<p class="item"><strong>Anthropic API</strong> <span class="tag">have today</span></p>
+<p>The strongest models are ones Thoracle does not run. Anthropic's are reached only through LiteLLM, so chat keeps working with both GPU machines off. Adding another provider is a few lines in one file and changes no app.</p>
+
+<h2>Tenants</h2>
+<p>In an enterprise environment, a platform team runs the platform, and each product team's apps run on it as tenants, each with its own space, limits and deploys. Thoracle would host mine the same way:</p>
+<p><strong>manavault-ph</strong> is a storefront for Magic: The Gathering singles, cards sold one at a time. Shopify and WooCommerce cannot handle them. One card comes in many printings and finishes, every copy has its own condition, and prices move with demand. Selling other people's cards on consignment adds another layer, so I built my own store.</p>
+<p><strong>gitaxian-probe</strong> exists because building manavault-ph uncovered a pricing problem. Philippine sellers price cards from US market data, but the cards for sale here are not the ones for sale overseas, so those prices are often wrong. gitaxian-probe reads the local market to measure real local supply and demand, and its data sets manavault-ph's prices.</p>
+
+<h2>Closing thoughts</h2>
+<p>I started Thoracle to learn how enterprises run their platforms. Building my own showed me where their tools stop fitting consumer hardware, and that is where the interesting work is. Rhystic Study and Worldly Tutor exist because nothing off the shelf did the job.</p>
+<p>The future state is the next round of the same lesson. A cluster, a secrets store, a job queue and real monitoring each teach something a single machine cannot, and every one of them runs on hardware I own and am free to break.</p>
+<p>If you are building your own, here is what I would tell you:</p>
+<ul class="advice">
+  <li><strong>Put a gateway in front of your models first.</strong> With one door for every model, apps never hold a provider's key, and a new model shows up everywhere at once.</li>
+  <li><strong>Use off-the-shelf tools until they stop fitting.</strong> Build your own part only where they assume hardware or habits you do not have.</li>
+  <li><strong>Make every change go through git.</strong> A dry run before each change turns a homelab from something you remember into something you can rebuild.</li>
+  <li><strong>A copy is not a backup.</strong> Replication copies a mistake to every machine at once; only a backup undoes a bad change.</li>
+</ul>
+<p>None of this is finished, and that is the point. I will write up each layer as I build it.</p>
+
+<nav class="post-end" aria-label="More">
+  <a href="/blog/">← All posts</a>
+  <a href="/">Home</a>
+</nav>
+
+</div>
+</div>
+
+</article>
+</main>
+
+<footer>© 2026 Mick Verzola</footer>
+
+</body>
+</html>
